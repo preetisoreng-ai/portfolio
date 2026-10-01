@@ -596,9 +596,207 @@ body {
         }
       }
     </style>
+<style>
+  /* Phones: the header is a wordmark and a menu button, with the case
+         study tabs in a panel under it; the cover fills the first screen
+         and the diagram sits on a short card with two sheets fanned out
+         behind it. */
+  #csMenuBtn {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    #csHeader {
+      flex-direction: row !important;
+      min-height: 64px;
+      padding: 10px 22px !important;
+      border-bottom-color: transparent;
+      box-shadow: none;
+      background: rgba(255, 255, 255, 0.92);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    #csHeader > a > span:first-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 500 !important;
+      font-size: 22px !important;
+      letter-spacing: -0.02em;
+      color: #1c1917 !important;
+    }
+    #csHeader > a > span:first-child::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #b9a8f2;
+    }
+    #csMenuBtn {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 7px;
+      width: 44px;
+      height: 44px;
+      margin-right: -6px;
+      padding: 0 6px;
+      background: none;
+      border: 0;
+    }
+    #csMenuBtn span {
+      display: block;
+      height: 1.8px;
+      border-radius: 2px;
+      background: #1c1917;
+      transition:
+        transform 0.25s ease,
+        opacity 0.2s ease;
+    }
+    #csMenuBtn[aria-expanded="true"] span:nth-child(1) {
+      transform: translateY(8.8px) rotate(45deg);
+    }
+    #csMenuBtn[aria-expanded="true"] span:nth-child(2) {
+      opacity: 0;
+    }
+    #csMenuBtn[aria-expanded="true"] span:nth-child(3) {
+      transform: translateY(-8.8px) rotate(-45deg);
+    }
+    /* The tabs, as a list dropping down from the header. */
+    #csTabs {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      display: none !important;
+      flex-direction: column;
+      align-items: stretch;
+      height: auto !important;
+      gap: 0 !important;
+      padding: 6px 22px 14px !important;
+      background: #fff;
+      border-bottom: 1px solid #ececf3;
+      box-shadow: 0 16px 30px rgba(41, 41, 103, 0.08);
+    }
+    #csTabs.is-open {
+      display: flex !important;
+    }
+    #csTabs > * {
+      justify-content: flex-start !important;
+      min-height: 44px;
+      padding: 0 !important;
+      border-bottom: 1px solid #f1f1f6;
+    }
+    #csTabs > *:last-child {
+      border-bottom: 0;
+    }
+    #csTabs > * > p {
+      font-size: 15px !important;
+    }
+    #csTabs > div > span {
+      display: none;
+    }
+
+    /* ---- The cover. ---- */
+    #root [data-name^="MacBook Pro"] {
+      min-height: calc(100svh - 64px);
+      justify-content: center;
+      gap: 0 !important;
+      padding: 48px 0 64px !important;
+    }
+    #root [data-name^="MacBook Pro"] > p:first-child {
+      font-size: clamp(40px, 12.4vw, 50px);
+      font-weight: 600;
+      line-height: 1.05;
+    }
+    #root [data-name^="MacBook Pro"] > p:nth-child(2) {
+      width: min(86%, 330px) !important;
+      margin-top: 16px;
+      font-size: 18px;
+      line-height: 1.42;
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(3) {
+      margin-top: 26px;
+      gap: 16px;
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(3) > span:first-child,
+    #root [data-name^="MacBook Pro"] > div:nth-child(3) > span:last-child {
+      width: 42px;
+    }
+    /* The card: shorter, so the diagram fills it, and no longer clipping
+           so the sheets behind it can show. The image's own frame still
+           clips the diagram. */
+    #root [data-name^="MacBook Pro"] > div:nth-child(4) {
+      position: relative !important;
+      left: auto !important;
+      top: auto !important;
+      z-index: auto;
+      /* A page-wide phone rule makes every [data-name] block full width. */
+      width: calc(100% - 64px) !important;
+      height: auto;
+      aspect-ratio: 1.4;
+      margin-top: 48px;
+      padding: 12px;
+      overflow: visible;
+      border-radius: 16px;
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(4) > div {
+      overflow: hidden;
+      border-radius: 8px;
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(4)::before,
+    #root [data-name^="MacBook Pro"] > div:nth-child(4)::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      pointer-events: none;
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(4)::before {
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-18px, -10px) rotate(-3.5deg);
+      box-shadow: 0 12px 34px rgba(83, 83, 152, 0.08);
+    }
+    #root [data-name^="MacBook Pro"] > div:nth-child(4)::after {
+      background: rgba(255, 255, 255, 0.62);
+      transform: translate(18px, 12px) rotate(3deg);
+      box-shadow: 0 18px 40px rgba(83, 83, 152, 0.1);
+    }
+  }
+</style>
+<script>
+  /* The case-study menu on a phone. */
+  document.addEventListener("DOMContentLoaded", function () {
+    var btn = document.getElementById("csMenuBtn");
+    var tabs = document.getElementById("csTabs");
+    if (!btn || !tabs) return;
+    function setOpen(open) {
+      tabs.classList.toggle("is-open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute(
+        "aria-label",
+        open ? "Close case study menu" : "Open case study menu",
+      );
+    }
+    btn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      setOpen(!tabs.classList.contains("is-open"));
+    });
+    document.addEventListener("click", function (e) {
+      if (!tabs.contains(e.target)) setOpen(false);
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && tabs.classList.contains("is-open")) {
+        setOpen(false);
+        btn.focus();
+      }
+    });
+  });
+</script>
   </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
-    <div id="root"><link rel="preload" as="image" href="./assets/csImage79.png"/><link rel="preload" as="image" href="./assets/csUserInterviewStickies.png"/><link rel="preload" as="image" href="./assets/csFig1A.png"/><link rel="preload" as="image" href="./assets/csIconHandshake.png"/><link rel="preload" as="image" href="./assets/csFig1B.png"/><link rel="preload" as="image" href="./assets/csFig1C.png"/><link rel="preload" as="image" href="./assets/csFig2A.png"/><link rel="preload" as="image" href="./assets/csFig2B.png"/><link rel="preload" as="image" href="./assets/csPersonaSarah.jpg"/><link rel="preload" as="image" href="./assets/csPersonaHarshad.jpg"/><link rel="preload" as="image" href="./assets/csPersonaAryan.jpg"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-node-id="40000033:3026" data-name="Inside project layout"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1852"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1860" href="./user-management.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1863" href="./studios.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p></a></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[10px] px-[16px] py-[40px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full" data-node-id="40000045:1051" data-name="MacBook Pro 14&#x27; - 3"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-node-id="40000045:1052" data-reveal="top">Decision Flow</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-node-id="40000045:1053" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Capture, structure, and surface decision-making touchpoints without disrupting natural workflows</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><span class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</span><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute h-[784px] left-[calc(50%+0.5px)] md:top-[375px] w-full md:w-[1025px]" data-node-id="40000566:23980" data-name="image 79" data-reveal="bottom" data-reveal-delay="2"><div class="md:absolute inset-0 overflow-hidden pointer-events-none"><img alt="Decision Flow hero architecture diagram" class="md:absolute h-full left-[-12.51%] max-w-none top-0 w-[112.52%]" src="./assets/csImage79.png"/></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[46px] md:pt-[144px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[640px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[34px]" style="font-variation-settings:&quot;wdth&quot; 100">MathCo is an enterprise AI and analytics company that helps organizations transform data into actionable business decisions. It builds customized data products, integrates AI into business workflows, and enables companies to scale intelligence across operations. Their approach focuses on connecting data, analytics, and decision-making to drive measurable outcomes and improve efficiency.</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100">NucliOS is MathCo’s proprietary AI-powered platform that powers this transformation. It converts raw data into governed, contextual intelligence, enables AI agents and applications, and supports end-to-end workflows—from data preparation to decision automation—helping enterprises move faster from insights to impactful business actions.</p></div><div class="md:ml-[124px] w-full md:w-[348px]" data-reveal="right"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[26px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[38px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100">March 2024- December 2025</p></div></div></div><div class="mt-[52px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] text-[16px] text-[#5e5c5c]" style="font-variation-settings:&quot;wdth&quot; 100">Product</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[6px] text-[26px] text-[#3b3b3b]" style="font-variation-settings:&quot;wdth&quot; 100">NucliOS</p></div></div><div class="bg-[#101124] mt-[133px] pb-[92px] pt-[75px] w-full" data-reveal="scale"><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#f6efe4] text-[48px]">Problem Statement</h2><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[812px] mt-[44px] text-[16px] leading-[24px] text-[#d5d7e8]" style="font-variation-settings:&quot;wdth&quot; 100">The organization’s decision-making process spans multiple functions and personas, bringing together diverse inputs, perspectives, and actions across the business. While this creates a rich foundation for informed decisions, the overall journey remains fragmented and difficult to trace end to end.</p><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[812px] text-[16px] leading-[24px] text-[#d5d7e8]" style="font-variation-settings:&quot;wdth&quot; 100">Information, insights, and decisions are often created and managed across disconnected systems and informal channels. As a result, critical context, rationale, and dependencies are not consistently captured or carried forward. This makes it challenging to understand how decisions originate, evolve, and ultimately translate into outcomes. The lack of a unified and traceable flow leads to limited visibility, inefficiencies, repeated work, and misalignment—hindering the organization’s ability to make consistent, scalable, and impact-driven decisions.</p></div></div><div class="bg-[#e9effb] pb-[49px] pt-[46px] w-full" data-reveal="true"><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Goals</p><div class="flex flex-wrap font-[&#x27;Roboto&#x27;] gap-x-[47px] gap-y-[16px] mt-[29px] text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100"><p class="whitespace-nowrap">1.  Make decision flows visible</p><p class="whitespace-nowrap">2.  Capture and preserve decision context</p><p class="whitespace-nowrap">3.  Reduce fragmentation into a single source of truth</p><p class="whitespace-nowrap">4.  Accelerate and streamline decision-making</p><p class="whitespace-nowrap">5. Build a reusable organizational memory</p></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[44px] md:pt-[139px]"><div data-reveal="true"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]">User Interview</h2></div><div class="mt-[73px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Objective</p><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[700px] mt-[33px] text-[20px] leading-[32px] text-[#4a4a5c]" style="font-variation-settings:&quot;wdth&quot; 100">To uncover how decisions flow across both tangible and intangible touchpoints, and identify gaps and opportunities to optimize the overall journey.</p></div><div class="mt-[81px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Hypothesis</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[30px] max-w-full md:w-[820px] space-y-[0px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Mapping the end-to-end decision flow will help uncover users’ micro-goals, while exposing gaps, lost context, and inefficiencies across the journey.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>A deeper understanding of how information and decisions evolve across functions will enable optimization of the process and improve visibility and transparency.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>While insights today exist in silos across decision intelligence, data-driven practices, and collaboration, the key opportunity lies in stitching them together to create a unified, traceable decision-making ecosystem.</span></li></ul></div><div class="mt-[127px]" data-reveal="card"><img alt="Interview notes for Harshad, Manasi, Ishani and Shridhar on a Figma sticky board" class="block h-auto max-w-full mx-auto" src="./assets/csUserInterviewStickies.png"/><p class="font-[&#x27;Roboto&#x27;] mt-[16px] text-[14px] text-[#302f2f] text-center" style="font-variation-settings:&quot;wdth&quot; 100">Fig. Screenshot from the Figma file where the interviews were documented</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"><div data-reveal="true"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]">User Research Insights</h2></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] max-w-full md:w-[640px] mt-[24px] reveal" style="font-variation-settings:&quot;wdth&quot; 100">In the table below the decision-making journey has been captured by before, after and during stages of decision making</p><div class="-mx-[16px] overflow-x-auto px-[16px] md:mx-0 md:overflow-visible md:px-0"><div class="border-[#e2e4ec] border-l border-t font-[&#x27;Roboto&#x27;] grid grid-cols-[130px_repeat(4,1fr)] min-w-full md:w-full md:min-w-0 mt-[59px] text-[15px] leading-[22px] text-[#302f2f]" data-reveal="card" style="font-variation-settings:&quot;wdth&quot; 100"><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r px-[16px] py-[24px]"></div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Pre Decision Making (Discover)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">During Decision Making (Analyse)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Post Decision Making (Collab)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Implement / Approval</div><div class="contents"><div class="bg-[#fafbfd] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[20px] text-[#090a0a]">Actions</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Gather Information: Collect relevant data and information related to the decision</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Insights Collection: Look at insights to create a decision</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Prepare decision for approval
+    <div id="root"><link rel="preload" as="image" href="./assets/csImage79.png"/><link rel="preload" as="image" href="./assets/csUserInterviewStickies.png"/><link rel="preload" as="image" href="./assets/csFig1A.png"/><link rel="preload" as="image" href="./assets/csIconHandshake.png"/><link rel="preload" as="image" href="./assets/csFig1B.png"/><link rel="preload" as="image" href="./assets/csFig1C.png"/><link rel="preload" as="image" href="./assets/csFig2A.png"/><link rel="preload" as="image" href="./assets/csFig2B.png"/><link rel="preload" as="image" href="./assets/csPersonaSarah.jpg"/><link rel="preload" as="image" href="./assets/csPersonaHarshad.jpg"/><link rel="preload" as="image" href="./assets/csPersonaAryan.jpg"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-node-id="40000033:3026" data-name="Inside project layout"><div id="csHeader" class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><button id="csMenuBtn" type="button" aria-label="Open case study menu" aria-expanded="false" aria-controls="csTabs"><span></span><span></span><span></span></button><div id="csTabs" class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1852"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1860" href="./user-management.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1863" href="./studios.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p></a></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[10px] px-[16px] py-[40px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full" data-node-id="40000045:1051" data-name="MacBook Pro 14&#x27; - 3"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-node-id="40000045:1052" data-reveal="top">Decision Flow</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-node-id="40000045:1053" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Capture, structure, and surface decision-making touchpoints without disrupting natural workflows</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><span class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</span><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute h-[784px] left-[calc(50%+0.5px)] md:top-[375px] w-full md:w-[1025px]" data-node-id="40000566:23980" data-name="image 79" data-reveal="bottom" data-reveal-delay="2"><div class="md:absolute inset-0 overflow-hidden pointer-events-none"><img alt="Decision Flow hero architecture diagram" class="md:absolute h-full left-[-12.51%] max-w-none top-0 w-[112.52%]" src="./assets/csImage79.png"/></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[46px] md:pt-[144px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[640px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[34px]" style="font-variation-settings:&quot;wdth&quot; 100">MathCo is an enterprise AI and analytics company that helps organizations transform data into actionable business decisions. It builds customized data products, integrates AI into business workflows, and enables companies to scale intelligence across operations. Their approach focuses on connecting data, analytics, and decision-making to drive measurable outcomes and improve efficiency.</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100">NucliOS is MathCo’s proprietary AI-powered platform that powers this transformation. It converts raw data into governed, contextual intelligence, enables AI agents and applications, and supports end-to-end workflows—from data preparation to decision automation—helping enterprises move faster from insights to impactful business actions.</p></div><div class="md:ml-[124px] w-full md:w-[348px]" data-reveal="right"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[26px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[38px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100">March 2024- December 2025</p></div></div></div><div class="mt-[52px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] text-[16px] text-[#5e5c5c]" style="font-variation-settings:&quot;wdth&quot; 100">Product</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[6px] text-[26px] text-[#3b3b3b]" style="font-variation-settings:&quot;wdth&quot; 100">NucliOS</p></div></div><div class="bg-[#101124] mt-[133px] pb-[92px] pt-[75px] w-full" data-reveal="scale"><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#f6efe4] text-[48px]">Problem Statement</h2><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[812px] mt-[44px] text-[16px] leading-[24px] text-[#d5d7e8]" style="font-variation-settings:&quot;wdth&quot; 100">The organization’s decision-making process spans multiple functions and personas, bringing together diverse inputs, perspectives, and actions across the business. While this creates a rich foundation for informed decisions, the overall journey remains fragmented and difficult to trace end to end.</p><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[812px] text-[16px] leading-[24px] text-[#d5d7e8]" style="font-variation-settings:&quot;wdth&quot; 100">Information, insights, and decisions are often created and managed across disconnected systems and informal channels. As a result, critical context, rationale, and dependencies are not consistently captured or carried forward. This makes it challenging to understand how decisions originate, evolve, and ultimately translate into outcomes. The lack of a unified and traceable flow leads to limited visibility, inefficiencies, repeated work, and misalignment—hindering the organization’s ability to make consistent, scalable, and impact-driven decisions.</p></div></div><div class="bg-[#e9effb] pb-[49px] pt-[46px] w-full" data-reveal="true"><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Goals</p><div class="flex flex-wrap font-[&#x27;Roboto&#x27;] gap-x-[47px] gap-y-[16px] mt-[29px] text-[16px] leading-[24px] text-[#302f2f]" style="font-variation-settings:&quot;wdth&quot; 100"><p class="whitespace-nowrap">1.  Make decision flows visible</p><p class="whitespace-nowrap">2.  Capture and preserve decision context</p><p class="whitespace-nowrap">3.  Reduce fragmentation into a single source of truth</p><p class="whitespace-nowrap">4.  Accelerate and streamline decision-making</p><p class="whitespace-nowrap">5. Build a reusable organizational memory</p></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[44px] md:pt-[139px]"><div data-reveal="true"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]">User Interview</h2></div><div class="mt-[73px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Objective</p><p class="font-[&#x27;Roboto&#x27;] max-w-full md:w-[700px] mt-[33px] text-[20px] leading-[32px] text-[#4a4a5c]" style="font-variation-settings:&quot;wdth&quot; 100">To uncover how decisions flow across both tangible and intangible touchpoints, and identify gaps and opportunities to optimize the overall journey.</p></div><div class="mt-[81px]" data-reveal="true"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Hypothesis</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] mt-[30px] max-w-full md:w-[820px] space-y-[0px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Mapping the end-to-end decision flow will help uncover users’ micro-goals, while exposing gaps, lost context, and inefficiencies across the journey.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>A deeper understanding of how information and decisions evolve across functions will enable optimization of the process and improve visibility and transparency.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>While insights today exist in silos across decision intelligence, data-driven practices, and collaboration, the key opportunity lies in stitching them together to create a unified, traceable decision-making ecosystem.</span></li></ul></div><div class="mt-[127px]" data-reveal="card"><img alt="Interview notes for Harshad, Manasi, Ishani and Shridhar on a Figma sticky board" class="block h-auto max-w-full mx-auto" src="./assets/csUserInterviewStickies.png"/><p class="font-[&#x27;Roboto&#x27;] mt-[16px] text-[14px] text-[#302f2f] text-center" style="font-variation-settings:&quot;wdth&quot; 100">Fig. Screenshot from the Figma file where the interviews were documented</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"><div data-reveal="true"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]">User Research Insights</h2></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] max-w-full md:w-[640px] mt-[24px] reveal" style="font-variation-settings:&quot;wdth&quot; 100">In the table below the decision-making journey has been captured by before, after and during stages of decision making</p><div class="-mx-[16px] overflow-x-auto px-[16px] md:mx-0 md:overflow-visible md:px-0"><div class="border-[#e2e4ec] border-l border-t font-[&#x27;Roboto&#x27;] grid grid-cols-[130px_repeat(4,1fr)] min-w-full md:w-full md:min-w-0 mt-[59px] text-[15px] leading-[22px] text-[#302f2f]" data-reveal="card" style="font-variation-settings:&quot;wdth&quot; 100"><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r px-[16px] py-[24px]"></div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Pre Decision Making (Discover)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">During Decision Making (Analyse)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Post Decision Making (Collab)</div><div class="bg-[#eef3fb] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[24px] text-[#090a0a]">Implement / Approval</div><div class="contents"><div class="bg-[#fafbfd] border-[#e2e4ec] border-b border-r font-bold px-[16px] py-[20px] text-[#090a0a]">Actions</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Gather Information: Collect relevant data and information related to the decision</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Insights Collection: Look at insights to create a decision</div><div class="border-[#e2e4ec] border-b border-r px-[16px] py-[20px] whitespace-pre-line">Prepare decision for approval
 Review decision
 Team discussion
 Compare

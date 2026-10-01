@@ -4282,23 +4282,19 @@
         #heroCategories > a {
           display: none;
         }
-        /* The ladybird stops patrolling and sits at the bottom right. */
+        /* The ladybird patrols the rule above the categories, end to end.
+           --cats-top is the rule's offset in the cover, set by script. The
+           rule runs 20px in from each side; the walk is that less the bug. */
         #hero .bloom-ladybird {
           display: block;
           position: absolute;
-          left: auto;
-          right: 30px;
-          bottom: 4px;
-          top: auto;
+          left: 20px;
+          right: auto;
+          top: calc(var(--cats-top, 0px) - 19px);
+          bottom: auto;
           width: 32px;
           z-index: 20;
-        }
-        #hero .bug-walk,
-        #hero .bug-turn {
-          animation: none !important;
-        }
-        #hero .bug-turn {
-          transform: scaleX(-1);
+          --bug-walk: calc(100vw - 72px);
         }
         /* Short enough to stay on the screen. */
         #hero .bug-trail {
@@ -4669,6 +4665,38 @@
         transform: rotate(45deg);
         background: #151515;
         color: #fff;
+      }
+
+      /* Phones swap the emoji and glyph icons for the line icons from the
+         Figma icon set (Portfolio file, "icon" section). iOS draws the
+         glyphs as colour emoji, which is what this replaces. */
+      .fig-ic {
+        display: none;
+      }
+      @media (max-width: 639px) {
+        .fig-ic {
+          display: block;
+        }
+        .hdr-emoji,
+        .cs-go-glyph {
+          display: none !important;
+        }
+        .dark .fig-ic {
+          filter: invert(1);
+        }
+        #soundToggleBtn .fig-ic.snd-on,
+        #soundToggleBtn.is-on .fig-ic.snd-off {
+          display: none;
+        }
+        #soundToggleBtn.is-on .fig-ic.snd-on {
+          display: block;
+        }
+        /* A tap leaves the card "hovered" on a phone; keep the arrow as it is
+           rather than turning it and blacking out the disc under it. */
+        .cs-card:hover .cs-go {
+          transform: none;
+          background: var(--cs-go);
+        }
       }
 
       /* The picture in each card hangs off the top right and is allowed to
@@ -5190,7 +5218,8 @@
               title="Flight Mode"
               aria-label="Flight Mode"
             >
-              <span class="text-sm">✈️</span>
+              <span class="text-sm hdr-emoji">✈️</span>
+              <img class="fig-ic" src="./assets/iconAirplaneTakeoff.svg" width="24" height="24" alt="" />
             </button>
 
             <!-- Download Resume -->
@@ -5204,7 +5233,7 @@
               aria-label="Open resume (opens in a new tab)"
             >
               <svg
-                class="w-4 h-4"
+                class="w-4 h-4 hdr-emoji"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -5217,6 +5246,7 @@
                 <path d="m7 10 5 5 5-5" />
                 <path d="M5 19h14" />
               </svg>
+              <img class="fig-ic" src="./assets/iconArrowCircleDown.svg" width="24" height="24" alt="" />
             </a>
 
             <!-- Sound & Ambient Music Toggle (Clean Icon Only, No Graph) -->
@@ -5226,7 +5256,9 @@
               class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all text-sm"
               title="Toggle Sound / Ambient Music"
             >
-              <span id="soundIcon">🔇</span>
+              <span id="soundIcon" class="hdr-emoji">🔇</span>
+              <img class="fig-ic snd-off" src="./assets/iconSoundOff.svg" width="24" height="24" alt="" />
+              <img class="fig-ic snd-on" src="./assets/iconSoundOn.svg" width="24" height="24" alt="" />
             </button>
 
             <!-- Dark/Light Mode Switcher -->
@@ -6102,7 +6134,7 @@
                 <h3>Decision Flow Platform</h3>
                 <p>Multi-model executive AI workflow engine</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
 
             <a href="./aura.html" class="cs-card cs-sand" data-cs-tags="consumer ai">
@@ -6127,7 +6159,7 @@
                 <h3>Aura</h3>
                 <p>Conversational Custom Tailoring</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
 
             <a href="./scavvy.html" class="cs-card cs-sky" data-cs-tags="consumer mobile">
@@ -6153,7 +6185,7 @@
                 <h3>Scavvy Outdoor App</h3>
                 <p>Real-world social treasure hunt &amp; discovery</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
 
             <a href="./building-with-ai.html" class="cs-card cs-mint" data-cs-tags="ai">
@@ -6176,7 +6208,7 @@
                 <h3>Benchmarking AI Systems</h3>
                 <p>Comparative analysis for real-world use</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
 
             <a href="./boring-ui.html" class="cs-card cs-blush" data-cs-tags="enterprise ai">
@@ -6200,7 +6232,7 @@
                 <h3>Boring UI</h3>
                 <p>Turning ordinary UI moments into tiny, game-like interactions</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
 
             <a
@@ -6237,7 +6269,7 @@
                 <h3>Platform Architecture</h3>
                 <p>Modular systems for scalable products</p>
               </div>
-              <span class="cs-go" aria-hidden="true">&#8599;</span>
+              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
             </a>
           </div>
           <p class="cs-empty" hidden>Nothing filed under that yet.</p>
@@ -9563,6 +9595,8 @@
         if (icon) {
           icon.textContent = soundEnabled ? "🔊" : "🔇";
         }
+        const soundBtn = document.getElementById("soundToggleBtn");
+        if (soundBtn) soundBtn.classList.toggle("is-on", soundEnabled);
 
         // Sync Soundpad Card Play/Pause UI
         const playPauseIconProd = document.getElementById("soundPadPlayPauseIconProduct");
@@ -12460,5 +12494,20 @@
         );
       })();
     </script>
-  </body>
+      <script>
+      /* On a phone the ladybird walks the rule over the categories; tell the
+         cover where that rule is, and again whenever the cover reflows. */
+      document.addEventListener("DOMContentLoaded", function () {
+        var cover = document.getElementById("heroComposition");
+        var cats = document.getElementById("heroCategories");
+        if (!cover || !cats) return;
+        function place() {
+          cover.style.setProperty("--cats-top", cats.offsetTop + "px");
+        }
+        place();
+        window.addEventListener("load", place);
+        if (window.ResizeObserver) new ResizeObserver(place).observe(cover);
+      });
+    </script>
+</body>
 </html>
