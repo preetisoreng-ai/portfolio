@@ -1,0 +1,2575 @@
+<!doctype html>
+<html lang="en">
+  <head><!-- page-transition-head:start -->
+<style>@view-transition{navigation:auto}::view-transition-old(root),::view-transition-new(root){animation:none}</style>
+<script>
+/* Goes in <head>, ahead of everything else. When a page transition is on its
+   way in, this puts the cover up straight away — colour, label and title —
+   before any of the page has been parsed, and hides the page underneath.
+   page-transition.js, at the end of <body>, then takes over this same cover
+   rather than making another one. Without this the page arrives with a gap:
+   a long page (the home page especially) paints before that script is
+   reached, so the title vanished for a moment and then came back.
+   `var home` is filled in per page by inject-page-transition.cjs. */
+(function () {
+  try {
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var s = JSON.parse(sessionStorage.getItem("pt-v2") || "null");
+    if (!s) return;
+    var home = false;
+    if (!home && s.stage === "in") return;
+
+    /* Home picks up the cover in the case study's own colour; a case study
+       picks it up in the card's. Must match page-transition.js. */
+    var bg = (home && s.page) || s.bg || "#f3f1ec";
+    var m = String(bg).match(/\d+(\.\d+)?/g);
+    var lum = m && m.length > 2 ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : 1;
+    var fg = lum > 0.55 ? "#1c1917" : "#f5f5f4";
+
+    var html = document.documentElement;
+    html.classList.add("pt-wait");
+    html.style.background = bg;
+    var style = document.createElement("style");
+    style.textContent = "html.pt-wait body{visibility:hidden!important}";
+    document.head.appendChild(style);
+
+    /* The same markup page-transition.js builds, already covering. */
+    var root = document.createElement("div");
+    root.className = "pt-root";
+    root.setAttribute("data-early", "");
+    root.setAttribute("aria-hidden", "true");
+    root.style.cssText =
+      "position:fixed;inset:0;z-index:2147483000;pointer-events:auto;overflow:hidden;" +
+      "background:" +
+      bg +
+      ";color:" +
+      fg +
+      ";" +
+      "clip-path:inset(0px 0px 0px 0px round 0px);will-change:clip-path;";
+    var text = document.createElement("div");
+    text.style.cssText =
+      "position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;" +
+      "justify-content:center;gap:16px;padding:0 24px;text-align:center;";
+    var lines = [
+      [
+        s.label || "",
+        'font:500 12px/1 Arial,"Helvetica Neue",Helvetica,sans-serif;letter-spacing:.2em;text-transform:uppercase;opacity:.6;',
+      ],
+      [
+        s.title || "",
+        'font:400 clamp(2.4rem,6vw,5rem)/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.015em;opacity:1;',
+      ],
+    ];
+    for (var i = 0; i < lines.length; i++) {
+      var el = document.createElement("span");
+      el.textContent = lines[i][0];
+      el.style.cssText = "display:block;will-change:transform,opacity;" + lines[i][1];
+      text.appendChild(el);
+    }
+    root.appendChild(text);
+    html.appendChild(root);
+  } catch (e) {}
+})();
+</script>
+<!-- page-transition-head:end -->
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aura — Preeti Soreng</title>
+    <meta name="description" content="Aura — a conversational, occasion-first fashion app for the global Indian community. UX case study by Preeti Soreng." />
+    <script>
+      // Always open at the top of the page, while keeping the in-page nav links
+      // working.
+      //
+      // Deliberately a classic inline script, not a module: module scripts are
+      // blocked by CORS over file://, and this page is meant to work when
+      // opened straight from disk.
+      (function () {
+        // Stop the browser restoring the previous scroll offset on reload.
+        try {
+          history.scrollRestoration = "manual";
+        } catch (e) {
+          /* not supported; the reset below still applies */
+        }
+
+        // Drop any fragment left in the URL so a refresh starts clean.
+        if (location.hash) {
+          try {
+            history.replaceState(null, "", location.pathname + location.search);
+          } catch (e) {
+            /* file:// can reject replaceState; the reset below still applies */
+          }
+        }
+
+        // "instant" so this never animates, even though the stylesheet opts
+        // into smooth scrolling.
+        var toTop = function () {
+          window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+        };
+        var navigated = false;
+        toTop();
+        // Images finishing late must not yank the page back to the top if the
+        // visitor has already clicked through to a section.
+        addEventListener("load", function () {
+          if (!navigated) toTop();
+        });
+
+        // Scroll in-page links here rather than letting the browser do it, and
+        // never write the fragment to the URL. That keeps a refresh at the top,
+        // and lets the same link be clicked repeatedly — a repeat click on an
+        // unchanged hash would otherwise be a no-op.
+        addEventListener("click", function (e) {
+          if (!e.target || !e.target.closest) return;
+          var link = e.target.closest('a[href^="#"]');
+          if (!link) return;
+          var target = document.querySelector(link.getAttribute("href"));
+          if (!target) return;
+          e.preventDefault();
+          navigated = true;
+          // Scroll the window explicitly rather than via scrollIntoView, which
+          // resolves the "nearest scrollable ancestor" and can pick the page
+          // wrapper instead of the window. Smoothness comes from the
+          // stylesheet, which already opts out under prefers-reduced-motion.
+          var margin = parseFloat(getComputedStyle(target).scrollMarginTop) || 0;
+          var top = target.getBoundingClientRect().top + window.scrollY - margin;
+          window.scrollTo({ top: top, left: 0 });
+        });
+      })();
+    </script>
+    <script>
+/**
+ * Scroll choreography for the portfolio: an entrance for whatever is on screen
+ * when the page opens, the same entrance played backwards on the way out, and
+ * hero parallax.
+ *
+ * Deliberately a classic script rather than part of the ES-module bundle. A
+ * module is CORS-blocked over file://, so a page opened straight from disk got
+ * no motion at all — the glass survived, because that is pure CSS, but nothing
+ * ever moved. A classic script runs there exactly as it does over http, and
+ * `prerender.tsx` inlines this file into every page so there is nothing to
+ * fetch either.
+ *
+ * The hidden state hangs off `html.motion-ready`. If this script never runs,
+ * nothing is ever hidden and the prerendered markup stands exactly as it is —
+ * there is no way to strand content at opacity 0.
+ */
+(function () {
+  /** Below this the design is scrolled far enough that parallax reads as jitter. */
+  var PARALLAX_CLAMP = 1600;
+
+  /**
+   * How far into the viewport an element must come before it is let in, as a
+   * fraction of viewport height. Holding the trigger back stops things
+   * animating while still clipped by the bottom edge.
+   */
+  var TRIGGER_INSET = 0.12;
+
+  /** If the entrance has not run by now, show everything and stop trying. */
+  var FAILSAFE_MS = 3000;
+
+  var root = document.documentElement;
+
+  /**
+   * Hide first, synchronously, while the head is still parsing.
+   *
+   * This has to happen before the first paint. The markup is prerendered, so
+   * leaving it until DOMContentLoaded means the browser has already painted the
+   * hero in its final position — and an element that is already where it
+   * belongs cannot animate into place without first blinking out, which is
+   * worse than no entrance at all. Hiding pre-paint means the visitor never
+   * sees the settled state, and the entrance below is the first thing they get.
+   */
+  root.classList.add("motion-ready");
+
+  var released = false;
+
+  /** Last resort: never leave the page hidden because something went wrong. */
+  function releaseAll() {
+    released = true;
+    var all = document.querySelectorAll("[data-reveal], .reveal");
+    for (var i = 0; i < all.length; i++) all[i].classList.add("is-in");
+  }
+  setTimeout(function () {
+    if (!released) releaseAll();
+  }, FAILSAFE_MS);
+
+  function start() {
+    var els = [].slice.call(document.querySelectorAll("[data-reveal], .reveal"));
+
+    /**
+     * Re-test every target against the viewport and set `.is-in` accordingly.
+     *
+     * Bi-directional on purpose: elements that leave lose the class and settle
+     * back to their hidden state, so scrolling up plays the same entrance in
+     * reverse rather than leaving everything switched on behind you.
+     *
+     * A sweep rather than an IntersectionObserver. The observer only reports
+     * elements whose intersection *changed*, and one large jump — End, or a
+     * restored scroll offset — can carry the viewport clean over an element
+     * between two frames without ever reporting it, leaving it invisible for
+     * good. Re-testing unconditionally means where the scroll came from cannot
+     * matter.
+     */
+    function sweep(limit) {
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        var box = el.getBoundingClientRect();
+        if (box.top < limit && box.bottom > 0) el.classList.add("is-in");
+        else el.classList.remove("is-in");
+      }
+    }
+
+    function setParallax() {
+      var y = window.scrollY || window.pageYOffset || 0;
+      root.style.setProperty("--sy", Math.min(y, PARALLAX_CLAMP) + "px");
+      /* Latches the moment the page first moves. The scroll cue's label reads
+         this to bow out once its invitation has been taken — a few pixels of
+         tolerance so a restored offset or a stray touch does not count. */
+      root.classList.toggle("scrolled", y > 8);
+    }
+
+    setParallax();
+
+    // rAF-coalesced, so a fast scroll does at most one style write per frame.
+    var frame = 0;
+    function apply() {
+      frame = 0;
+      setParallax();
+      sweep(window.innerHeight * (1 - TRIGGER_INSET));
+    }
+    function onScroll() {
+      if (!frame) frame = requestAnimationFrame(apply);
+    }
+
+    /**
+     * Flush styles, then release.
+     *
+     * A transition runs when a property's computed value changes between two
+     * style recalculations. The hidden state was set by the head script above
+     * and has been the elements' computed style since they were parsed, so
+     * reading a layout property here is enough to close that first recalc and
+     * make `.is-in` an animated change rather than a value adopted instantly.
+     *
+     * This deliberately does not wait on requestAnimationFrame. rAF does not
+     * fire while a tab is not painting — open the page in a background tab and
+     * a frame-gated entrance never runs, leaving the hero hidden until the tab
+     * is looked at.
+     */
+    void document.body.offsetHeight;
+
+    released = true;
+    // The full viewport, not the inset trigger: on arrival everything actually
+    // on screen should come in, including anything straddling the bottom edge.
+    sweep(window.innerHeight);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    // Late images can move everything below them; re-test once they land.
+    window.addEventListener("load", onScroll);
+
+    /**
+     * Lets a host document re-run the entrance after it swaps content in. The
+     * single-file bundle stacks every page in one document and shows one at a
+     * time; a hidden page measures zero, so its reveals are cleared, and it
+     * needs a fresh pass the moment it becomes visible.
+     *
+     * Synchronous, and measuring the full viewport rather than the inset
+     * trigger — the same terms as the first load, since arriving on a page is
+     * what this is. Going through the scroll handler instead would put it
+     * behind requestAnimationFrame, which does not fire in a tab that is not
+     * painting.
+     */
+    window.__motionRefresh = function () {
+      setParallax();
+      sweep(window.innerHeight);
+    };
+  }
+
+  function boot() {
+    try {
+      start();
+    } catch (e) {
+      releaseAll();
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&family=Bakbak+One&family=Bonheur+Royale&family=Caveat:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&family=Jost:wght@400;600;700&family=Roboto:wdth,wght@100,300;100,400;100,500;100,600;100,700;100,800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,:before,:after,::backdrop{--tw-translate-x:0;--tw-translate-y:0;--tw-translate-z:0;--tw-scale-x:1;--tw-scale-y:1;--tw-scale-z:1;--tw-rotate-x:initial;--tw-rotate-y:initial;--tw-rotate-z:initial;--tw-skew-x:initial;--tw-skew-y:initial;--tw-space-y-reverse:0;--tw-border-style:solid;--tw-gradient-position:initial;--tw-gradient-from:#0000;--tw-gradient-via:#0000;--tw-gradient-to:#0000;--tw-gradient-stops:initial;--tw-gradient-via-stops:initial;--tw-gradient-from-position:0%;--tw-gradient-via-position:50%;--tw-gradient-to-position:100%;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-shadow:0 0 #0000;--tw-shadow-color:initial;--tw-shadow-alpha:100%;--tw-inset-shadow:0 0 #0000;--tw-inset-shadow-color:initial;--tw-inset-shadow-alpha:100%;--tw-ring-color:initial;--tw-ring-shadow:0 0 #0000;--tw-inset-ring-color:initial;--tw-inset-ring-shadow:0 0 #0000;--tw-ring-inset:initial;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-offset-shadow:0 0 #0000;--tw-blur:initial;--tw-brightness:initial;--tw-contrast:initial;--tw-grayscale:initial;--tw-hue-rotate:initial;--tw-invert:initial;--tw-opacity:initial;--tw-saturate:initial;--tw-sepia:initial;--tw-drop-shadow:initial;--tw-drop-shadow-color:initial;--tw-drop-shadow-alpha:100%;--tw-drop-shadow-size:initial;--tw-duration:initial;--tw-ease:initial}}}@layer theme{:root,:host{--font-sans:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";--font-mono:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;--color-gray-100:oklch(96.7% .003 264.542);--color-black:#000;--color-white:#fff;--spacing:.25rem;--font-weight-light:300;--font-weight-normal:400;--font-weight-medium:500;--font-weight-semibold:600;--font-weight-bold:700;--ease-in:cubic-bezier(.4, 0, 1, 1);--ease-out:cubic-bezier(0, 0, .2, 1);--ease-in-out:cubic-bezier(.4, 0, .2, 1);--default-transition-duration:.15s;--default-transition-timing-function:cubic-bezier(.4, 0, .2, 1);--default-font-family:var(--font-sans);--default-mono-font-family:var(--font-mono)}}@layer base{*,:after,:before,::backdrop{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}html,:host{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:var(--default-mono-font-family,ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring:where(:not(iframe)){outline:auto}progress{vertical-align:baseline}summary{display:list-item}ol,ul,menu{list-style:none}img,svg,video,canvas,audio,iframe,embed,object{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,select,optgroup,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit{padding-block:0}::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-day-field{padding-block:0}::-webkit-datetime-edit-hour-field{padding-block:0}::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-millisecond-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button{height:auto}::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.pointer-events-none{pointer-events:none}.collapse{visibility:collapse}.invisible{visibility:hidden}.visible{visibility:visible}.absolute{position:absolute}.fixed{position:fixed}.relative{position:relative}.static{position:static}.sticky{position:sticky}.inset-0{inset:0}.inset-\[-5\%_0_-3\.54\%_0\]{inset:-5% 0 -3.54%}.inset-\[-10\.49\%_-6\.45\%\]{inset:-10.49% -6.45%}.inset-\[-12\.64\%_-7\.3\%\]{inset:-12.64% -7.3%}.inset-\[-13\.5\%_-12\.21\%\]{inset:-13.5% -12.21%}.inset-\[-14\.62\%_-9\%\]{inset:-14.62% -9%}.inset-\[-16\.9\%_-9\.51\%\]{inset:-16.9% -9.51%}.inset-\[-17\.63\%_-10\.18\%\]{inset:-17.63% -10.18%}.inset-\[-18\.82\%_-17\.03\%\]{inset:-18.82% -17.03%}.inset-\[-20\.28\%_-11\.65\%\]{inset:-20.28% -11.65%}.inset-\[-21\.14\%_-18\.07\%\]{inset:-21.14% -18.07%}.inset-\[-23\.57\%_-13\.26\%\]{inset:-23.57% -13.26%}.inset-\[-27\.15\%_-23\.3\%\]{inset:-27.15% -23.3%}.inset-\[-28\.28\%_-16\.25\%\]{inset:-28.28% -16.25%}.inset-\[-29\.22\%_-25\.16\%\]{inset:-29.22% -25.16%}.inset-\[-29\.48\%_-25\.2\%\]{inset:-29.48% -25.2%}.inset-\[-29\.74\%_-25\.6\%\]{inset:-29.74% -25.6%}.inset-\[-37\.87\%_-32\.5\%\]{inset:-37.87% -32.5%}.inset-\[-40\.76\%_-35\.08\%\]{inset:-40.76% -35.08%}.inset-\[-40\.97\%_-26\.13\%\]{inset:-40.97% -26.13%}.inset-\[-41\.48\%_-35\.7\%\]{inset:-41.48% -35.7%}.inset-\[-43\.07\%_-26\.69\%\]{inset:-43.07% -26.69%}.inset-\[-57\.14\%_-36\.44\%\]{inset:-57.14% -36.44%}.inset-\[-60\.07\%_-37\.22\%\]{inset:-60.07% -37.22%}.inset-\[0_-0\.01px_0_0\]{inset:0 -.01px 0 0}.inset-\[0_0_24\.73\%_0\]{inset:0 0 24.73%}.inset-\[1\.86px_2\.01px_0\.15px_-0\.13px\]{inset:1.86px 2.01px .15px -.13px}.inset-\[1\.86px_2\.02px_0\.15px_-0\.13px\]{inset:1.86px 2.02px .15px -.13px}.inset-\[1\.99px_0\.08px_0\.02px_1\.8px\]{inset:1.99px .08px .02px 1.8px}.inset-x-0{inset-inline:0}.top-0{top:0}.top-1{top:var(--spacing)}.top-1\/2{top:50%}.top-\[-0\.01\%\]{top:-.01%}.top-\[-0\.05\%\]{top:-.05%}.top-\[-0\.06\%\]{top:-.06%}.top-\[-3px\]{top:-3px}.top-\[-7px\]{top:-7px}.top-\[-8px\]{top:-8px}.top-\[-12\.36\%\]{top:-12.36%}.top-\[-12\.57\%\]{top:-12.57%}.top-\[-13px\]{top:-13px}.top-\[-19\.23\%\]{top:-19.23%}.top-\[-20\.55\%\]{top:-20.55%}.top-\[-43\.87px\]{top:-43.87px}.top-\[-55\.67\%\]{top:-55.67%}.top-\[-89\.36\%\]{top:-89.36%}.top-\[-135\.25\%\]{top:-135.25%}.top-\[-141\.94\%\]{top:-141.94%}.top-\[-258\.11\%\]{top:-258.11%}.top-\[9\.9px\]{top:9.9px}.top-\[13\.33px\]{top:13.33px}.top-\[14\.67px\]{top:14.67px}.top-\[16px\]{top:16px}.top-\[17\.12px\]{top:17.12px}.top-\[22\.35px\]{top:22.35px}.top-\[56px\]{top:56px}.top-\[61px\]{top:61px}.top-\[70\.49px\]{top:70.49px}.top-\[75px\]{top:75px}.top-\[114px\]{top:114px}.top-\[182px\]{top:182px}.top-\[199px\]{top:199px}.top-\[213\.85px\]{top:213.85px}.top-\[225px\]{top:225px}.top-\[227px\]{top:227px}.top-\[233px\]{top:233px}.top-\[236px\]{top:236px}.top-\[242px\]{top:242px}.top-\[249px\]{top:249px}.top-\[254px\]{top:254px}.top-\[261px\]{top:261px}.top-\[272\.36px\]{top:272.36px}.top-\[300px\]{top:300px}.top-\[363px\]{top:363px}.top-\[372px\]{top:372px}.top-\[375px\]{top:375px}.top-\[377px\]{top:377px}.top-\[379px\]{top:379px}.top-\[389px\]{top:389px}.top-\[418px\]{top:418px}.top-\[445\.23px\]{top:445.23px}.top-\[452\.69px\]{top:452.69px}.top-\[463px\]{top:463px}.top-\[554px\]{top:554px}.top-\[593px\]{top:593px}.top-\[603\.2px\]{top:603.2px}.top-\[612\.12px\]{top:612.12px}.top-\[703\.25px\]{top:703.25px}.top-\[731\.53px\]{top:731.53px}.top-\[735\.83px\]{top:735.83px}.top-\[770px\]{top:770px}.top-\[802\.33px\]{top:802.33px}.top-\[810\.79px\]{top:810.79px}.top-\[843\.55px\]{top:843.55px}.top-\[844\.6px\]{top:844.6px}.top-\[868\.8px\]{top:868.8px}.top-\[883\.83px\]{top:883.83px}.top-\[916\.46px\]{top:916.46px}.top-\[927\.11px\]{top:927.11px}.top-\[935\.12px\]{top:935.12px}.top-\[958\.06px\]{top:958.06px}.top-\[979px\]{top:979px}.top-\[981\.03px\]{top:981.03px}.top-\[1036\.77px\]{top:1036.77px}.top-\[1047\.03px\]{top:1047.03px}.top-\[1065px\]{top:1065px}.top-\[1106\.14px\]{top:1106.14px}.top-\[1122\.95px\]{top:1122.95px}.top-\[1140px\]{top:1140px}.top-\[1160px\]{top:1160px}.top-\[1305px\]{top:1305px}.top-\[1560px\]{top:1560px}.top-\[1705px\]{top:1705px}.top-\[1771px\]{top:1771px}.top-\[2171px\]{top:2171px}.top-\[2348px\]{top:2348px}.top-\[2505px\]{top:2505px}.top-\[2508px\]{top:2508px}.top-\[2527px\]{top:2527px}.top-\[2535px\]{top:2535px}.top-\[2538px\]{top:2538px}.top-\[2543\.1px\]{top:2543.1px}.top-\[2577\.69px\]{top:2577.69px}.top-\[2614px\]{top:2614px}.top-\[2617px\]{top:2617px}.top-\[2634px\]{top:2634px}.top-\[2637px\]{top:2637px}.top-\[2663\.9px\]{top:2663.9px}.top-\[2663px\]{top:2663px}.top-\[2666px\]{top:2666px}.top-\[2680px\]{top:2680px}.top-\[2729px\]{top:2729px}.top-\[2748px\]{top:2748px}.top-\[2750px\]{top:2750px}.top-\[2753px\]{top:2753px}.top-\[2789px\]{top:2789px}.top-\[2833px\]{top:2833px}.top-\[2905px\]{top:2905px}.top-\[2908px\]{top:2908px}.top-\[2927px\]{top:2927px}.top-\[2935px\]{top:2935px}.top-\[2938px\]{top:2938px}.top-\[2943\.1px\]{top:2943.1px}.top-\[2964px\]{top:2964px}.top-\[2977\.69px\]{top:2977.69px}.top-\[3014px\]{top:3014px}.top-\[3017px\]{top:3017px}.top-\[3030px\]{top:3030px}.top-\[3034px\]{top:3034px}.top-\[3037px\]{top:3037px}.top-\[3063\.9px\]{top:3063.9px}.top-\[3063px\]{top:3063px}.top-\[3066px\]{top:3066px}.top-\[3080px\]{top:3080px}.top-\[3129px\]{top:3129px}.top-\[3150px\]{top:3150px}.top-\[3153px\]{top:3153px}.top-\[3189px\]{top:3189px}.top-\[3233px\]{top:3233px}.top-\[3307\.24px\]{top:3307.24px}.top-\[3310\.24px\]{top:3310.24px}.top-\[3338\.92px\]{top:3338.92px}.top-\[3356px\]{top:3356px}.top-\[3364px\]{top:3364px}.top-\[3373\.28px\]{top:3373.28px}.top-\[3430px\]{top:3430px}.top-\[3598\.92px\]{top:3598.92px}.top-\[3600px\]{top:3600px}.top-\[3707\.24px\]{top:3707.24px}.top-\[3710\.24px\]{top:3710.24px}.top-\[3738\.92px\]{top:3738.92px}.top-\[3756px\]{top:3756px}.top-\[3773\.28px\]{top:3773.28px}.top-\[3813px\]{top:3813px}.top-\[3823px\]{top:3823px}.top-\[3998\.92px\]{top:3998.92px}.top-\[4000px\]{top:4000px}.top-\[4037px\]{top:4037px}.top-\[4053px\]{top:4053px}.top-\[4213px\]{top:4213px}.top-\[4223px\]{top:4223px}.top-\[4261px\]{top:4261px}.top-\[4279px\]{top:4279px}.top-\[4437px\]{top:4437px}.top-\[4453px\]{top:4453px}.top-\[4486\.02px\]{top:4486.02px}.top-\[4499px\]{top:4499px}.top-\[4514\.79px\]{top:4514.79px}.top-\[4661px\]{top:4661px}.top-\[4679px\]{top:4679px}.top-\[4886\.02px\]{top:4886.02px}.top-\[4899px\]{top:4899px}.top-\[4914\.79px\]{top:4914.79px}.top-\[4930px\]{top:4930px}.top-\[5003px\]{top:5003px}.top-\[5330px\]{top:5330px}.top-\[5403px\]{top:5403px}.right-0{right:0}.right-\[39px\]{right:39px}.right-\[221\.87px\]{right:221.87px}.bottom-0{bottom:0}.bottom-\[-3px\]{bottom:-3px}.bottom-\[calc\(26px\+env\(safe-area-inset-bottom\)\)\]{bottom:calc(26px + env(safe-area-inset-bottom))}.left-0{left:0}.left-1{left:var(--spacing)}.left-1\/2{left:50%}.left-\[-0\.07\%\]{left:-.07%}.left-\[-0\.15\%\]{left:-.15%}.left-\[-0\.63\%\]{left:-.63%}.left-\[-1\.346px\]{left:-1.346px}.left-\[-1px\]{left:-1px}.left-\[-3px\]{left:-3px}.left-\[-9\.09\%\]{left:-9.09%}.left-\[-9\.55\%\]{left:-9.55%}.left-\[-12\.51\%\]{left:-12.51%}.left-\[-32\.1\%\]{left:-32.1%}.left-\[-53\.47px\]{left:-53.47px}.left-\[-60\.27\%\]{left:-60.27%}.left-\[-79\.78\%\]{left:-79.78%}.left-\[-98\.35\%\]{left:-98.35%}.left-\[-361\.16\%\]{left:-361.16%}.left-\[-394\.26\%\]{left:-394.26%}.left-\[4\.1px\]{left:4.1px}.left-\[9\.48px\]{left:9.48px}.left-\[9\.53px\]{left:9.53px}.left-\[14\.84px\]{left:14.84px}.left-\[16\.24px\]{left:16.24px}.left-\[28px\]{left:28px}.left-\[36px\]{left:36px}.left-\[39px\]{left:39px}.left-\[43px\]{left:43px}.left-\[56px\]{left:56px}.left-\[125\.45px\]{left:125.45px}.left-\[201px\]{left:201px}.left-\[202px\]{left:202px}.left-\[218\.28px\]{left:218.28px}.left-\[294\.5px\]{left:294.5px}.left-\[316\.7px\]{left:316.7px}.left-\[321\.98px\]{left:321.98px}.left-\[360\.5px\]{left:360.5px}.left-\[383\.89px\]{left:383.89px}.left-\[412\.86px\]{left:412.86px}.left-\[438px\]{left:438px}.left-\[525\.91px\]{left:525.91px}.left-\[533\.82px\]{left:533.82px}.left-\[598\.27px\]{left:598.27px}.left-\[606\.24px\]{left:606.24px}.left-\[735\.08px\]{left:735.08px}.left-\[758\.51px\]{left:758.51px}.left-\[774\.05px\]{left:774.05px}.left-\[795\.4px\]{left:795.4px}.left-\[817\.01px\]{left:817.01px}.left-\[884px\]{left:884px}.left-\[893px\]{left:893px}.left-\[901\.95px\]{left:901.95px}.left-\[996\.18px\]{left:996.18px}.left-\[1065\.16px\]{left:1065.16px}.left-\[1074px\]{left:1074px}.left-\[1092\.3px\]{left:1092.3px}.left-\[1103px\]{left:1103px}.left-\[1279\.38px\]{left:1279.38px}.left-\[calc\(8\.33\%\+151\.5px\)\]{left:calc(8.33% + 151.5px)}.left-\[calc\(8\.33\%\+154px\)\]{left:calc(8.33% + 154px)}.left-\[calc\(8\.33\%\+165\.5px\)\]{left:calc(8.33% + 165.5px)}.left-\[calc\(8\.33\%\+183\.5px\)\]{left:calc(8.33% + 183.5px)}.left-\[calc\(8\.33\%\+188\.5px\)\]{left:calc(8.33% + 188.5px)}.left-\[calc\(8\.33\%\+198\.5px\)\]{left:calc(8.33% + 198.5px)}.left-\[calc\(8\.33\%\+200\.5px\)\]{left:calc(8.33% + 200.5px)}.left-\[calc\(8\.33\%\+205\.5px\)\]{left:calc(8.33% + 205.5px)}.left-\[calc\(8\.33\%\+213\.5px\)\]{left:calc(8.33% + 213.5px)}.left-\[calc\(8\.33\%\+222\.5px\)\]{left:calc(8.33% + 222.5px)}.left-\[calc\(8\.33\%\+225px\)\]{left:calc(8.33% + 225px)}.left-\[calc\(8\.33\%\+232px\)\]{left:calc(8.33% + 232px)}.left-\[calc\(16\.67\%\+134\.43px\)\]{left:calc(16.67% + 134.43px)}.left-\[calc\(16\.67\%\+158px\)\]{left:calc(16.67% + 158px)}.left-\[calc\(16\.67\%\+163px\)\]{left:calc(16.67% + 163px)}.left-\[calc\(16\.67\%\+173px\)\]{left:calc(16.67% + 173px)}.left-\[calc\(16\.67\%\+175px\)\]{left:calc(16.67% + 175px)}.left-\[calc\(16\.67\%\+183px\)\]{left:calc(16.67% + 183px)}.left-\[calc\(16\.67\%\+185px\)\]{left:calc(16.67% + 185px)}.left-\[calc\(16\.67\%\+231px\)\]{left:calc(16.67% + 231px)}.left-\[calc\(20\.83\%\+134\.62px\)\]{left:calc(20.83% + 134.62px)}.left-\[calc\(20\.83\%\+141\.82px\)\]{left:calc(20.83% + 141.82px)}.left-\[calc\(25\%\+105\.5px\)\]{left:calc(25% + 105.5px)}.left-\[calc\(25\%\+107px\)\]{left:calc(25% + 107px)}.left-\[calc\(25\%\+127px\)\]{left:calc(25% + 127px)}.left-\[calc\(25\%\+162\.24px\)\]{left:calc(25% + 162.24px)}.left-\[calc\(29\.17\%\+70\.87px\)\]{left:calc(29.17% + 70.87px)}.left-\[calc\(33\.33\%\+76px\)\]{left:calc(33.33% + 76px)}.left-\[calc\(33\.33\%\+77px\)\]{left:calc(33.33% + 77px)}.left-\[calc\(33\.33\%\+129px\)\]{left:calc(33.33% + 129px)}.left-\[calc\(33\.33\%\+136\.29px\)\]{left:calc(33.33% + 136.29px)}.left-\[calc\(33\.33\%\+160\.5px\)\]{left:calc(33.33% + 160.5px)}.left-\[calc\(41\.67\%\+54\.5px\)\]{left:calc(41.67% + 54.5px)}.left-\[calc\(41\.67\%\+81\.5px\)\]{left:calc(41.67% + 81.5px)}.left-\[calc\(50\%\+0\.5px\)\]{left:calc(50% + .5px)}.left-\[calc\(50\%\+1\.3px\)\]{left:calc(50% + 1.3px)}.left-\[calc\(50\%\+2px\)\]{left:calc(50% + 2px)}.left-\[calc\(50\%\+27px\)\]{left:calc(50% + 27px)}.left-\[calc\(50\%\+73px\)\]{left:calc(50% + 73px)}.left-\[calc\(50\%-0\.01px\)\]{left:calc(50% - .01px)}.left-\[calc\(50\%-0\.73px\)\]{left:calc(50% - .73px)}.left-\[calc\(58\.33\%-27\.5px\)\]{left:calc(58.33% - 27.5px)}.left-\[calc\(70\.83\%-73\.93px\)\]{left:calc(70.83% - 73.93px)}.left-\[calc\(79\.17\%-121\.56px\)\]{left:calc(79.17% - 121.56px)}.left-\[calc\(100\%\+276px\)\]{left:calc(100% + 276px)}.left-\[calc\(100\%\+833px\)\]{left:calc(100% + 833px)}.left-full{left:100%}.z-40{z-index:40}.z-50{z-index:50}.container{width:100%}@media(min-width:40rem){.container{max-width:40rem}}@media(min-width:48rem){.container{max-width:48rem}}@media(min-width:64rem){.container{max-width:64rem}}@media(min-width:80rem){.container{max-width:80rem}}@media(min-width:96rem){.container{max-width:96rem}}.-mx-\[16px\]{margin-inline:-16px}.mx-\[80px\]{margin-inline:80px}.mx-auto{margin-inline:auto}.ms-\[21px\]{margin-inline-start:21px}.mt-0{margin-top:0}.mt-\[1\.1px\]{margin-top:1.1px}.mt-\[4\.74px\]{margin-top:4.74px}.mt-\[6px\]{margin-top:6px}.mt-\[7px\]{margin-top:7px}.mt-\[8px\]{margin-top:8px}.mt-\[9\.91px\]{margin-top:9.91px}.mt-\[10px\]{margin-top:10px}.mt-\[11px\]{margin-top:11px}.mt-\[13px\]{margin-top:13px}.mt-\[14px\]{margin-top:14px}.mt-\[16px\]{margin-top:16px}.mt-\[18px\]{margin-top:18px}.mt-\[19px\]{margin-top:19px}.mt-\[20px\]{margin-top:20px}.mt-\[21px\]{margin-top:21px}.mt-\[22px\]{margin-top:22px}.mt-\[24px\]{margin-top:24px}.mt-\[25px\]{margin-top:25px}.mt-\[26px\]{margin-top:26px}.mt-\[28px\]{margin-top:28px}.mt-\[29px\]{margin-top:29px}.mt-\[30px\]{margin-top:30px}.mt-\[31px\]{margin-top:31px}.mt-\[32px\]{margin-top:32px}.mt-\[33px\]{margin-top:33px}.mt-\[34px\]{margin-top:34px}.mt-\[35px\]{margin-top:35px}.mt-\[36px\]{margin-top:36px}.mt-\[37px\]{margin-top:37px}.mt-\[38px\]{margin-top:38px}.mt-\[40px\]{margin-top:40px}.mt-\[44px\]{margin-top:44px}.mt-\[45px\]{margin-top:45px}.mt-\[46px\]{margin-top:46px}.mt-\[47px\]{margin-top:47px}.mt-\[48px\]{margin-top:48px}.mt-\[50px\]{margin-top:50px}.mt-\[51px\]{margin-top:51px}.mt-\[52px\]{margin-top:52px}.mt-\[56px\]{margin-top:56px}.mt-\[57px\]{margin-top:57px}.mt-\[59px\]{margin-top:59px}.mt-\[60px\]{margin-top:60px}.mt-\[61px\]{margin-top:61px}.mt-\[63px\]{margin-top:63px}.mt-\[64px\]{margin-top:64px}.mt-\[65px\]{margin-top:65px}.mt-\[73px\]{margin-top:73px}.mt-\[74px\]{margin-top:74px}.mt-\[75px\]{margin-top:75px}.mt-\[78px\]{margin-top:78px}.mt-\[81px\]{margin-top:81px}.mt-\[82px\]{margin-top:82px}.mt-\[83px\]{margin-top:83px}.mt-\[87px\]{margin-top:87px}.mt-\[88px\]{margin-top:88px}.mt-\[89px\]{margin-top:89px}.mt-\[91px\]{margin-top:91px}.mt-\[94px\]{margin-top:94px}.mt-\[107px\]{margin-top:107px}.mt-\[109px\]{margin-top:109px}.mt-\[110px\]{margin-top:110px}.mt-\[120px\]{margin-top:120px}.mt-\[125px\]{margin-top:125px}.mt-\[127px\]{margin-top:127px}.mt-\[133px\]{margin-top:133px}.mt-\[139px\]{margin-top:139px}.mt-\[150px\]{margin-top:150px}.mt-\[151px\]{margin-top:151px}.mt-\[160px\]{margin-top:160px}.mt-\[175px\]{margin-top:175px}.mt-\[176px\]{margin-top:176px}.mt-\[204px\]{margin-top:204px}.mt-\[205px\]{margin-top:205px}.mt-\[229px\]{margin-top:229px}.mt-\[264\.63px\]{margin-top:264.63px}.mt-\[271px\]{margin-top:271px}.mt-\[275px\]{margin-top:275px}.mt-\[302px\]{margin-top:302px}.mt-\[305px\]{margin-top:305px}.mt-\[309px\]{margin-top:309px}.mt-\[353px\]{margin-top:353px}.mt-\[356\.72px\]{margin-top:356.72px}.mr-\[-4px\]{margin-right:-4px}.mb-0{margin-bottom:0}.-ml-\[10px\]{margin-left:-10px}.ml-0{margin-left:0}.ml-\[6px\]{margin-left:6px}.ml-\[9px\]{margin-left:9px}.ml-\[53px\]{margin-left:53px}.ml-\[62px\]{margin-left:62px}.ml-\[111px\]{margin-left:111px}.ml-\[124px\]{margin-left:124px}.ml-\[148px\]{margin-left:148px}.ml-\[150px\]{margin-left:150px}.ml-\[203px\]{margin-left:203px}.ml-\[259\.48px\]{margin-left:259.48px}.ml-\[273\.04px\]{margin-left:273.04px}.ml-\[274\.14px\]{margin-left:274.14px}.ml-\[503\.21px\]{margin-left:503.21px}.ml-\[541\.68px\]{margin-left:541.68px}.ml-\[542\.78px\]{margin-left:542.78px}.block{display:block}.contents{display:contents}.flex{display:flex}.grid{display:grid}.hidden{display:none}.inline{display:inline}.inline-block{display:inline-block}.inline-flex{display:inline-flex}.inline-grid{display:inline-grid}.table{display:table}.aspect-\[3\/4\]{aspect-ratio:3/4}.aspect-\[96\/4\.980000972747803\]{aspect-ratio:96/4.98}.aspect-\[267\/47\]{aspect-ratio:267/47}.aspect-\[284\/187\]{aspect-ratio:284/187}.aspect-\[566\/389\]{aspect-ratio:566/389}.aspect-square{aspect-ratio:1}.size-\[16px\]{width:16px;height:16px}.size-\[19px\]{width:19px;height:19px}.size-\[22\.627px\]{width:22.627px;height:22.627px}.size-\[36px\]{width:36px;height:36px}.size-\[38px\]{width:38px;height:38px}.size-\[39px\]{width:39px;height:39px}.size-\[42px\]{width:42px;height:42px}.size-\[48px\]{width:48px;height:48px}.size-\[54\.049px\]{width:54.049px;height:54.049px}.size-\[55\.903px\]{width:55.903px;height:55.903px}.size-\[73\.008px\]{width:73.008px;height:73.008px}.size-\[100px\]{width:100px;height:100px}.size-\[102px\]{width:102px;height:102px}.size-\[109px\]{width:109px;height:109px}.size-\[118px\]{width:118px;height:118px}.size-\[125\.111px\]{width:125.111px;height:125.111px}.size-\[136px\]{width:136px;height:136px}.size-\[137\.504px\]{width:137.504px;height:137.504px}.size-\[142px\]{width:142px;height:142px}.size-\[148\.389px\]{width:148.389px;height:148.389px}.size-\[156\.065px\]{width:156.065px;height:156.065px}.size-\[157\.275px\]{width:157.275px;height:157.275px}.size-\[168\.42px\]{width:168.42px;height:168.42px}.size-\[394px\]{width:394px;height:394px}.size-full{width:100%;height:100%}.h-\[1\.043px\]{height:1.043px}.h-\[4\.979px\]{height:4.979px}.h-\[10px\]{height:10px}.h-\[13\.618px\]{height:13.618px}.h-\[19\.328px\]{height:19.328px}.h-\[20\.006px\]{height:20.006px}.h-\[20px\]{height:20px}.h-\[22\.276px\]{height:22.276px}.h-\[24px\]{height:24px}.h-\[25\.727px\]{height:25.727px}.h-\[27px\]{height:27px}.h-\[28px\]{height:28px}.h-\[33px\]{height:33px}.h-\[34px\]{height:34px}.h-\[35\.787px\]{height:35.787px}.h-\[36px\]{height:36px}.h-\[37px\]{height:37px}.h-\[38px\]{height:38px}.h-\[40px\]{height:40px}.h-\[44px\]{height:44px}.h-\[47px\]{height:47px}.h-\[48px\]{height:48px}.h-\[51\.525px\]{height:51.525px}.h-\[54\.936px\]{height:54.936px}.h-\[57\.751px\]{height:57.751px}.h-\[65\.396px\]{height:65.396px}.h-\[66\.775px\]{height:66.775px}.h-\[71\.226px\]{height:71.226px}.h-\[71\.858px\]{height:71.858px}.h-\[72\.515px\]{height:72.515px}.h-\[76\.615px\]{height:76.615px}.h-\[78\.455px\]{height:78.455px}.h-\[79\.561px\]{height:79.561px}.h-\[80\.541px\]{height:80.541px}.h-\[80px\]{height:80px}.h-\[81\.37px\]{height:81.37px}.h-\[81\.701px\]{height:81.701px}.h-\[87\.138px\]{height:87.138px}.h-\[89\.1px\]{height:89.1px}.h-\[92\.483px\]{height:92.483px}.h-\[93\.182px\]{height:93.182px}.h-\[99\.333px\]{height:99.333px}.h-\[100\.1\%\]{height:100.1%}.h-\[100\.02\%\]{height:100.02%}.h-\[100\.09\%\]{height:100.09%}.h-\[100\.11\%\]{height:100.11%}.h-\[100px\]{height:100px}.h-\[103\.112px\]{height:103.112px}.h-\[105\.957px\]{height:105.957px}.h-\[108\.744px\]{height:108.744px}.h-\[110\.957px\]{height:110.957px}.h-\[112\.36\%\]{height:112.36%}.h-\[112px\]{height:112px}.h-\[113\.017px\]{height:113.017px}.h-\[116\.69px\]{height:116.69px}.h-\[116\.96\%\]{height:116.96%}.h-\[116\.296px\]{height:116.296px}.h-\[119\.131px\]{height:119.131px}.h-\[121\.525px\]{height:121.525px}.h-\[122\.738px\]{height:122.738px}.h-\[124\.26px\]{height:124.26px}.h-\[131\.508px\]{height:131.508px}.h-\[135\.143px\]{height:135.143px}.h-\[137px\]{height:137px}.h-\[138px\]{height:138px}.h-\[140\.035px\]{height:140.035px}.h-\[140\.66\%\]{height:140.66%}.h-\[143\.594px\]{height:143.594px}.h-\[145\.89\%\]{height:145.89%}.h-\[162\.738px\]{height:162.738px}.h-\[166\.142px\]{height:166.142px}.h-\[170\.963px\]{height:170.963px}.h-\[175\.327px\]{height:175.327px}.h-\[187px\]{height:187px}.h-\[196px\]{height:196px}.h-\[200\.259px\]{height:200.259px}.h-\[202px\]{height:202px}.h-\[204px\]{height:204px}.h-\[205\.571px\]{height:205.571px}.h-\[205\.658px\]{height:205.658px}.h-\[211\.041px\]{height:211.041px}.h-\[214px\]{height:214px}.h-\[215\.662px\]{height:215.662px}.h-\[217\.969px\]{height:217.969px}.h-\[224\.327px\]{height:224.327px}.h-\[224px\]{height:224px}.h-\[226\.95\%\]{height:226.95%}.h-\[244\.515px\]{height:244.515px}.h-\[255\.434px\]{height:255.434px}.h-\[256\.077px\]{height:256.077px}.h-\[256\.834px\]{height:256.834px}.h-\[256\.898px\]{height:256.898px}.h-\[257\.14px\]{height:257.14px}.h-\[257\.069px\]{height:257.069px}.h-\[264px\]{height:264px}.h-\[265px\]{height:265px}.h-\[266px\]{height:266px}.h-\[274\.47\%\]{height:274.47%}.h-\[274px\]{height:274px}.h-\[328\.093px\]{height:328.093px}.h-\[333\.914px\]{height:333.914px}.h-\[334\.698px\]{height:334.698px}.h-\[349\.011px\]{height:349.011px}.h-\[349\.184px\]{height:349.184px}.h-\[350\.112px\]{height:350.112px}.h-\[374\.19\%\]{height:374.19%}.h-\[404px\]{height:404px}.h-\[427\.357px\]{height:427.357px}.h-\[433\.69\%\]{height:433.69%}.h-\[460\.66\%\]{height:460.66%}.h-\[514\.332px\]{height:514.332px}.h-\[514\.389px\]{height:514.389px}.h-\[555\.682px\]{height:555.682px}.h-\[596px\]{height:596px}.h-\[602\.071px\]{height:602.071px}.h-\[724\.152px\]{height:724.152px}.h-\[784px\]{height:784px}.h-\[802px\]{height:802px}.h-\[866px\]{height:866px}.h-\[873px\]{height:873px}.h-\[921px\]{height:921px}.h-\[947px\]{height:947px}.h-\[989px\]{height:989px}.h-\[1180px\]{height:1180px}.h-\[1404px\]{height:1404px}.h-\[7233px\]{height:7233px}.h-\[7633px\]{height:7633px}.h-auto{height:auto}.h-full{height:100%}.h-px{height:1px}.min-h-\[60px\]{min-height:60px}.min-h-\[100svh\]{min-height:100svh}.min-h-px{min-height:1px}.w-\[25\.6\%\]{width:25.6%}.w-\[32\%\]{width:32%}.w-\[35px\]{width:35px}.w-\[39px\]{width:39px}.w-\[40px\]{width:40px}.w-\[44px\]{width:44px}.w-\[55\.571px\]{width:55.571px}.w-\[59\.86px\]{width:59.86px}.w-\[62\.286px\]{width:62.286px}.w-\[64\.86px\]{width:64.86px}.w-\[66px\]{width:66px}.w-\[70\.269px\]{width:70.269px}.w-\[71\.207px\]{width:71.207px}.w-\[72\.309px\]{width:72.309px}.w-\[81px\]{width:81px}.w-\[82\.069px\]{width:82.069px}.w-\[83\.35px\]{width:83.35px}.w-\[83\.482px\]{width:83.482px}.w-\[88\%\]{width:88%}.w-\[88\.89px\]{width:88.89px}.w-\[88\.654px\]{width:88.654px}.w-\[90\.548px\]{width:90.548px}.w-\[92\.442px\]{width:92.442px}.w-\[94px\]{width:94px}.w-\[95\.649px\]{width:95.649px}.w-\[96px\]{width:96px}.w-\[98\.856px\]{width:98.856px}.w-\[100\.3\%\]{width:100.3%}.w-\[100\.532px\]{width:100.532px}.w-\[100\.842px\]{width:100.842px}.w-\[101\.81\%\]{width:101.81%}.w-\[101\.535px\]{width:101.535px}.w-\[103\.62\%\]{width:103.62%}.w-\[103\.476px\]{width:103.476px}.w-\[104\.64\%\]{width:104.64%}.w-\[104px\]{width:104px}.w-\[107\.738px\]{width:107.738px}.w-\[110px\]{width:110px}.w-\[111\.665px\]{width:111.665px}.w-\[112\.52\%\]{width:112.52%}.w-\[114\.258px\]{width:114.258px}.w-\[116\.241px\]{width:116.241px}.w-\[118px\]{width:118px}.w-\[122\.575px\]{width:122.575px}.w-\[123\.18\%\]{width:123.18%}.w-\[123\.638px\]{width:123.638px}.w-\[125\.111px\]{width:125.111px}.w-\[126\.28px\]{width:126.28px}.w-\[128\.922px\]{width:128.922px}.w-\[137\.255px\]{width:137.255px}.w-\[141\.603px\]{width:141.603px}.w-\[158\.365px\]{width:158.365px}.w-\[163\.02\%\]{width:163.02%}.w-\[177\.495px\]{width:177.495px}.w-\[178px\]{width:178px}.w-\[182\.75px\]{width:182.75px}.w-\[193\.796px\]{width:193.796px}.w-\[198\.35\%\]{width:198.35%}.w-\[203\.07px\]{width:203.07px}.w-\[206\.232px\]{width:206.232px}.w-\[206px\]{width:206px}.w-\[217\.555px\]{width:217.555px}.w-\[217px\]{width:217px}.w-\[219\.18\%\]{width:219.18%}.w-\[220\.858px\]{width:220.858px}.w-\[220px\]{width:220px}.w-\[228\.314px\]{width:228.314px}.w-\[233\.44px\]{width:233.44px}.w-\[236\.589px\]{width:236.589px}.w-\[240px\]{width:240px}.w-\[242\.216px\]{width:242.216px}.w-\[243\.317px\]{width:243.317px}.w-\[248\.457px\]{width:248.457px}.w-\[248\.622px\]{width:248.622px}.w-\[252\.615px\]{width:252.615px}.w-\[256\.405px\]{width:256.405px}.w-\[256\.444px\]{width:256.444px}.w-\[257\.087px\]{width:257.087px}.w-\[258\.43\%\]{width:258.43%}.w-\[260\.933px\]{width:260.933px}.w-\[262\.034px\]{width:262.034px}.w-\[262px\]{width:262px}.w-\[263px\]{width:263px}.w-\[265\.223px\]{width:265.223px}.w-\[266\.305px\]{width:266.305px}.w-\[267\.065px\]{width:267.065px}.w-\[267px\]{width:267px}.w-\[270\.272px\]{width:270.272px}.w-\[274px\]{width:274px}.w-\[277px\]{width:277px}.w-\[278px\]{width:278px}.w-\[283\.206px\]{width:283.206px}.w-\[284px\]{width:284px}.w-\[285\.383px\]{width:285.383px}.w-\[285px\]{width:285px}.w-\[286\.377px\]{width:286.377px}.w-\[287\.64\%\]{width:287.64%}.w-\[287\.615px\]{width:287.615px}.w-\[299\.217px\]{width:299.217px}.w-\[301\.991px\]{width:301.991px}.w-\[301px\]{width:301px}.w-\[309px\]{width:309px}.w-\[314\.032px\]{width:314.032px}.w-\[316px\]{width:316px}.w-\[325\.56px\]{width:325.56px}.w-\[333px\]{width:333px}.w-\[334px\]{width:334px}.w-\[335px\]{width:335px}.w-\[339\.9px\]{width:339.9px}.w-\[342\.533px\]{width:342.533px}.w-\[346\.03\%\]{width:346.03%}.w-\[346px\]{width:346px}.w-\[348px\]{width:348px}.w-\[349px\]{width:349px}.w-\[358px\]{width:358px}.w-\[361px\]{width:361px}.w-\[391px\]{width:391px}.w-\[410px\]{width:410px}.w-\[411px\]{width:411px}.w-\[422px\]{width:422px}.w-\[435px\]{width:435px}.w-\[439px\]{width:439px}.w-\[462px\]{width:462px}.w-\[473\.457px\]{width:473.457px}.w-\[480px\]{width:480px}.w-\[494px\]{width:494px}.w-\[496px\]{width:496px}.w-\[520px\]{width:520px}.w-\[528\.936px\]{width:528.936px}.w-\[546px\]{width:546px}.w-\[547px\]{width:547px}.w-\[587px\]{width:587px}.w-\[594px\]{width:594px}.w-\[596px\]{width:596px}.w-\[638px\]{width:638px}.w-\[640px\]{width:640px}.w-\[654px\]{width:654px}.w-\[655px\]{width:655px}.w-\[663px\]{width:663px}.w-\[680px\]{width:680px}.w-\[691px\]{width:691px}.w-\[753\.28\%\]{width:753.28%}.w-\[785px\]{width:785px}.w-\[798px\]{width:798px}.w-\[826\.45\%\]{width:826.45%}.w-\[886px\]{width:886px}.w-\[912px\]{width:912px}.w-\[962px\]{width:962px}.w-\[1025px\]{width:1025px}.w-\[1036px\]{width:1036px}.w-\[1047px\]{width:1047px}.w-\[1079px\]{width:1079px}.w-\[1101px\]{width:1101px}.w-\[1107px\]{width:1107px}.w-\[1108px\]{width:1108px}.w-\[1112px\]{width:1112px}.w-\[1156\.8px\]{width:1156.8px}.w-\[1352px\]{width:1352px}.w-\[1504\.795px\]{width:1504.8px}.w-\[1512px\]{width:1512px}.w-\[1528px\]{width:1528px}.w-\[min-content\]{width:min-content}.w-auto{width:auto}.w-full{width:100%}.w-px{width:1px}.max-w-\[640px\]{max-width:640px}.max-w-\[700px\]{max-width:700px}.max-w-\[740px\]{max-width:740px}.max-w-\[770px\]{max-width:770px}.max-w-\[800px\]{max-width:800px}.max-w-\[812px\]{max-width:812px}.max-w-\[820px\]{max-width:820px}.max-w-\[880px\]{max-width:880px}.max-w-\[960px\]{max-width:960px}.max-w-\[1091px\]{max-width:1091px}.max-w-full{max-width:100%}.max-w-none{max-width:none}.min-w-full{min-width:100%}.flex-1{flex:1}.flex-\[1_0_0\]{flex:1 0 0}.flex-none{flex:none}.shrink-0{flex-shrink:0}.-translate-x-1{--tw-translate-x:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-x-1\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1{--tw-translate-y:calc(var(--spacing) * -1);translate:var(--tw-translate-x) var(--tw-translate-y)}.-translate-y-1\/2{--tw-translate-y: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.-scale-y-100{--tw-scale-y: -100% ;scale:var(--tw-scale-x) var(--tw-scale-y)}.-rotate-2{rotate:-2deg}.-rotate-4{rotate:-4deg}.-rotate-6{rotate:-6deg}.-rotate-135{rotate:-135deg}.-rotate-163{rotate:-163deg}.-rotate-174{rotate:-174deg}.rotate-2{rotate:2deg}.rotate-4{rotate:4deg}.rotate-5{rotate:5deg}.rotate-6{rotate:6deg}.rotate-11{rotate:11deg}.rotate-12{rotate:12deg}.rotate-17{rotate:17deg}.rotate-134{rotate:134deg}.rotate-180{rotate:180deg}.rotate-\[-8deg\]{rotate:-8deg}.rotate-\[6deg\]{rotate:6deg}.rotate-\[8deg\]{rotate:8deg}.transform{transform:var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,)}.cursor-pointer{cursor:pointer}.resize{resize:both}.scroll-mt-\[64px\]{scroll-margin-top:64px}.scrollbar-none{scrollbar-width:none}.list-decimal{list-style-type:decimal}.list-disc{list-style-type:disc}.grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-cols-\[127px_239px_239px_239px_197px\]{grid-template-columns:127px 239px 239px 239px 197px}.grid-cols-\[128px_repeat\(4\,1fr\)\]{grid-template-columns:128px repeat(4,1fr)}.grid-cols-\[130px_repeat\(4\,1fr\)\]{grid-template-columns:130px repeat(4,1fr)}.grid-cols-\[290px_437px_1fr\]{grid-template-columns:290px 437px 1fr}.grid-cols-\[max-content\]{grid-template-columns:max-content}.grid-rows-\[max-content\]{grid-template-rows:max-content}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.place-items-start{place-items:start}.content-center{align-content:center}.content-stretch{align-content:stretch}.items-baseline{align-items:baseline}.items-center{align-items:center}.items-end{align-items:flex-end}.items-start{align-items:flex-start}.justify-between{justify-content:space-between}.justify-center{justify-content:center}.gap-\[1px\]{gap:1px}.gap-\[2px\]{gap:2px}.gap-\[4px\]{gap:4px}.gap-\[8px\]{gap:8px}.gap-\[10\.298px\]{gap:10.298px}.gap-\[10px\]{gap:10px}.gap-\[12px\]{gap:12px}.gap-\[13px\]{gap:13px}.gap-\[14px\]{gap:14px}.gap-\[16px\]{gap:16px}.gap-\[18px\]{gap:18px}.gap-\[20px\]{gap:20px}.gap-\[21px\]{gap:21px}.gap-\[24px\]{gap:24px}.gap-\[26px\]{gap:26px}.gap-\[28px\]{gap:28px}.gap-\[36px\]{gap:36px}.gap-\[39px\]{gap:39px}.gap-\[43px\]{gap:43px}.gap-\[46px\]{gap:46px}.gap-\[48px\]{gap:48px}.gap-\[56\.25px\]{gap:56.25px}.gap-\[56px\]{gap:56px}.gap-\[75px\]{gap:75px}.gap-\[77px\]{gap:77px}.gap-\[120px\]{gap:120px}.gap-\[207px_104px\]{gap:207px 104px}.gap-\[clamp\(2px\,2\.2vw\,14px\)\]{gap:clamp(2px,2.2vw,14px)}:where(.space-y-\[0px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block:0}:where(.space-y-\[6px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(6px * var(--tw-space-y-reverse));margin-block-end:calc(6px * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-\[12px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(12px * var(--tw-space-y-reverse));margin-block-end:calc(12px * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-\[14px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(14px * var(--tw-space-y-reverse));margin-block-end:calc(14px * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-\[16px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(16px * var(--tw-space-y-reverse));margin-block-end:calc(16px * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-\[40px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(40px * var(--tw-space-y-reverse));margin-block-end:calc(40px * calc(1 - var(--tw-space-y-reverse)))}:where(.space-y-\[103px\]>:not(:last-child)){--tw-space-y-reverse:0;margin-block-start:calc(103px * var(--tw-space-y-reverse));margin-block-end:calc(103px * calc(1 - var(--tw-space-y-reverse)))}.gap-x-\[47px\]{column-gap:47px}.gap-y-\[16px\]{row-gap:16px}.self-start{align-self:flex-start}.overflow-clip{overflow:clip}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-x-clip{overflow-x:clip}.rounded{border-radius:.25rem}.rounded-\[3px\]{border-radius:3px}.rounded-\[4px\]{border-radius:4px}.rounded-\[6px\]{border-radius:6px}.rounded-\[7\.21px\]{border-radius:7.21px}.rounded-\[7px\]{border-radius:7px}.rounded-\[8px\]{border-radius:8px}.rounded-\[9\.21px\]{border-radius:9.21px}.rounded-\[10px\]{border-radius:10px}.rounded-\[12px\]{border-radius:12px}.rounded-\[14px\]{border-radius:14px}.rounded-\[16px\]{border-radius:16px}.rounded-\[20px\]{border-radius:20px}.rounded-\[24px\]{border-radius:24px}.rounded-\[28px\]{border-radius:28px}.rounded-\[36px\]{border-radius:36px}.rounded-\[50px\]{border-radius:50px}.rounded-\[inherit\]{border-radius:inherit}.rounded-full{border-radius:3.40282e38px}.border,.border-\[1px\]{border-style:var(--tw-border-style);border-width:1px}.border-\[3px\]{border-style:var(--tw-border-style);border-width:3px}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-r{border-right-style:var(--tw-border-style);border-right-width:1px}.border-b{border-bottom-style:var(--tw-border-style);border-bottom-width:1px}.border-l{border-left-style:var(--tw-border-style);border-left-width:1px}.border-l-2{border-left-style:var(--tw-border-style);border-left-width:2px}.border-solid{--tw-border-style:solid;border-style:solid}.border-\[\#9a9a9a\]{border-color:#9a9a9a}.border-\[\#b4d9ed\]{border-color:#b4d9ed}.border-\[\#c9c9c9\]{border-color:#c9c9c9}.border-\[\#d9d7ee\]{border-color:#d9d7ee}.border-\[\#d9d9d9\]{border-color:#d9d9d9}.border-\[\#e2e4ec\]{border-color:#e2e4ec}.border-\[\#e5e7eb\]{border-color:#e5e7eb}.border-\[\#eceaf5\]{border-color:#eceaf5}.border-\[rgba\(41\,41\,103\,0\.22\)\]{border-color:#29296738}.border-gray-100{border-color:var(--color-gray-100)}.border-white{border-color:var(--color-white)}.bg-\[\#0057ff\]{background-color:#0057ff}.bg-\[\#080820\]{background-color:#080820}.bg-\[\#101124\]{background-color:#101124}.bg-\[\#363530\]{background-color:#363530}.bg-\[\#535398\]{background-color:#535398}.bg-\[\#a7e8bd\]{background-color:#a7e8bd}.bg-\[\#abe3f6\]{background-color:#abe3f6}.bg-\[\#b7f7d3\]{background-color:#b7f7d3}.bg-\[\#c5e1f1\]{background-color:#c5e1f1}.bg-\[\#cb2170\]{background-color:#cb2170}.bg-\[\#cfcfcf\]{background-color:#cfcfcf}.bg-\[\#d8f5b8\]{background-color:#d8f5b8}.bg-\[\#dce8e8\]{background-color:#dce8e8}.bg-\[\#dcf7ff\]{background-color:#dcf7ff}.bg-\[\#e6e9f2\]{background-color:#e6e9f2}.bg-\[\#e6edfa\]{background-color:#e6edfa}.bg-\[\#e8e8e8\]{background-color:#e8e8e8}.bg-\[\#e9effb\]{background-color:#e9effb}.bg-\[\#ea4c89\]{background-color:#ea4c89}.bg-\[\#ebe3d6\]{background-color:#ebe3d6}.bg-\[\#eef3fb\]{background-color:#eef3fb}.bg-\[\#eff6ff\]{background-color:#eff6ff}.bg-\[\#f3f0ce\]{background-color:#f3f0ce}.bg-\[\#f3f9fc\]{background-color:#f3f9fc}.bg-\[\#f4e3d7\]{background-color:#f4e3d7}.bg-\[\#f4f4f4\]{background-color:#f4f4f4}.bg-\[\#f6b38a\]{background-color:#f6b38a}.bg-\[\#f7f7f7\]{background-color:#f7f7f7}.bg-\[\#f9fafb\]{background-color:#f9fafb}.bg-\[\#f393b5\]{background-color:#f393b5}.bg-\[\#fafafa\]{background-color:#fafafa}.bg-\[\#fafbfd\]{background-color:#fafbfd}.bg-\[\#fcf9f7\]{background-color:#fcf9f7}.bg-\[\#ffdeea\]{background-color:#ffdeea}.bg-\[rgba\(255\,115\,102\,0\.2\)\]{background-color:#ff736633}.bg-\[rgba\(255\,255\,255\,0\)\]{background-color:#fff0}.bg-white{background-color:var(--color-white)}.bg-white\/70{background-color:#ffffffb3}@supports (color:color-mix(in lab,red,red)){.bg-white\/70{background-color:color-mix(in oklab,var(--color-white) 70%,transparent)}}.bg-gradient-to-b{--tw-gradient-position:to bottom in oklab;background-image:linear-gradient(var(--tw-gradient-stops))}.from-transparent{--tw-gradient-from:transparent;--tw-gradient-stops:var(--tw-gradient-via-stops,var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))}.to-white{--tw-gradient-to:var(--color-white);--tw-gradient-stops:var(--tw-gradient-via-stops,var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position))}.object-contain{object-fit:contain}.object-cover{object-fit:cover}.object-fill{object-fit:fill}.p-\[2\.3\%\]{padding:2.3%}.p-\[16\.48px\]{padding:16.48px}.p-\[20px\]{padding:20px}.px-\[8px\]{padding-inline:8px}.px-\[12px\]{padding-inline:12px}.px-\[14px\]{padding-inline:14px}.px-\[16px\]{padding-inline:16px}.px-\[18px\]{padding-inline:18px}.px-\[20px\]{padding-inline:20px}.px-\[26px\]{padding-inline:26px}.px-\[28px\]{padding-inline:28px}.px-\[32px\]{padding-inline:32px}.px-\[36px\]{padding-inline:36px}.px-\[48px\]{padding-inline:48px}.px-\[clamp\(6px\,1\.8vw\,12px\)\]{padding-inline:clamp(6px,1.8vw,12px)}.py-1{padding-block:var(--spacing)}.py-\[5px\]{padding-block:5px}.py-\[6px\]{padding-block:6px}.py-\[7px\]{padding-block:7px}.py-\[8px\]{padding-block:8px}.py-\[10px\]{padding-block:10px}.py-\[12px\]{padding-block:12px}.py-\[14px\]{padding-block:14px}.py-\[16\.48px\]{padding-block:16.48px}.py-\[16px\]{padding-block:16px}.py-\[18px\]{padding-block:18px}.py-\[20px\]{padding-block:20px}.py-\[22px\]{padding-block:22px}.py-\[24px\]{padding-block:24px}.py-\[26px\]{padding-block:26px}.py-\[36px\]{padding-block:36px}.py-\[40px\]{padding-block:40px}.py-\[48px\]{padding-block:48px}.py-\[64px\]{padding-block:64px}.ps-\[18px\]{padding-inline-start:18px}.pt-\[24px\]{padding-top:24px}.pt-\[40px\]{padding-top:40px}.pt-\[42px\]{padding-top:42px}.pt-\[44px\]{padding-top:44px}.pt-\[45px\]{padding-top:45px}.pt-\[46px\]{padding-top:46px}.pt-\[47px\]{padding-top:47px}.pt-\[48px\]{padding-top:48px}.pt-\[49px\]{padding-top:49px}.pt-\[50px\]{padding-top:50px}.pt-\[52px\]{padding-top:52px}.pt-\[53px\]{padding-top:53px}.pt-\[55px\]{padding-top:55px}.pt-\[56px\]{padding-top:56px}.pt-\[58px\]{padding-top:58px}.pt-\[59px\]{padding-top:59px}.pt-\[60px\]{padding-top:60px}.pt-\[61px\]{padding-top:61px}.pt-\[62px\]{padding-top:62px}.pt-\[64px\]{padding-top:64px}.pt-\[65px\]{padding-top:65px}.pt-\[67px\]{padding-top:67px}.pt-\[69px\]{padding-top:69px}.pt-\[74px\]{padding-top:74px}.pt-\[75px\]{padding-top:75px}.pt-\[76px\]{padding-top:76px}.pt-\[78px\]{padding-top:78px}.pt-\[79px\]{padding-top:79px}.pt-\[80px\]{padding-top:80px}.pt-\[84px\]{padding-top:84px}.pt-\[86px\]{padding-top:86px}.pt-\[88px\]{padding-top:88px}.pt-\[91px\]{padding-top:91px}.pt-\[106px\]{padding-top:106px}.pt-\[111px\]{padding-top:111px}.pt-\[117px\]{padding-top:117px}.pt-\[130px\]{padding-top:130px}.pt-\[132px\]{padding-top:132px}.pt-\[139px\]{padding-top:139px}.pt-\[141px\]{padding-top:141px}.pt-\[142px\]{padding-top:142px}.pt-\[144px\]{padding-top:144px}.pt-\[145px\]{padding-top:145px}.pt-\[150px\]{padding-top:150px}.pt-\[152px\]{padding-top:152px}.pt-\[156px\]{padding-top:156px}.pt-\[166px\]{padding-top:166px}.pt-\[171px\]{padding-top:171px}.pt-\[174px\]{padding-top:174px}.pt-\[181px\]{padding-top:181px}.pt-\[182px\]{padding-top:182px}.pt-\[185px\]{padding-top:185px}.pt-\[189px\]{padding-top:189px}.pt-\[192px\]{padding-top:192px}.pt-\[193px\]{padding-top:193px}.pt-\[200px\]{padding-top:200px}.pt-\[204px\]{padding-top:204px}.pt-\[209px\]{padding-top:209px}.pt-\[211px\]{padding-top:211px}.pt-\[212px\]{padding-top:212px}.pt-\[216px\]{padding-top:216px}.pt-\[234px\]{padding-top:234px}.pt-\[235px\]{padding-top:235px}.pt-\[245px\]{padding-top:245px}.pt-\[246px\]{padding-top:246px}.pt-\[251px\]{padding-top:251px}.pt-\[263px\]{padding-top:263px}.pt-\[268px\]{padding-top:268px}.pt-\[283px\]{padding-top:283px}.pt-\[286px\]{padding-top:286px}.pt-\[334px\]{padding-top:334px}.pt-\[481px\]{padding-top:481px}.pr-\[16\.48px\]{padding-right:16.48px}.pb-0{padding-bottom:0}.pb-\[0\.785px\]{padding-bottom:.785px}.pb-\[14px\]{padding-bottom:14px}.pb-\[36px\]{padding-bottom:36px}.pb-\[37px\]{padding-bottom:37px}.pb-\[40px\]{padding-bottom:40px}.pb-\[49px\]{padding-bottom:49px}.pb-\[52px\]{padding-bottom:52px}.pb-\[92px\]{padding-bottom:92px}.pb-\[96px\]{padding-bottom:96px}.pb-\[98px\]{padding-bottom:98px}.pb-\[106px\]{padding-bottom:106px}.pb-\[183px\]{padding-bottom:183px}.pl-\[6px\]{padding-left:6px}.pl-\[8px\]{padding-left:8px}.pl-\[10px\]{padding-left:10px}.pl-\[12px\]{padding-left:12px}.pl-\[16px\]{padding-left:16px}.pl-\[24px\]{padding-left:24px}.pl-\[40px\]{padding-left:40px}.pl-\[56\.48px\]{padding-left:56.48px}.pl-\[86\.48px\]{padding-left:86.48px}.text-center{text-align:center}.text-left{text-align:left}.text-right{text-align:right}.font-\[\'Abhaya_Libre\'\]{font-family:Abhaya Libre}.font-\[\'Bakbak_One\'\]{font-family:Bakbak One}.font-\[\'Bonheur_Royale\'\]{font-family:Bonheur Royale}.font-\[\'Inter\'\]{font-family:Inter}.font-\[\'Jost\'\]{font-family:Jost}.font-\[\'Roboto\'\]{font-family:Roboto}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[12px\]{font-size:12px}.text-\[13px\]{font-size:13px}.text-\[14px\]{font-size:14px}.text-\[15px\]{font-size:15px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[18px\]{font-size:18px}.text-\[20px\]{font-size:20px}.text-\[21px\]{font-size:21px}.text-\[22px\]{font-size:22px}.text-\[24px\]{font-size:24px}.text-\[26px\]{font-size:26px}.text-\[28px\]{font-size:28px}.text-\[32px\]{font-size:32px}.text-\[34px\]{font-size:34px}.text-\[37\.5px\]{font-size:37.5px}.text-\[37px\]{font-size:37px}.text-\[40px\]{font-size:40px}.text-\[42px\]{font-size:42px}.text-\[45px\]{font-size:45px}.text-\[48px\]{font-size:48px}.text-\[72px\]{font-size:72px}.text-\[clamp\(11px\,3\.1vw\,16px\)\]{font-size:clamp(11px,3.1vw,16px)}.text-\[clamp\(15px\,4\.2vw\,22px\)\]{font-size:clamp(15px,4.2vw,22px)}.leading-\[0\]{--tw-leading:0;line-height:0}.leading-\[1\.2\]{--tw-leading:1.2;line-height:1.2}.leading-\[1\.3\]{--tw-leading:1.3;line-height:1.3}.leading-\[1\.4\]{--tw-leading:1.4;line-height:1.4}.leading-\[1\.05\]{--tw-leading:1.05;line-height:1.05}.leading-\[1\.5\]{--tw-leading:1.5;line-height:1.5}.leading-\[1\.15\]{--tw-leading:1.15;line-height:1.15}.leading-\[1\.35\]{--tw-leading:1.35;line-height:1.35}.leading-\[1\.55\]{--tw-leading:1.55;line-height:1.55}.leading-\[1\]{--tw-leading:1;line-height:1}.leading-\[18px\]{--tw-leading:18px;line-height:18px}.leading-\[19px\]{--tw-leading:19px;line-height:19px}.leading-\[20\.8px\]{--tw-leading:20.8px;line-height:20.8px}.leading-\[20px\]{--tw-leading:20px;line-height:20px}.leading-\[21\.6px\]{--tw-leading:21.6px;line-height:21.6px}.leading-\[22px\]{--tw-leading:22px;line-height:22px}.leading-\[24px\]{--tw-leading:24px;line-height:24px}.leading-\[27px\]{--tw-leading:27px;line-height:27px}.leading-\[29px\]{--tw-leading:29px;line-height:29px}.leading-\[30px\]{--tw-leading:30px;line-height:30px}.leading-\[31px\]{--tw-leading:31px;line-height:31px}.leading-\[32px\]{--tw-leading:32px;line-height:32px}.leading-\[33px\]{--tw-leading:33px;line-height:33px}.leading-\[34px\]{--tw-leading:34px;line-height:34px}.leading-\[36\.4px\]{--tw-leading:36.4px;line-height:36.4px}.leading-\[38px\]{--tw-leading:38px;line-height:38px}.leading-\[42px\]{--tw-leading:42px;line-height:42px}.leading-\[48px\]{--tw-leading:48px;line-height:48px}.leading-\[52px\]{--tw-leading:52px;line-height:52px}.leading-\[normal\]{--tw-leading:normal;line-height:normal}.leading-none{--tw-leading:1;line-height:1}.font-\[400\]{--tw-font-weight:400;font-weight:400}.font-\[600\]{--tw-font-weight:600;font-weight:600}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-light{--tw-font-weight:var(--font-weight-light);font-weight:var(--font-weight-light)}.font-medium{--tw-font-weight:var(--font-weight-medium);font-weight:var(--font-weight-medium)}.font-normal{--tw-font-weight:var(--font-weight-normal);font-weight:var(--font-weight-normal)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-\[-0\.32px\]{--tw-tracking:-.32px;letter-spacing:-.32px}.tracking-\[-0\.36px\]{--tw-tracking:-.36px;letter-spacing:-.36px}.tracking-\[-0\.264px\]{--tw-tracking:-.264px;letter-spacing:-.264px}.tracking-\[-0\.418px\]{--tw-tracking:-.418px;letter-spacing:-.418px}.tracking-\[-0\.532px\]{--tw-tracking:-.532px;letter-spacing:-.532px}.tracking-\[0\.4px\]{--tw-tracking:.4px;letter-spacing:.4px}.tracking-\[0\.5px\]{--tw-tracking:.5px;letter-spacing:.5px}.tracking-\[0\.6px\]{--tw-tracking:.6px;letter-spacing:.6px}.tracking-\[0\.8px\]{--tw-tracking:.8px;letter-spacing:.8px}.tracking-\[1\.4px\]{--tw-tracking:1.4px;letter-spacing:1.4px}.tracking-\[1\.12px\]{--tw-tracking:1.12px;letter-spacing:1.12px}.tracking-\[2\.4px\]{--tw-tracking:2.4px;letter-spacing:2.4px}.tracking-\[2\.6px\]{--tw-tracking:2.6px;letter-spacing:2.6px}.tracking-\[2\.56px\]{--tw-tracking:2.56px;letter-spacing:2.56px}.tracking-\[4px\]{--tw-tracking:4px;letter-spacing:4px}.\[word-break\:break-word\]{word-break:break-word}.whitespace-normal{white-space:normal}.whitespace-nowrap{white-space:nowrap}.whitespace-pre{white-space:pre}.whitespace-pre-line{white-space:pre-line}.whitespace-pre-wrap{white-space:pre-wrap}.text-\[\#0a0a0a\]{color:#0a0a0a}.text-\[\#1e1e1e\]{color:#1e1e1e}.text-\[\#2d2d2d\]{color:#2d2d2d}.text-\[\#3a3a4d\]{color:#3a3a4d}.text-\[\#3b3b3b\]{color:#3b3b3b}.text-\[\#3f4a63\]{color:#3f4a63}.text-\[\#4a4a5c\]{color:#4a4a5c}.text-\[\#5e5c5c\]{color:#5e5c5c}.text-\[\#6b6b6b\]{color:#6b6b6b}.text-\[\#12a150\]{color:#12a150}.text-\[\#090a0a\]{color:#090a0a}.text-\[\#302f2f\]{color:#302f2f}.text-\[\#337bc7\]{color:#337bc7}.text-\[\#111111\]{color:#111}.text-\[\#123524\]{color:#123524}.text-\[\#292967\]{color:#292967}.text-\[\#535398\]{color:#535398}.text-\[\#757575\]{color:#757575}.text-\[\#cb2170\]{color:#cb2170}.text-\[\#d5d7e8\]{color:#d5d7e8}.text-\[\#d53535\]{color:#d53535}.text-\[\#e5d7d0\]{color:#e5d7d0}.text-\[\#e0334c\]{color:#e0334c}.text-\[\#f6efe4\]{color:#f6efe4}.text-\[\#fffbfb\]{color:#fffbfb}.text-\[rgba\(0\,0\,0\,0\.75\)\]{color:#000000bf}.text-black{color:var(--color-black)}.text-white{color:var(--color-white)}.uppercase{text-transform:uppercase}.italic{font-style:italic}.not-italic{font-style:normal}.underline{text-decoration-line:underline}.opacity-0{opacity:0}.opacity-70{opacity:.7}.opacity-75{opacity:.75}.opacity-100{opacity:1}.shadow{--tw-shadow:0 1px 3px 0 var(--tw-shadow-color,#0000001a), 0 1px 2px -1px var(--tw-shadow-color,#0000001a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[-4px_12px_2px_0px_rgba\(0\,0\,0\,0\.07\)\]{--tw-shadow:-4px 12px 2px 0px var(--tw-shadow-color,#00000012);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[0_1px_6px_rgba\(41\,41\,103\,0\.10\)\]{--tw-shadow:0 1px 6px var(--tw-shadow-color,#2929671a);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[0_4px_14px_0_rgba\(203\,33\,112\,0\.25\)\]{--tw-shadow:0 4px 14px 0 var(--tw-shadow-color,#cb217040);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[0_4px_14px_rgba\(83\,83\,152\,0\.12\)\]{--tw-shadow:0 4px 14px var(--tw-shadow-color,#5353981f);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[0_5px_16px_rgba\(83\,83\,152\,0\.15\)\]{--tw-shadow:0 5px 16px var(--tw-shadow-color,#53539826);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[2px_8px_2px_0px_rgba\(0\,0\,0\,0\.07\)\]{--tw-shadow:2px 8px 2px 0px var(--tw-shadow-color,#00000012);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-\[inset_0px_0\.5px_0px_0\.5px_rgba\(255\,255\,255\,0\.6\)\]{--tw-shadow:inset 0px .5px 0px .5px var(--tw-shadow-color,#fff9);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.shadow-xs{--tw-shadow:0 1px 2px 0 var(--tw-shadow-color,#0000000d);box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)}.blur{--tw-blur:blur(8px);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow{--tw-drop-shadow-size:drop-shadow(0 1px 2px var(--tw-drop-shadow-color,#0000001a)) drop-shadow(0 1px 1px var(--tw-drop-shadow-color,#0000000f));--tw-drop-shadow:drop-shadow(0 1px 2px #0000001a) drop-shadow(0 1px 1px #0000000f);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow-\[0px_4px_17px_rgba\(72\,61\,85\,0\.2\)\]{--tw-drop-shadow-size:drop-shadow(0px 4px 17px var(--tw-drop-shadow-color,#483d5533));--tw-drop-shadow:var(--tw-drop-shadow-size);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.drop-shadow-\[2px_8px_1px_rgba\(0\,0\,0\,0\.07\)\]{--tw-drop-shadow-size:drop-shadow(2px 8px 1px var(--tw-drop-shadow-color,#00000012));--tw-drop-shadow:var(--tw-drop-shadow-size);filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.filter{filter:var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,)}.transition{transition-property:color,background-color,border-color,outline-color,text-decoration-color,fill,stroke,--tw-gradient-from,--tw-gradient-via,--tw-gradient-to,opacity,box-shadow,transform,translate,scale,rotate,filter,-webkit-backdrop-filter,backdrop-filter,display,content-visibility,overlay,pointer-events;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-opacity{transition-property:opacity;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.transition-transform{transition-property:transform,translate,scale,rotate;transition-timing-function:var(--tw-ease,var(--default-transition-timing-function));transition-duration:var(--tw-duration,var(--default-transition-duration))}.duration-150{--tw-duration:.15s;transition-duration:.15s}.duration-200{--tw-duration:.2s;transition-duration:.2s}.ease-in{--tw-ease:var(--ease-in);transition-timing-function:var(--ease-in)}.ease-in-out{--tw-ease:var(--ease-in-out);transition-timing-function:var(--ease-in-out)}.ease-out{--tw-ease:var(--ease-out);transition-timing-function:var(--ease-out)}.\[grid-area\:1\/1\]{grid-area:1/1}@media(hover:hover){.group-hover\:opacity-0:is(:where(.group):hover *){opacity:0}.group-hover\:opacity-100:is(:where(.group):hover *){opacity:1}.hover\:scale-\[1\.02\]:hover{scale:1.02}.hover\:opacity-70:hover{opacity:.7}.hover\:opacity-100:hover{opacity:1}}@media(min-width:40rem){.sm\:text-\[15px\]{font-size:15px}.sm\:text-\[48px\]{font-size:48px}}@media(min-width:48rem){.md\:absolute{position:absolute}.md\:top-\[28px\]{top:28px}.md\:top-\[75px\]{top:75px}.md\:top-\[114px\]{top:114px}.md\:top-\[117px\]{top:117px}.md\:top-\[155\.5px\]{top:155.5px}.md\:top-\[182px\]{top:182px}.md\:top-\[199px\]{top:199px}.md\:top-\[242px\]{top:242px}.md\:top-\[249px\]{top:249px}.md\:top-\[254px\]{top:254px}.md\:top-\[260px\]{top:260px}.md\:top-\[300px\]{top:300px}.md\:top-\[375px\]{top:375px}.md\:top-\[377px\]{top:377px}.md\:top-\[389px\]{top:389px}.md\:top-\[418px\]{top:418px}.md\:left-1\/2{left:50%}.md\:mx-0{margin-inline:0}.md\:mt-0{margin-top:0}.md\:mt-\[10px\]{margin-top:10px}.md\:mt-\[133px\]{margin-top:133px}.md\:mt-\[204px\]{margin-top:204px}.md\:mt-\[229px\]{margin-top:229px}.md\:mt-\[231px\]{margin-top:231px}.md\:mt-\[271px\]{margin-top:271px}.md\:mt-\[275px\]{margin-top:275px}.md\:mt-\[305px\]{margin-top:305px}.md\:mt-\[353px\]{margin-top:353px}.md\:ml-\[62px\]{margin-left:62px}.md\:ml-\[111px\]{margin-left:111px}.md\:ml-\[124px\]{margin-left:124px}.md\:ml-\[148px\]{margin-left:148px}.md\:ml-\[150px\]{margin-left:150px}.md\:ml-\[203px\]{margin-left:203px}.md\:block{display:block}.md\:hidden{display:none}.md\:h-\[47px\]{height:47px}.md\:h-\[48px\]{height:48px}.md\:h-\[80px\]{height:80px}.md\:h-\[857px\]{height:857px}.md\:h-\[866px\]{height:866px}.md\:h-\[921px\]{height:921px}.md\:w-\[301px\]{width:301px}.md\:w-\[309px\]{width:309px}.md\:w-\[333px\]{width:333px}.md\:w-\[334px\]{width:334px}.md\:w-\[335px\]{width:335px}.md\:w-\[346px\]{width:346px}.md\:w-\[348px\]{width:348px}.md\:w-\[349px\]{width:349px}.md\:w-\[361px\]{width:361px}.md\:w-\[411px\]{width:411px}.md\:w-\[439px\]{width:439px}.md\:w-\[496px\]{width:496px}.md\:w-\[515px\]{width:515px}.md\:w-\[520px\]{width:520px}.md\:w-\[560px\]{width:560px}.md\:w-\[594px\]{width:594px}.md\:w-\[600px\]{width:600px}.md\:w-\[638px\]{width:638px}.md\:w-\[640px\]{width:640px}.md\:w-\[654px\]{width:654px}.md\:w-\[655px\]{width:655px}.md\:w-\[663px\]{width:663px}.md\:w-\[680px\]{width:680px}.md\:w-\[691px\]{width:691px}.md\:w-\[700px\]{width:700px}.md\:w-\[740px\]{width:740px}.md\:w-\[770px\]{width:770px}.md\:w-\[798px\]{width:798px}.md\:w-\[812px\]{width:812px}.md\:w-\[820px\]{width:820px}.md\:w-\[850px\]{width:850px}.md\:w-\[860px\]{width:860px}.md\:w-\[880px\]{width:880px}.md\:w-\[886px\]{width:886px}.md\:w-\[960px\]{width:960px}.md\:w-\[962px\]{width:962px}.md\:w-\[966px\]{width:966px}.md\:w-\[1025px\]{width:1025px}.md\:w-\[1036px\]{width:1036px}.md\:w-\[1047px\]{width:1047px}.md\:w-\[1050px\]{width:1050px}.md\:w-\[1091px\]{width:1091px}.md\:w-\[1101px\]{width:1101px}.md\:w-\[1107px\]{width:1107px}.md\:w-\[1112px\]{width:1112px}.md\:w-\[1352px\]{width:1352px}.md\:w-\[1512px\]{width:1512px}.md\:w-auto{width:auto}.md\:min-w-0{min-width:0}.md\:-translate-x-1\/2{--tw-translate-x: -50% ;translate:var(--tw-translate-x) var(--tw-translate-y)}.md\:flex-row{flex-direction:row}.md\:gap-0{gap:0}.md\:gap-\[8px\]{gap:8px}.md\:gap-\[46px\]{gap:46px}.md\:gap-\[56px\]{gap:56px}.md\:overflow-visible{overflow:visible}.md\:px-0{padding-inline:0}.md\:px-\[12px\]{padding-inline:12px}.md\:px-\[28px\]{padding-inline:28px}.md\:px-\[80px\]{padding-inline:80px}.md\:py-0{padding-block:0}.md\:py-\[10px\]{padding-block:10px}.md\:pt-\[77px\]{padding-top:77px}.md\:pt-\[79px\]{padding-top:79px}.md\:pt-\[91px\]{padding-top:91px}.md\:pt-\[105px\]{padding-top:105px}.md\:pt-\[106px\]{padding-top:106px}.md\:pt-\[111px\]{padding-top:111px}.md\:pt-\[117px\]{padding-top:117px}.md\:pt-\[130px\]{padding-top:130px}.md\:pt-\[132px\]{padding-top:132px}.md\:pt-\[139px\]{padding-top:139px}.md\:pt-\[141px\]{padding-top:141px}.md\:pt-\[142px\]{padding-top:142px}.md\:pt-\[144px\]{padding-top:144px}.md\:pt-\[145px\]{padding-top:145px}.md\:pt-\[150px\]{padding-top:150px}.md\:pt-\[152px\]{padding-top:152px}.md\:pt-\[156px\]{padding-top:156px}.md\:pt-\[166px\]{padding-top:166px}.md\:pt-\[171px\]{padding-top:171px}.md\:pt-\[174px\]{padding-top:174px}.md\:pt-\[181px\]{padding-top:181px}.md\:pt-\[182px\]{padding-top:182px}.md\:pt-\[185px\]{padding-top:185px}.md\:pt-\[189px\]{padding-top:189px}.md\:pt-\[192px\]{padding-top:192px}.md\:pt-\[193px\]{padding-top:193px}.md\:pt-\[200px\]{padding-top:200px}.md\:pt-\[202px\]{padding-top:202px}.md\:pt-\[204px\]{padding-top:204px}.md\:pt-\[209px\]{padding-top:209px}.md\:pt-\[216px\]{padding-top:216px}.md\:pt-\[234px\]{padding-top:234px}.md\:pt-\[235px\]{padding-top:235px}.md\:pt-\[245px\]{padding-top:245px}.md\:pt-\[246px\]{padding-top:246px}.md\:pt-\[251px\]{padding-top:251px}.md\:pt-\[263px\]{padding-top:263px}.md\:pt-\[268px\]{padding-top:268px}.md\:pt-\[283px\]{padding-top:283px}.md\:pt-\[286px\]{padding-top:286px}.md\:pt-\[334px\]{padding-top:334px}.md\:text-\[16px\]{font-size:16px}.md\:text-\[18px\]{font-size:18px}.md\:text-\[72px\]{font-size:72px}.md\:tracking-\[2\.4px\]{--tw-tracking:2.4px;letter-spacing:2.4px}.md\:whitespace-nowrap{white-space:nowrap}}@media(min-width:64rem){.lg\:flex-1{flex:1}.lg\:flex-row{flex-direction:row}}}html,body{background:#fff;margin:0}@media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}body{justify-content:center;display:flex}:root{--ease-out-expo:cubic-bezier(.16, 1, .3, 1);--reveal-dur:.9s;--sy:0px;--hero-progress:0}html.motion-ready [data-reveal],html.motion-ready .reveal{opacity:0;transform:translate3d(0,var(--reveal-y,32px),0) scale(var(--reveal-scale,.97));filter:blur(var(--reveal-blur,5px));transition:opacity var(--reveal-dur) var(--ease-out-expo) var(--reveal-delay,0s),transform var(--reveal-dur) var(--ease-out-expo) var(--reveal-delay,0s),filter var(--reveal-dur) var(--ease-out-expo) var(--reveal-delay,0s)}html.motion-ready [data-reveal].is-in,html.motion-ready .reveal.is-in{opacity:1;filter:none;transform:none}html.motion-ready [data-reveal=left]{transform:translate(-40px)scale(.98)}html.motion-ready [data-reveal=right]{transform:translate(40px)scale(.98)}html.motion-ready [data-reveal=scale]{--reveal-y:0px;--reveal-scale:.92}html.motion-ready [data-reveal=top]{--reveal-y:-60px;--reveal-scale:1}html.motion-ready [data-reveal=bottom]{--reveal-y:100px;--reveal-scale:1}html.motion-ready [data-reveal=card]{--reveal-y:56px;--reveal-scale:.96;--reveal-blur:6px}[data-reveal-delay="1"]{--reveal-delay:90ms}[data-reveal-delay="2"]{--reveal-delay:.18s}[data-reveal-delay="3"]{--reveal-delay:.27s}[data-reveal-delay="4"]{--reveal-delay:.36s}[data-reveal-delay="5"]{--reveal-delay:.45s}.scroll-cue-label{transition:opacity .32s var(--ease-out-expo),transform .32s var(--ease-out-expo)}html.scrolled .scroll-cue-label{opacity:0;transform:translateY(4px)}.glass{-webkit-backdrop-filter:blur(20px)saturate(180%);backdrop-filter:blur(20px)saturate(180%);background:#ffffff8c;border:1px solid #ffffffb3;box-shadow:0 8px 32px #53539818,inset 0 1px #ffffffe6}.glass-tint{background:var(--glass-tint,#fff)}@supports (color:color-mix(in lab,red,red)){.glass-tint{background:color-mix(in srgb,var(--glass-tint,#fff) 62%,#ffffff59)}}.glass-tint{-webkit-backdrop-filter:blur(16px)saturate(170%);backdrop-filter:blur(16px)saturate(170%);border:1px solid #ffffffa6;box-shadow:0 10px 34px #5353981b,inset 0 1px #ffffffd9}@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.glass-tint{background:var(--glass-tint,#fff)}.glass{background:#ffffffeb}}.glass-card{background:radial-gradient(118% 88% at 50% 106%,var(--glass-tint,#fff) 0%,#fff0 72%),linear-gradient(158deg,#ffffffe0,#fff9 54%,#ffffffb8)}@supports (color:color-mix(in lab,red,red)){.glass-card{background:radial-gradient(118% 88% at 50% 106%,color-mix(in srgb,var(--glass-tint,#fff) 82%,transparent),#fff0 72%),linear-gradient(158deg,#ffffffe0,#fff9 54%,#ffffffb8)}}.glass-card{-webkit-backdrop-filter:blur(22px)saturate(150%);backdrop-filter:blur(22px)saturate(150%);border:1px solid #ffffffbf;box-shadow:0 18px 44px -12px #53539833,0 4px 12px -4px #5353981a,inset 0 1px #fffffff2,inset 0 -1px #ffffff73}.glass-card.lift:hover{box-shadow:0 30px 66px -16px #53539842,0 6px 16px -6px #5353981f,inset 0 1px #fffffff2,inset 0 -1px #ffffff73}@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.glass-card{background:radial-gradient(118% 88% at 50% 106%,var(--glass-tint,#fff) 0%,#fff0 72%),#fffffff0}@supports (color:color-mix(in lab,red,red)){.glass-card{background:radial-gradient(118% 88% at 50% 106%,color-mix(in srgb,var(--glass-tint,#fff) 82%,transparent),#fff0 72%),#fffffff0}}}.glass-sheen:after{content:"";border-radius:inherit;pointer-events:none;background:linear-gradient(135deg,#ffffff8c,#ffffff1f,#fff0 52%);position:absolute;inset:0}.glow{pointer-events:none;background:radial-gradient(closest-side,var(--glow) 0%,#fff0 100%);border-radius:9999px;position:absolute}.nav-link{position:relative}.nav-link:after{content:"";width:0;height:1.5px;transition:width .42s var(--ease-out-expo),opacity .42s var(--ease-out-expo);opacity:0;background:currentColor;border-radius:1px;position:absolute;bottom:6px;left:50%;transform:translate(-50%)}.nav-link:hover:after,.nav-link:focus-visible:after,.nav-link.is-current:after{opacity:.9;width:calc(100% - 2px)}html.motion-ready .parallax{transform:translate3d(0,calc(var(--sy) * var(--depth,.1)),0);will-change:transform}.lift{transition:translate .62s var(--ease-out-expo),scale .62s var(--ease-out-expo),box-shadow .62s var(--ease-out-expo)}.lift:hover{translate:0 -10px;box-shadow:0 26px 60px #53539829,inset 0 1px #ffffffe6}.lift:active{transition-duration:.18s;translate:0 -4px;scale:.995}@media(prefers-reduced-motion:reduce){html.motion-ready [data-reveal]{filter:none;transition:opacity .4s ease var(--reveal-delay,0s);transform:none}html.motion-ready .parallax{transform:none}.lift,.lift:hover,.lift:active{transition:box-shadow .3s;translate:none;scale:none}.nav-link:after{transition:none}}.no-scrollbar::-webkit-scrollbar{display:none}.scrollbar-none::-webkit-scrollbar{display:none}.no-scrollbar,.scrollbar-none{-ms-overflow-style:none;scrollbar-width:none}@media(max-width:767px){html,body{width:100%;overflow-x:hidden}body{display:block}div[data-name],div[data-name="Landing Page"],.w-\[1512px\]{box-sizing:border-box;width:100%!important;max-width:100vw!important}.w-\[1352px\],.w-\[1112px\],.w-\[1047px\],.w-\[1036px\],.w-\[1025px\],.w-\[962px\],.w-\[886px\]{box-sizing:border-box;width:100%!important;max-width:100%!important}.mx-\[80px\]{width:calc(100% - 2rem)!important;margin-left:1rem!important;margin-right:1rem!important}.mx-auto{box-sizing:border-box;padding-left:1rem;padding-right:1rem}.flex:not(.items-center){flex-wrap:wrap}.w-\[655px\],.w-\[640px\],.w-\[638px\],.w-\[346px\],.w-\[333px\],.w-\[301px\],.w-\[411px\],.w-\[439px\],.w-\[496px\],.w-\[520px\],.w-\[594px\],.w-\[596px\],.w-\[316px\],.w-\[515px\],.w-\[850px\]{width:100%!important;max-width:100%!important}.ml-\[124px\],.ml-\[111px\],.ml-\[148px\],.ml-\[150px\],.ml-\[53px\],.ml-\[62px\],.ml-\[203px\]{margin-top:1.5rem!important;margin-left:0!important}.gap-\[120px\]{gap:2rem!important}.text-\[72px\]{font-size:2.5rem!important;line-height:1.15!important}.text-\[48px\],.text-\[45px\],.text-\[42px\],.text-\[40px\]{font-size:1.85rem!important;line-height:1.25!important}img:not([class*=max-w-none]),svg:not([class*=max-w-none]){max-width:100%!important}.h-\[866px\],.h-\[921px\],.h-\[1404px\]{text-align:center!important;box-sizing:border-box!important;flex-direction:column!important;justify-content:flex-start!important;align-items:center!important;gap:1.25rem!important;height:auto!important;min-height:auto!important;padding:2rem 1rem!important;display:flex!important;position:relative!important}.h-\[866px\]>*,.h-\[921px\]>*,.h-\[1404px\]>*{text-align:center!important;max-width:100%!important;margin-left:auto!important;margin-right:auto!important;position:relative!important;inset:auto!important;transform:none!important}.h-\[866px\] img,.h-\[921px\] img,.h-\[1404px\] img,.h-\[866px\] figure,.h-\[921px\] figure,.h-\[1404px\] figure,.h-\[866px\] .reveal,.h-\[921px\] .reveal,.h-\[1404px\] .reveal{align-self:center!important;max-width:100%!important;height:auto!important;margin-left:auto!important;margin-right:auto!important;display:block!important}div[data-reveal=card]{flex-direction:column!important;width:100%!important}div[data-reveal=card]>a,div[data-reveal=card]>div{width:100%!important;max-width:100%!important}.sticky{z-index:50;width:100%;position:sticky;top:0}}@media(max-width:640px){.px-\[48px\]{padding-left:1rem!important;padding-right:1rem!important}.py-\[48px\]{padding-top:1.25rem!important;padding-bottom:1.25rem!important}.text-\[72px\]{font-size:2rem!important}.text-\[28px\]{font-size:1.35rem!important}.pt-\[105px\],.pt-\[181px\],.pt-\[111px\],.pt-\[106px\]{padding-top:2.5rem!important}}@property --tw-translate-x{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-y{syntax:"*";inherits:false;initial-value:0}@property --tw-translate-z{syntax:"*";inherits:false;initial-value:0}@property --tw-scale-x{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-y{syntax:"*";inherits:false;initial-value:1}@property --tw-scale-z{syntax:"*";inherits:false;initial-value:1}@property --tw-rotate-x{syntax:"*";inherits:false}@property --tw-rotate-y{syntax:"*";inherits:false}@property --tw-rotate-z{syntax:"*";inherits:false}@property --tw-skew-x{syntax:"*";inherits:false}@property --tw-skew-y{syntax:"*";inherits:false}@property --tw-space-y-reverse{syntax:"*";inherits:false;initial-value:0}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-gradient-position{syntax:"*";inherits:false}@property --tw-gradient-from{syntax:"<color>";inherits:false;initial-value:#0000}@property --tw-gradient-via{syntax:"<color>";inherits:false;initial-value:#0000}@property --tw-gradient-to{syntax:"<color>";inherits:false;initial-value:#0000}@property --tw-gradient-stops{syntax:"*";inherits:false}@property --tw-gradient-via-stops{syntax:"*";inherits:false}@property --tw-gradient-from-position{syntax:"<length-percentage>";inherits:false;initial-value:0%}@property --tw-gradient-via-position{syntax:"<length-percentage>";inherits:false;initial-value:50%}@property --tw-gradient-to-position{syntax:"<length-percentage>";inherits:false;initial-value:100%}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-shadow-color{syntax:"*";inherits:false}@property --tw-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-inset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-shadow-color{syntax:"*";inherits:false}@property --tw-inset-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-ring-color{syntax:"*";inherits:false}@property --tw-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-inset-ring-color{syntax:"*";inherits:false}@property --tw-inset-ring-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-ring-inset{syntax:"*";inherits:false}@property --tw-ring-offset-width{syntax:"<length>";inherits:false;initial-value:0}@property --tw-ring-offset-color{syntax:"*";inherits:false;initial-value:#fff}@property --tw-ring-offset-shadow{syntax:"*";inherits:false;initial-value:0 0 #0000}@property --tw-blur{syntax:"*";inherits:false}@property --tw-brightness{syntax:"*";inherits:false}@property --tw-contrast{syntax:"*";inherits:false}@property --tw-grayscale{syntax:"*";inherits:false}@property --tw-hue-rotate{syntax:"*";inherits:false}@property --tw-invert{syntax:"*";inherits:false}@property --tw-opacity{syntax:"*";inherits:false}@property --tw-saturate{syntax:"*";inherits:false}@property --tw-sepia{syntax:"*";inherits:false}@property --tw-drop-shadow{syntax:"*";inherits:false}@property --tw-drop-shadow-color{syntax:"*";inherits:false}@property --tw-drop-shadow-alpha{syntax:"<percentage>";inherits:false;initial-value:100%}@property --tw-drop-shadow-size{syntax:"*";inherits:false}@property --tw-duration{syntax:"*";inherits:false}@property --tw-ease{syntax:"*";inherits:false}
+
+    
+/* Antigravity Font Utilities */
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.font-roboto,
+.font-\[\'Roboto\'\] {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+}
+.font-display,
+.font-serif,
+.font-editorial,
+.font-\[\'Fraunces\'\,serif\],
+[class*="font-['Fraunces'"] {
+  font-family: 'Fraunces', Georgia, serif !important;
+}
+.font-mono,
+.font-\[\'IBM_Plex_Mono\'\,monospace\],
+[class*="font-['IBM_Plex_Mono'"] {
+  font-family: 'IBM Plex Mono', monospace !important;
+}
+.font-hand,
+.font-notes,
+.font-\[\'Caveat\'\,cursive\],
+[class*="font-['Caveat'"] {
+  font-family: 'Caveat', cursive !important;
+}
+</style>
+    <style>/* Aura case study — the same measure and type scale as the other inside
+   pages (1112px column, Abhaya Libre headings, Roboto body, 13px tracked
+   eyebrows), with Aura's own ivory, plum and gold for the tints. */
+:root {
+  --au-ivory: #f3efe7;
+  --au-sand: #f3eee4;
+  --au-plum: #3b2a5a;
+  --au-gold: #c89b3c;
+  --au-ink: #090a0a;
+  --au-muted: #5a5468;
+  --au-line: #e7e1d6;
+}
+[id^="au-"] {
+  scroll-margin-top: 96px;
+}
+
+.au-col {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
+  padding: 0 16px;
+}
+.au-eyebrow {
+  font:
+    700 13px/1 Roboto,
+    sans-serif;
+  letter-spacing: 2.6px;
+  color: var(--au-ink);
+  font-variation-settings: "wdth" 100;
+}
+.au-h2 {
+  font-family: "Abhaya Libre", Georgia, serif;
+  font-weight: 600;
+  line-height: 1.05;
+  font-size: 34px;
+  color: var(--au-ink);
+}
+.au-lede {
+  margin-top: 18px;
+  max-width: 655px;
+}
+.au-body {
+  font:
+    400 16px/24px Roboto,
+    sans-serif;
+  color: #000;
+  font-variation-settings: "wdth" 100;
+}
+.au-body + .au-body {
+  margin-top: 12px;
+}
+.au-body b {
+  font-weight: 700;
+}
+.au-block {
+  font:
+    500 20px/1.15 Roboto,
+    sans-serif;
+  color: #0a0a0a;
+  font-variation-settings: "wdth" 100;
+}
+.au-notes {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0 0 0 8px;
+  font:
+    400 16px/24px Roboto,
+    sans-serif;
+  color: #000;
+  font-variation-settings: "wdth" 100;
+}
+.au-notes li {
+  display: flex;
+  gap: 10px;
+}
+.au-notes li + li {
+  margin-top: 6px;
+}
+.au-notes li::before {
+  content: "·";
+  flex-shrink: 0;
+}
+.au-notes b {
+  font-weight: 700;
+}
+.au-section {
+  padding-top: 64px;
+}
+
+/* Hero */
+.au-hero {
+  background: linear-gradient(180deg, #fbf8f3 0%, var(--au-ivory) 100%);
+  padding: 40px 16px 0;
+  overflow: clip;
+  text-align: center;
+}
+.au-hero-title {
+  font-family: "Abhaya Libre", Georgia, serif;
+  font-weight: 600;
+  font-size: 56px;
+  line-height: 1;
+  color: #000;
+}
+.au-hero-sub {
+  margin: 18px auto 0;
+  max-width: 640px;
+  font:
+    400 16px/1.45 Roboto,
+    sans-serif;
+  color: #000;
+  font-variation-settings: "wdth" 100;
+}
+.au-hero-tag {
+  margin-top: 18px;
+  display: inline-flex;
+  gap: 20px;
+  align-items: center;
+  font:
+    500 12px Roboto,
+    sans-serif;
+  color: #292967;
+  letter-spacing: 1.6px;
+  font-variation-settings: "wdth" 100;
+}
+.au-hero-tag i {
+  font-style: normal;
+  font-weight: 700;
+  color: #000;
+}
+.au-hero-phones {
+  margin: 40px auto 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 14px;
+}
+.au-hero-phones .au-phone {
+  width: 30%;
+  max-width: 300px;
+}
+.au-hero-phones .au-phone:nth-child(2) {
+  margin-top: -18px;
+}
+
+/* Phone frame — the same dark bezel as the phone on the home page's card */
+.au-phone {
+  position: relative;
+  flex-shrink: 0;
+  border: 6px solid #1b1b1f;
+  border-radius: 34px;
+  overflow: hidden;
+  background: var(--au-ivory);
+  box-shadow: 0 30px 50px -28px rgba(20, 30, 60, 0.55);
+  aspect-ratio: 430 / 932;
+}
+.au-phone img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.au-hero .au-phone {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 0;
+  aspect-ratio: 430 / 780;
+}
+
+/* Overview & role */
+.au-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.au-role-title {
+  margin-top: 26px;
+  font:
+    500 20px/1.4 Roboto,
+    sans-serif;
+  color: var(--au-ink);
+  font-variation-settings: "wdth" 100;
+}
+.au-stats {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--au-line);
+  border: 1px solid var(--au-line);
+}
+.au-stat {
+  background: #fff;
+  padding: 20px 18px;
+}
+.au-stat strong {
+  display: block;
+  font-family: "Abhaya Libre", Georgia, serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--au-plum);
+}
+.au-stat span {
+  display: block;
+  margin-top: 8px;
+  font:
+    400 14px/20px Roboto,
+    sans-serif;
+  color: var(--au-muted);
+}
+
+/* Principles */
+.au-grid2 {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px 64px;
+}
+.au-principle {
+  border-top: 1px solid var(--au-line);
+  padding-top: 18px;
+}
+.au-principle .au-num {
+  font:
+    500 13px "IBM Plex Mono",
+    monospace;
+  color: var(--au-gold);
+}
+.au-principle .au-block {
+  margin-top: 10px;
+}
+.au-principle .au-body {
+  margin-top: 8px;
+}
+
+/* Personas */
+.au-personas {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.au-persona {
+  background: var(--au-sand);
+  border-radius: 12px;
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+}
+.au-persona .au-block {
+  font-size: 19px;
+}
+.au-persona .au-meta {
+  margin-top: 6px;
+  font:
+    400 13px/18px "IBM Plex Mono",
+    monospace;
+  color: var(--au-muted);
+}
+.au-persona blockquote {
+  margin: 16px 0 0;
+  font-family: "Abhaya Libre", Georgia, serif;
+  font-weight: 600;
+  font-size: 21px;
+  line-height: 1.25;
+  color: var(--au-plum);
+}
+.au-persona dl {
+  margin: auto 0 0;
+  padding-top: 18px;
+  font:
+    400 14px/20px Roboto,
+    sans-serif;
+}
+.au-persona dt {
+  font-weight: 700;
+  margin-top: 8px;
+}
+.au-persona dd {
+  margin: 0;
+}
+
+/* Tables — IA, signals, metrics */
+.au-table {
+  margin-top: 32px;
+  width: 100%;
+  border-collapse: collapse;
+  font:
+    400 15px/22px Roboto,
+    sans-serif;
+  font-variation-settings: "wdth" 100;
+}
+.au-table th {
+  text-align: left;
+  font:
+    700 12px/1 Roboto,
+    sans-serif;
+  letter-spacing: 2px;
+  color: var(--au-muted);
+  padding: 0 16px 12px 0;
+  border-bottom: 1px solid #000;
+}
+.au-table td {
+  padding: 14px 16px 14px 0;
+  border-bottom: 1px solid var(--au-line);
+  vertical-align: top;
+}
+.au-table td:first-child {
+  font-weight: 500;
+  white-space: nowrap;
+}
+.au-table .au-mono {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--au-plum);
+}
+.au-scroll {
+  overflow-x: auto;
+}
+
+.au-chips {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.au-chip {
+  font:
+    400 13px/1 Roboto,
+    sans-serif;
+  padding: 8px 12px;
+  border: 1px solid var(--au-line);
+  border-radius: 999px;
+  background: #fff;
+}
+
+/* Journey */
+.au-journey {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  counter-reset: stage;
+}
+.au-stage {
+  position: relative;
+  padding: 0 0 22px 34px;
+  border-left: 1px solid var(--au-gold);
+  margin-left: 6px;
+}
+.au-stage::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--au-gold);
+}
+.au-stage .au-num {
+  font:
+    500 13px "IBM Plex Mono",
+    monospace;
+  color: var(--au-gold);
+}
+.au-stage .au-block {
+  font-size: 18px;
+  margin-top: 4px;
+}
+.au-stage .au-body {
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.au-loop {
+  margin-top: 28px;
+  background: #dce8e8;
+  padding: 10px 18px;
+  max-width: 638px;
+}
+
+/* Screen walkthrough */
+.au-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding-top: 72px;
+}
+.au-screen .au-phone {
+  width: 280px;
+  max-width: 80%;
+}
+.au-screen-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px;
+  margin-bottom: 20px;
+}
+.au-screen-label span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font:
+    400 16px Roboto,
+    sans-serif;
+}
+.au-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--au-sand);
+  color: var(--au-plum);
+  display: grid;
+  place-items: center;
+  font:
+    600 14px "IBM Plex Mono",
+    monospace;
+}
+.au-screen .au-body {
+  margin-top: 16px;
+}
+.au-why {
+  margin-top: 22px;
+  background: #dce8e8;
+  padding: 10px 18px;
+}
+
+/* Design system */
+.au-swatches {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.au-swatch {
+  border: 1px solid var(--au-line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+.au-swatch i {
+  display: block;
+  height: 72px;
+}
+.au-swatch div {
+  padding: 10px 12px;
+  font:
+    400 13px/18px Roboto,
+    sans-serif;
+}
+.au-swatch b {
+  display: block;
+  font-weight: 500;
+  font-size: 15px;
+}
+.au-swatch code {
+  font:
+    400 12px "IBM Plex Mono",
+    monospace;
+  color: var(--au-muted);
+}
+.au-type {
+  margin-top: 36px;
+  display: grid;
+  gap: 0;
+}
+.au-type-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 18px 0;
+  border-top: 1px solid var(--au-line);
+}
+.au-type-row .au-sample {
+  font-size: 30px;
+  line-height: 1.1;
+  color: var(--au-plum);
+}
+
+/* Roadmap */
+.au-waves {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+.au-wave {
+  border-radius: 12px;
+  padding: 26px 24px;
+}
+.au-wave .au-eyebrow {
+  color: var(--au-muted);
+  letter-spacing: 2px;
+}
+.au-wave .au-block {
+  margin-top: 12px;
+}
+
+/* Closing */
+.au-close {
+  margin-top: 96px;
+  background: var(--au-plum);
+  color: #fbf8f3;
+  text-align: center;
+  padding: 72px 16px;
+}
+.au-close p:first-child {
+  font-family: "Abhaya Libre", Georgia, serif;
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 1.1;
+}
+.au-close p + p {
+  margin: 20px auto 0;
+  max-width: 640px;
+  font:
+    400 16px/24px Roboto,
+    sans-serif;
+  opacity: 0.85;
+}
+
+@media (min-width: 768px) {
+  .au-col {
+    width: 1112px;
+    padding: 0;
+  }
+  .au-h2 {
+    font-size: 40px;
+  }
+  .au-section {
+    padding-top: 150px;
+  }
+  .au-hero {
+    padding-top: 75px;
+  }
+  .au-hero-title {
+    font-size: 72px;
+  }
+  .au-hero-tag {
+    font-size: 18px;
+    letter-spacing: 2.4px;
+    gap: 46px;
+  }
+  .au-hero-phones {
+    gap: 48px;
+    margin-top: 64px;
+  }
+  .au-hero-phones .au-phone {
+    width: 300px;
+  }
+  .au-hero-phones .au-phone:nth-child(2) {
+    margin-top: -40px;
+  }
+  .au-hero .au-phone {
+    border-radius: 44px 44px 0 0;
+    border-width: 9px;
+    border-bottom: 0;
+  }
+  .au-overview {
+    flex-direction: row;
+    gap: 124px;
+  }
+  .au-overview > :first-child {
+    width: 655px;
+  }
+  .au-overview > :last-child {
+    width: 333px;
+  }
+  .au-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .au-grid2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .au-personas {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .au-journey {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 36px 28px;
+  }
+  .au-stage {
+    border-left: 0;
+    border-top: 1px solid var(--au-gold);
+    margin-left: 0;
+    padding: 22px 0 0;
+  }
+  .au-stage::before {
+    left: 0;
+    top: -6px;
+  }
+  .au-screen {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 96px;
+    padding-top: 140px;
+  }
+  .au-screen.au-flip {
+    flex-direction: row-reverse;
+  }
+  .au-screen .au-phone {
+    width: 320px;
+  }
+  .au-screen > div:last-child {
+    flex: 1;
+    padding-top: 24px;
+    max-width: 663px;
+  }
+  .au-swatches {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .au-type-row {
+    grid-template-columns: 340px 1fr 120px;
+    align-items: baseline;
+    gap: 24px;
+  }
+  .au-waves {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .au-close {
+    margin-top: 180px;
+    padding: 110px 16px;
+  }
+  .au-close p:first-child {
+    font-size: 56px;
+  }
+}
+</style>
+    <style>
+      [data-name] > div:first-child > div:nth-child(2) p,
+      [data-name] > div:first-child > a:last-child {font-family:'Roboto',Arial,sans-serif!important;letter-spacing:0!important;font-size:16px!important;line-height:1.45!important}
+      [data-name] > div:first-child > div:nth-child(2) a p{font-weight:400!important;color:#777b91!important}
+      [data-name] > div:first-child > div:nth-child(2) > div p{font-weight:600!important;color:#34349a!important}
+      [data-name] > div:first-child > div:nth-child(2) > div span{height:1px!important;background:#514fd6!important}
+      @media(max-width:767px){
+        [data-name] > div:first-child > div:nth-child(2) p,
+        [data-name] > div:first-child > a:last-child{font-size:12px!important}
+      }
+    </style>
+    <style>
+      .au-protected{display:none!important}
+      .au-gate{width:min(1112px,calc(100% - 32px));margin:110px auto 40px;padding:72px 24px;text-align:center;border:1px solid #e7e5ef;border-radius:20px;background:linear-gradient(145deg,#fbfbff 0%,#f4f2ff 52%,#f5fbf8 100%);box-shadow:0 20px 60px rgba(68,58,132,.08)}
+      .au-gate__eyebrow{margin:0;color:#5553a5;font:600 12px/1.2 'Roboto',Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase}
+      .au-gate__title{margin:18px 0 0;color:#111217;font:600 clamp(32px,4vw,50px)/1.08 'Fraunces',Georgia,serif;letter-spacing:-.025em}
+      .au-gate__copy{max-width:520px;margin:18px auto 0;color:#6f7180;font:400 16px/1.6 'Roboto',Arial,sans-serif}
+      .au-gate__form{display:flex;justify-content:center;gap:10px;max-width:500px;margin:34px auto 0}
+      .au-gate__input{min-width:0;flex:1;height:48px;padding:0 16px;border:1px solid #d8d6e5;border-radius:10px;background:#fff;color:#15151a;font:400 16px/1 'Roboto',Arial,sans-serif;outline:none;box-shadow:inset 0 1px 2px rgba(20,20,40,.03)}
+      .au-gate__input:focus{border-color:#625fd9;box-shadow:0 0 0 3px rgba(98,95,217,.12)}
+      .au-gate__button{height:48px;padding:0 22px;border:0;border-radius:10px;background:#4f4dc5;color:#fff;font:600 15px/1 'Roboto',Arial,sans-serif;cursor:pointer;transition:transform .2s ease,background .2s ease}
+      .au-gate__button:hover{background:#403eac;transform:translateY(-1px)}
+      .au-gate__error{min-height:22px;margin:12px 0 0;color:#b33b52;font:500 13px/1.5 'Roboto',Arial,sans-serif}
+      .au-gate__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+      @media(max-width:600px){.au-gate{margin-top:64px;padding:48px 20px}.au-gate__form{flex-direction:column}.au-gate__button{width:100%}}
+    </style>
+    <script>
+      (function(){
+        var ACCESS_KEY='aura-access-v1';
+        var PASSWORD='ps@design0815';
+        function initAuraGate(){
+          var page=document.querySelector('[data-name="Aura"]');
+          var overview=document.getElementById('au-overview');
+          if(!page||!overview||overview.parentElement!==page)return;
+          var gate=document.createElement('section');
+          gate.className='au-gate';
+          gate.setAttribute('aria-labelledby','au-gate-title');
+          gate.innerHTML='<p class="au-gate__eyebrow">Protected case study</p><h2 class="au-gate__title" id="au-gate-title">Enter password to continue</h2><p class="au-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="au-gate__form"><label class="au-gate__sr" for="au-password">Password</label><input class="au-gate__input" id="au-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="au-gate__button" type="submit">View case study</button></form><p class="au-gate__error" role="alert" aria-live="polite"></p>';
+          overview.insertAdjacentElement('afterend',gate);
+          var protectedNodes=[];
+          for(var node=gate.nextElementSibling;node;node=node.nextElementSibling){protectedNodes.push(node);node.classList.add('au-protected');}
+          /* While locked, the header's section links point at hidden sections;
+             send them to the gate instead. */
+          function onNavClick(event){
+            var link=event.target.closest&&event.target.closest('a[href^="#"]');
+            if(!link)return;
+            var target=document.getElementById(link.getAttribute('href').slice(1));
+            if(!target||!target.classList.contains('au-protected'))return;
+            event.preventDefault();
+            gate.scrollIntoView({behavior:'smooth',block:'center'});
+          }
+          document.addEventListener('click',onNavClick);
+          function unlock(){
+            protectedNodes.forEach(function(el){el.classList.remove('au-protected');});
+            gate.remove();
+            document.removeEventListener('click',onNavClick);
+            try{sessionStorage.setItem(ACCESS_KEY,'1');}catch(e){}
+            /* The reveal sweep runs on scroll; nudge it so the sections now
+               in view fade in without waiting for the reader to move. */
+            window.dispatchEvent(new Event('scroll'));
+          }
+          try{if(sessionStorage.getItem(ACCESS_KEY)==='1'){unlock();return;}}catch(e){}
+          var form=gate.querySelector('form'),input=gate.querySelector('input'),error=gate.querySelector('.au-gate__error');
+          form.addEventListener('submit',function(event){event.preventDefault();if(input.value===PASSWORD){unlock();return;}error.textContent='Incorrect password. Please try again.';input.value='';input.focus();});
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initAuraGate);else initAuraGate();
+      })();
+    </script>
+  </head>
+  <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
+    <div id="root"><link rel="preload" as="image" href="./assets/auraScreenHome.jpg"/><link rel="preload" as="image" href="./assets/auraScreenDiscover.jpg"/><link rel="preload" as="image" href="./assets/auraScreenOrders.jpg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Aura"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-overview"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Overview</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-people"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">People</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-structure"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Structure</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-screens"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Screens</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-system"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">System</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-roadmap"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Roadmap</p></a></div></div>
+<div class="au-hero">
+  <p class="au-hero-title" data-reveal="top">Aura</p>
+  <p class="au-hero-sub" data-reveal="top" data-reveal-delay="1">
+    A personal designer in every NRI pocket — the conversational fashion
+    platform built for the global Indian community
+  </p>
+  <div class="au-hero-tag" data-reveal="top" data-reveal-delay="1">
+    <i aria-hidden="true">I</i><span>Conversational fashion</span
+    ><i aria-hidden="true">I</i>
+  </div>
+  <div class="au-hero-phones" data-reveal="bottom" data-reveal-delay="2">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenDiscover.jpg"
+        alt="Aura Discover: curated collections, editorial stories and designer spotlight"
+      />
+    </div>
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenHome.jpg"
+        alt="Aura home: Editorial Stories, upcoming events and bridal lehengas"
+      />
+    </div>
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenOrders.jpg"
+        alt="Aura Orders: pieces in production with stage trackers"
+      />
+    </div>
+  </div>
+</div>
+
+<!-- Overview & role -->
+<div class="au-col" id="au-overview" style="padding-top: 105px">
+  <div class="au-overview">
+    <div data-reveal="left">
+      <p class="au-eyebrow">Overview</p>
+      <p class="au-body" style="margin-top: 21px">
+        For Indians living abroad, dressing for a wedding back home is a
+        logistics problem dressed up as a shopping one. The outfit has to
+        <b
+          >fit without a trial, clear customs without a surprise bill, and land
+          before the sangeet</b
+        >
+        — usually ordered from a boutique the customer has never met.
+      </p>
+      <p class="au-body">
+        Aura is not a catalog. It opens with a conversation —
+        <b>“What are you dressing for?”</b> — and answers with a stylist backed
+        by a workshop of verified artisans. Every screen ladders up to that
+        promise: occasion before object, fit as a guarantee, and every price
+        shown next to a delivery date.
+      </p>
+    </div>
+    <div data-reveal="right" data-reveal-delay="1">
+      <p class="au-eyebrow">Role</p>
+      <p class="au-role-title">Product Designer&nbsp;|&nbsp;Aura</p>
+      <p class="au-body" style="margin-top: 14px">
+        UX Strategy, Information Architecture, Interaction &amp; Visual Design,
+        Design System, Prototyping
+      </p>
+      <p class="au-body" style="margin-top: 30px">July 2026 - September 2026</p>
+    </div>
+  </div>
+  <div class="au-stats" data-reveal="bottom">
+    <div class="au-stat">
+      <strong>10</strong><span>experience pillars</span>
+    </div>
+    <div class="au-stat"><strong>42</strong><span>screens specified</span></div>
+    <div class="au-stat"><strong>5</strong><span>NRI personas</span></div>
+    <div class="au-stat">
+      <strong>8</strong><span>stage customer journey</span>
+    </div>
+  </div>
+</div>
+
+<!-- Principles -->
+<div class="au-col au-section" id="au-principles" data-reveal="scale">
+  <h2 class="au-h2">Design principles</h2>
+  <p class="au-body au-lede">
+    Aura is a conversation with a stylist who happens to have a workshop of
+    artisans behind them. Every UX decision had to ladder up to that.
+  </p>
+  <div class="au-grid2">
+    <div class="au-principle">
+      <p class="au-num">01</p>
+      <p class="au-block">Occasion before object</p>
+      <p class="au-body">
+        Never open with a grid of products. Open with the moment — a wedding, a
+        Diwali dinner, a temple visit — and let intent drive everything else.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">02</p>
+      <p class="au-block">Ask, then curate</p>
+      <p class="au-body">
+        A few sharp questions earn a small, hand-picked shortlist. Three
+        considered options beat three hundred.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">03</p>
+      <p class="au-block">Show the human</p>
+      <p class="au-body">
+        Boutique names, artisan photos, city of origin and craft heritage are
+        first-class content, not footnotes.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">04</p>
+      <p class="au-block">Fit is a promise, not a form</p>
+      <p class="au-body">
+        Every measurement flow ends with a guarantee. If it doesn’t fit, Aura
+        fixes it — and that reshapes onboarding, checkout and delivery.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">05</p>
+      <p class="au-block">Time is the hidden currency</p>
+      <p class="au-body">
+        Every price lives next to a delivery window; every delivery window lives
+        next to an event date. The biggest fear isn’t cost — it’s missing the
+        occasion.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">06</p>
+      <p class="au-block">Make transparency the feature</p>
+      <p class="au-body">
+        Cutting, embroidery, quality check, dispatch — the customer sees each
+        step with a real photo. Progress is content.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">07</p>
+      <p class="au-block">Design for two homes</p>
+      <p class="au-body">
+        US billing, India delivery, a mother’s measurements, a daughter’s
+        preferences. Data, IA and copy all assume dual geography.
+      </p>
+    </div>
+    <div class="au-principle">
+      <p class="au-num">08</p>
+      <p class="au-block">Personalization compounds</p>
+      <p class="au-body">
+        Every tap, save, return and measurement trains the Fashion Graph. The
+        app should feel like it remembers — because it does.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Personas -->
+<div class="au-col au-section" id="au-people" data-reveal="scale">
+  <h2 class="au-h2">Five NRI customers</h2>
+  <p class="au-body au-lede">
+    Each persona sets specific screens, defaults and edge cases across the
+    product.
+  </p>
+  <div class="au-personas">
+    <div class="au-persona">
+      <p class="au-block">Priya, the Bride-to-Be</p>
+      <p class="au-meta">Toronto · 32 · Product Manager</p>
+      <blockquote>
+        “My wedding is in Hyderabad in five months. I have opinions but no
+        time.”
+      </blockquote>
+      <dl>
+        <dt>Budget</dt>
+        <dd>$3,500 – $8,000 across 4 outfits</dd>
+        <dt>Biggest fear</dt>
+        <dd>The lehenga doesn’t arrive in time, or doesn’t fit.</dd>
+      </dl>
+    </div>
+    <div class="au-persona">
+      <p class="au-block">Anjali, the Occasional Guest</p>
+      <p class="au-meta">Jersey City · 29 · Attorney</p>
+      <blockquote>
+        “Two Indian weddings a year, and I refuse to wear the same outfit
+        twice.”
+      </blockquote>
+      <dl>
+        <dt>Budget</dt>
+        <dd>$250 – $600 per event</dd>
+        <dt>Biggest fear</dt>
+        <dd>Paying $500 for something that arrives ill-fitting.</dd>
+      </dl>
+    </div>
+    <div class="au-persona">
+      <p class="au-block">Ravi &amp; Meena, the Family Planners</p>
+      <p class="au-meta">Sunnyvale · early 40s</p>
+      <blockquote>
+        “Seven functions, four family members, one panic.”
+      </blockquote>
+      <dl>
+        <dt>Budget</dt>
+        <dd>$1,800 – $4,000 for the trip</dd>
+        <dt>Biggest fear</dt>
+        <dd>One outfit ruins the family photos.</dd>
+      </dl>
+    </div>
+    <div class="au-persona">
+      <p class="au-block">Kavya, the Festive Regular</p>
+      <p class="au-meta">London · 36 · Consultant, mother of two</p>
+      <blockquote>
+        “Put-together for Diwali, Karwa Chauth, Onam — without spending my
+        weekend scrolling.”
+      </blockquote>
+      <dl>
+        <dt>Budget</dt>
+        <dd>£200 – £700 per festival</dd>
+        <dt>Biggest fear</dt>
+        <dd>Looking like she tried too hard, or not enough.</dd>
+      </dl>
+    </div>
+    <div class="au-persona">
+      <p class="au-block">Arjun, the Groomsman</p>
+      <p class="au-meta">Austin · 34 · Startup founder</p>
+      <blockquote>
+        “A sherwani that ships to Delhi, fits me at 6′2″, and doesn’t look like
+        a costume.”
+      </blockquote>
+      <dl>
+        <dt>Budget</dt>
+        <dd>$800 – $1,500</dd>
+        <dt>Biggest fear</dt>
+        <dd>Standing out for the wrong reason in the group photo.</dd>
+      </dl>
+    </div>
+    <div class="au-persona" style="background: #dce8e8">
+      <p class="au-block">Seven jobs to be done</p>
+      <p class="au-body" style="margin-top: 12px">
+        Every screen had to advance one of them — if a feature didn’t map to a
+        job, it was cut.
+      </p>
+      <ul class="au-notes" style="padding-left: 0">
+        <li>Help me look right for this moment</li>
+        <li>Get me a fit I can trust</li>
+        <li>Make my inspiration real</li>
+        <li>Coordinate with my people</li>
+        <li>Get it in my hands on time</li>
+        <li>Prove the craft is real</li>
+        <li>Remember me next time</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- IA -->
+<div class="au-col au-section" id="au-structure" data-reveal="scale">
+  <h2 class="au-h2">Information architecture</h2>
+  <p class="au-body au-lede">
+    Aura organizes around <b>Moments</b> (why you shop) and <b>People</b> (who
+    you shop for), not categories. Category browse still exists — one tap below
+    the surface.
+  </p>
+  <div class="au-scroll">
+    <table class="au-table">
+      <thead>
+        <tr>
+          <th>Tab</th>
+          <th>What lives here</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Home</td>
+          <td>
+            Occasion-first landing, the AI stylist entry point, upcoming events,
+            reorder and wardrobe suggestions.
+          </td>
+        </tr>
+        <tr>
+          <td>Discover</td>
+          <td>
+            Curated collections, editorial stories, designer spotlights,
+            inspiration and community looks.
+          </td>
+        </tr>
+        <tr>
+          <td>Design</td>
+          <td>
+            AI Personal Designer chat, inspiration upload, saved looks, designs
+            in progress.
+          </td>
+        </tr>
+        <tr>
+          <td>Wardrobe</td>
+          <td>
+            Owned items, measurement profiles, family members, reorder
+            shortcuts, alteration credits.
+          </td>
+        </tr>
+        <tr>
+          <td>Orders</td>
+          <td>
+            Live production tracker, delivery, returns, alterations, group
+            orders.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="au-block" style="margin-top: 48px">Global controls</p>
+  <ul class="au-notes">
+    <li>
+      <span
+        ><b>Ship to</b> — persistent in the header; resets shipping and duties
+        everywhere.</span
+      >
+    </li>
+    <li>
+      <span
+        ><b>Currency</b> follows Ship to by default, overridable in
+        Settings.</span
+      >
+    </li>
+    <li>
+      <span
+        ><b>Wearing for</b> — the person selector that decides which measurement
+        profile applies.</span
+      >
+    </li>
+    <li>
+      <span
+        ><b>Deliver by</b> — an event-date pill that filters designers by
+        feasible lead time.</span
+      >
+    </li>
+  </ul>
+  <p class="au-block" style="margin-top: 40px">
+    Secondary browse, never front-loaded
+  </p>
+  <div class="au-chips">
+    <span class="au-chip">By moment</span><span class="au-chip">By person</span
+    ><span class="au-chip">By silhouette</span
+    ><span class="au-chip">By craft</span
+    ><span class="au-chip">By city / region</span
+    ><span class="au-chip">By designer</span>
+  </div>
+</div>
+
+<!-- Journey -->
+<div class="au-col au-section" id="au-journey" data-reveal="scale">
+  <h2 class="au-h2">The eight-stage NRI journey</h2>
+  <p class="au-body au-lede">
+    From the moment an invitation arrives to the wedding photo on the fridge —
+    each stage has its own screens, notifications and success metric.
+  </p>
+  <div class="au-journey">
+    <div class="au-stage">
+      <p class="au-num">01</p>
+      <p class="au-block">Trigger</p>
+      <p class="au-body">
+        An invite, a festival on the calendar, a friend’s post. Aura shows up as
+        a push, the occasion calendar, an inspiration upload.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">02</p>
+      <p class="au-block">Discover</p>
+      <p class="au-body">
+        “What should I wear? What’s the vibe?” — the stylist chat, look boards
+        and occasion guides.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">03</p>
+      <p class="au-block">Decide</p>
+      <p class="au-body">
+        Narrow to two or three looks, match a designer, lock the palette. Video
+        consults on demand.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">04</p>
+      <p class="au-block">Measure</p>
+      <p class="au-body">
+        Auto-measure, manual entry, tailor review, or a tape session on the next
+        India trip.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">05</p>
+      <p class="au-block">Order</p>
+      <p class="au-body">
+        Landed, all-in cost. Delivery to the US or India. Pay in local currency.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">06</p>
+      <p class="au-block">Track</p>
+      <p class="au-body">
+        Cutting, stitching, embroidery, QC, dispatch — with real photos and
+        estimated dates.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">07</p>
+      <p class="au-block">Approve &amp; receive</p>
+      <p class="au-body">
+        Approve pre-dispatch photos, pick customs handling, unbox.
+      </p>
+    </div>
+    <div class="au-stage">
+      <p class="au-num">08</p>
+      <p class="au-block">Remember</p>
+      <p class="au-body">
+        Wear, photograph, review, add to the wardrobe, restyle later.
+      </p>
+    </div>
+  </div>
+  <p class="au-body au-loop">
+    <b>The Aura loop.</b> Stage 08 isn’t the end — every completed journey feeds
+    the Fashion Graph and seeds Stage 01 of the next occasion.
+  </p>
+</div>
+
+<!-- Screens -->
+<div class="au-col au-section" id="au-screens">
+  <h2 class="au-h2" data-reveal="scale">The screens</h2>
+  <p class="au-body au-lede" data-reveal="scale">
+    Eight screens from the working prototype, each one answering a pillar from
+    the specification.
+  </p>
+
+  <div class="au-screen reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenHome.jpg"
+        alt="Aura home screen"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">01</span>Home</span
+        ><span class="au-eyebrow">Occasion-first</span>
+      </div>
+      <p class="au-block">Moments, not product tiles</p>
+      <p class="au-body">
+        The front door asks what you’re dressing for, never what you want to
+        buy. Editorial stories set the tone; your own calendar sits right under
+        them.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            ><b>Upcoming events</b> — Navratri, a sister’s wedding in Chicago —
+            carry their dates, so every look downstream is filtered by what can
+            ship in time</span
+          >
+        </li>
+        <li>
+          <span
+            >Collections are grouped by occasion — Bridal, Festive, Cocktail —
+            before silhouette</span
+          >
+        </li>
+        <li>
+          <span
+            >The <b>“Ask me anything”</b> bar is pinned to the bottom: text or
+            voice, the stylist is always one tap away</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen au-flip reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenStylist.jpg"
+        alt="Aura stylist conversation start"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">02</span>AI Personal Designer</span
+        ><span class="au-eyebrow">Search to conversation</span>
+      </div>
+      <p class="au-block">From ten thousand products to three looks</p>
+      <p class="au-body">
+        “Tell me about the occasion — where it is, when it is, and how you want
+        to feel in the room.” A few sharp exchanges later, the customer has a
+        shortlist with a real path to purchase.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            ><b>Suggested chips</b> under every reply — “Review wardrobe”,
+            “Suggest 9 looks” — so nobody is forced to type</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Progressive disclosure</b>: never more than two questions before
+            a preview</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Explainable curation</b>: each look carries a “Why this?” line
+            citing weather, saved palette and budget</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Escalation to a human</b> stylist when spend crosses $1,500 or
+            the event is under three weeks away</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenDiscover.jpg"
+        alt="Aura Discover tab"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">03</span>Discover</span
+        ><span class="au-eyebrow">AI inspiration</span>
+      </div>
+      <p class="au-block">Taste before inventory</p>
+      <p class="au-body">
+        Curated collections, editorial stories and a designer spotlight — browse
+        that feels like a magazine, one tap below the conversation.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            >Silhouette rail — Lehengas, Sarees, Anarkalis, Kurta sets — for
+            customers who already know what they want</span
+          >
+        </li>
+        <li>
+          <span
+            >Editorial stories explain the craft (“The story behind a Banarasi”)
+            rather than just showing it</span
+          >
+        </li>
+        <li>
+          <span
+            >Every tile routes back into the stylist, so inspiration becomes a
+            priced, customizable order</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen au-flip reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenDesigners.jpg"
+        alt="Aura Discover designers list"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">04</span>Discover designers</span
+        ><span class="au-eyebrow">Verified marketplace</span>
+      </div>
+      <p class="au-block">The workshop behind the app</p>
+      <p class="au-body">
+        Aura warehouses nothing. It curates boutiques, artisans and weavers —
+        and every one of them has a face, a city and a story.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            >Each card shows
+            <b>rating, NRI order count, specialty, city, lead time</b> and
+            whether it ships worldwide or is GI-certified</span
+          >
+        </li>
+        <li>
+          <span
+            >Ranked by fit-for-you and lead-time feasibility for your event —
+            <b>never by ad spend</b></span
+          >
+        </li>
+        <li>
+          <span
+            >Craft filters — Bridal, Handloom, Zardosi, Menswear — surface
+            specialists first</span
+          >
+        </li>
+      </ul>
+      <p class="au-body au-why">
+        Verification is an explainable checklist, not a badge: business &amp;
+        tax checks, a workshop visit, a sample audit, NRI shipping certification
+        and a quarterly review.
+      </p>
+    </div>
+  </div>
+
+  <div class="au-screen reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenCollection.jpg"
+        alt="Aura curated collection"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">05</span>Curated collection</span
+        ><span class="au-eyebrow">NRI-centric</span>
+      </div>
+      <p class="au-block">Priced the way it lands</p>
+      <p class="au-body">
+        Collections are named for how people actually shop from abroad — “Under
+        $400, fully landed”, “Packs flat, travels far”.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            >Filters by <b>Occasion, Craft, Fit, Travel and Budget</b> — the
+            axes that decide an NRI order</span
+          >
+        </li>
+        <li>
+          <span
+            >Prices are landed and all-in: stitching, shipping, insurance and
+            duties in one number, in the customer’s currency</span
+          >
+        </li>
+        <li>
+          <span
+            >The stylist bubble stays in reach to turn any piece into a
+            conversation</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen au-flip reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenWardrobe.jpg"
+        alt="Aura wardrobe"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">06</span>Wardrobe</span
+        ><span class="au-eyebrow">Digital wardrobe &amp; family</span>
+      </div>
+      <p class="au-block">A closet that remembers — for the whole family</p>
+      <p class="au-body">
+        The wardrobe turns Aura from a shopping app into a relationship: every
+        piece, every measurement, every person you shop for.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            ><b>Sync calendar</b> pulls occasion dates in and sets lead time on
+            every commission</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Measurement profiles</b> — a primary set plus one per family
+            member, each with its last update</span
+          >
+        </li>
+        <li>
+          <span
+            >Kids’ profiles flag
+            <b>“re-measure suggested — children grow”</b></span
+          >
+        </li>
+        <li>
+          <span
+            >An empty Favourites state speaks in Aura’s voice rather than a
+            blank grid</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenOrders.jpg"
+        alt="Aura orders and production tracker"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">07</span>Orders</span
+        ><span class="au-eyebrow">Trusted quality</span>
+      </div>
+      <p class="au-block">Five glass rooms</p>
+      <p class="au-body">
+        Trust is Aura’s largest barrier to conversion, so the production tracker
+        turns opacity into a feature.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            ><b>In production</b> — a stage tracker per piece (“Stage 4 of 8 ·
+            Handwork”) with the artisan, the city and a delivery date</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Your approval</b> — pre-dispatch photos wait for the customer
+            before the box leaves</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Group order</b> — a wedding trousseau across family members,
+            each with their own status</span
+          >
+        </li>
+        <li>
+          <span
+            ><b>Delivery</b> — “Duties prepaid — nothing to pay on
+            arrival”</span
+          >
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="au-screen au-flip reveal">
+    <div class="au-phone">
+      <img
+        src="./assets/auraScreenProfile.jpg"
+        alt="Aura profile and measurements"
+        loading="lazy"
+      />
+    </div>
+    <div>
+      <div class="au-screen-label">
+        <span><span class="au-dot">08</span>Your profile</span
+        ><span class="au-eyebrow">Perfect fit guarantee</span>
+      </div>
+      <p class="au-block">Fit as a promise, not a form</p>
+      <p class="au-body">
+        Fit is the number-one reason NRIs abandon Indian fashion sites.
+        Measurements are saved once, reviewed by a real tailor, and backed by
+        credits — not disclaimers.
+      </p>
+      <ul class="au-notes">
+        <li>
+          <span
+            >Bust, waist, hip, shoulder, sleeve and length in
+            <b>inches or centimetres</b>, with an <b>AI scan</b> as the
+            low-effort path</span
+          >
+        </li>
+        <li>
+          <span>Every AI estimate stays editable and shows its confidence</span>
+        </li>
+        <li>
+          <span
+            >Phone is “used only for delivery and fitting calls” — privacy
+            stated where it’s asked</span
+          >
+        </li>
+      </ul>
+      <p class="au-body au-why">
+        The fit promise: measure your way · reviewed by a real tailor ·
+        photographed before dispatch · free first alteration · store credit if
+        we fail.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Design system -->
+<div class="au-col au-section" id="au-system" data-reveal="scale">
+  <h2 class="au-h2">Design system</h2>
+  <p class="au-body au-lede">
+    Warm ivory, deep plum and antique gold — a serif for warmth, a sans-serif
+    for clarity, and motion that never touches a price.
+  </p>
+  <div class="au-swatches">
+    <div class="au-swatch">
+      <i style="background: #fbf8f3"></i>
+      <div><b>Ivory</b>Background<br /><code>#FBF8F3</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #f3eee4"></i>
+      <div><b>Sand</b>Inset panels, chips<br /><code>#F3EEE4</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #3b2a5a"></i>
+      <div><b>Plum</b>Primary CTAs, headers<br /><code>#3B2A5A</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #c89b3c"></i>
+      <div><b>Gold</b>Accent, badges<br /><code>#C89B3C</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #1e1b2e"></i>
+      <div><b>Ink</b>Body text<br /><code>#1E1B2E</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #5a5468"></i>
+      <div><b>Ash</b>Muted text<br /><code>#5A5468</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #ffffff"></i>
+      <div><b>Surface</b>Cards, sheets<br /><code>#FFFFFF</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #3f7a4b"></i>
+      <div><b>Leaf</b>Success<br /><code>#3F7A4B</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #b26b1a"></i>
+      <div><b>Amber</b>Warning<br /><code>#B26B1A</code></div>
+    </div>
+    <div class="au-swatch">
+      <i style="background: #a0304a"></i>
+      <div><b>Vermilion</b>Error, destructive<br /><code>#A0304A</code></div>
+    </div>
+  </div>
+  <div class="au-type">
+    <div class="au-type-row">
+      <span
+        class="au-sample"
+        style="
+          font-family:
+            &quot;Instrument Serif&quot;, &quot;Fraunces&quot;, Georgia, serif;
+          font-style: italic;
+        "
+        >Editorial Stories</span
+      ><span class="au-body"
+        >Serif — display, headlines, occasion pages, the editorial voice</span
+      ><span class="au-body" style="color: #5a5468">22–68 pt</span>
+    </div>
+    <div class="au-type-row">
+      <span
+        class="au-sample"
+        style="font-family: Inter, Roboto, sans-serif; font-size: 24px"
+        >Ask me anything</span
+      ><span class="au-body">DM Sans — body, UI, buttons, captions</span
+      ><span class="au-body" style="color: #5a5468">8–16 pt</span>
+    </div>
+    <div class="au-type-row">
+      <span
+        class="au-sample"
+        style="
+          font-family: &quot;IBM Plex Mono&quot;, monospace;
+          font-size: 22px;
+        "
+        >24 Oct 2026 · $527.00</span
+      ><span class="au-body"
+        >Mono / tabular — prices, measurements, order numbers</span
+      ><span class="au-body" style="color: #5a5468">9–14 pt</span>
+    </div>
+  </div>
+  <div class="au-grid2" style="margin-top: 48px">
+    <div>
+      <p class="au-block">Motion</p>
+      <ul class="au-notes">
+        <li>
+          200 ms ease-out for surfaces, 280 ms for sheets, 400 ms for hero image
+          swaps
+        </li>
+        <li>
+          Tracker milestones fill a gold hairline in 600 ms; the new photo
+          cross-fades
+        </li>
+        <li>
+          <span
+            ><b>Never animate</b> prices, totals or countdowns — they update
+            instantly to feel trustworthy</span
+          >
+        </li>
+        <li>Reduced motion keeps only opacity fades</li>
+      </ul>
+    </div>
+    <div>
+      <p class="au-block">Accessibility</p>
+      <ul class="au-notes">
+        <li>
+          WCAG AA minimum — plum on ivory passes AAA; gold is decorative only
+        </li>
+        <li>
+          OS text scale respected up to 200%, tabular numerals keep prices
+          aligned
+        </li>
+        <li>
+          Every status encoded in icon + colour + text, never colour alone
+        </li>
+        <li>44 × 44 pt touch targets; voice input on every text field</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Edge cases -->
+<div class="au-col au-section" id="au-edges" data-reveal="scale">
+  <h2 class="au-h2">Designing for the hard days</h2>
+  <p class="au-body au-lede">
+    Aura wins or loses on failure. Each scenario has a defined interaction
+    pattern.
+  </p>
+  <div class="au-scroll">
+    <table class="au-table">
+      <thead>
+        <tr>
+          <th>Scenario</th>
+          <th>What Aura does</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Event too close</td>
+          <td>
+            Offers rental partners, ready-made with express stitching, or
+            blouse-only with an heirloom saree. Never shows a designer who can’t
+            ship in time.
+          </td>
+        </tr>
+        <tr>
+          <td>Auto-measure below 80%</td>
+          <td>
+            Routes to guided manual entry and offers a free 20-minute video with
+            a tailor before confirming.
+          </td>
+        </tr>
+        <tr>
+          <td>Family palette clash</td>
+          <td>
+            A “palette debate” card shows both preferences, three compromise
+            palettes and a one-tap vote.
+          </td>
+        </tr>
+        <tr>
+          <td>Boutique misses a milestone</td>
+          <td>
+            Proactive notice with options: accept the new date, switch designer,
+            or cancel with a full refund plus $50 credit.
+          </td>
+        </tr>
+        <tr>
+          <td>Damage on arrival</td>
+          <td>
+            One-tap “report a problem”, an instant alteration credit, and a
+            prepaid return or local repair.
+          </td>
+        </tr>
+        <tr>
+          <td>Language mix-up</td>
+          <td>
+            Every misread reply carries a “not what I meant” chip and an
+            explicit language switch.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Measurement & roadmap -->
+<div class="au-col au-section" id="au-roadmap" data-reveal="scale">
+  <h2 class="au-h2">Measuring success</h2>
+  <div class="au-scroll">
+    <table class="au-table">
+      <thead>
+        <tr>
+          <th>Pillar</th>
+          <th>Key metric</th>
+          <th>Year-1 target</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AI Personal Designer</td>
+          <td>Session → shortlist rate</td>
+          <td class="au-mono">55%</td>
+        </tr>
+        <tr>
+          <td>Perfect Fit</td>
+          <td>Fit-related refund rate</td>
+          <td class="au-mono">&lt; 3%</td>
+        </tr>
+        <tr>
+          <td>Marketplace</td>
+          <td>Orders shipped on time</td>
+          <td class="au-mono">92%</td>
+        </tr>
+        <tr>
+          <td>Occasion-first</td>
+          <td>Occasion → order conversion</td>
+          <td class="au-mono">18%</td>
+        </tr>
+        <tr>
+          <td>Digital wardrobe</td>
+          <td>Repeat order rate at 6 months</td>
+          <td class="au-mono">34%</td>
+        </tr>
+        <tr>
+          <td>Family shopping</td>
+          <td>Share of multi-item baskets</td>
+          <td class="au-mono">22%</td>
+        </tr>
+        <tr>
+          <td>Trusted quality</td>
+          <td>Pre-dispatch approval rate</td>
+          <td class="au-mono">96%</td>
+        </tr>
+        <tr>
+          <td>NRI-centric</td>
+          <td>Landed-cost accuracy</td>
+          <td class="au-mono">±$3 of quote</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="au-body au-loop" style="margin-top: 32px">
+    <b>One number to rule them all:</b> the share of customers whose second
+    order is easier than their first — measured by time-to-shortlist and
+    questions asked. Target: 90% by month 12.
+  </p>
+
+  <h2 class="au-h2" style="margin-top: 110px">Roadmap</h2>
+  <div class="au-waves">
+    <div class="au-wave" style="background: #f3eee4">
+      <p class="au-eyebrow">Phase 1 · Months 0–6</p>
+      <p class="au-block">Prove the promise</p>
+      <ul class="au-notes">
+        <li>AI Personal Designer</li>
+        <li>Perfect Fit Guarantee</li>
+        <li>10 verified boutiques, 4 hub cities</li>
+        <li>Landed-cost checkout, two-address delivery</li>
+        <li>Production tracker + pre-dispatch approval</li>
+      </ul>
+    </div>
+    <div class="au-wave" style="background: #dce8e8">
+      <p class="au-eyebrow">Phase 2 · Months 6–12</p>
+      <p class="au-block">Family, inspiration, wardrobe</p>
+      <ul class="au-notes">
+        <li>Family basket, palette lock, split payment</li>
+        <li>AI Inspiration from photos and links</li>
+        <li>Digital wardrobe + restyle suggestions</li>
+        <li>40+ designers across 8 hub cities</li>
+        <li>Community posts and ambassadors</li>
+      </ul>
+    </div>
+    <div class="au-wave" style="background: #ece6f3">
+      <p class="au-eyebrow">Phase 3 · Months 12–24</p>
+      <p class="au-block">The Fashion Graph compounds</p>
+      <ul class="au-notes">
+        <li>Graph-powered curation everywhere</li>
+        <li>Predictive occasion calendar</li>
+        <li>Cross-family wardrobe intelligence</li>
+        <li>Live tailor video collaboration</li>
+        <li>AR try-on for silhouettes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="au-close" data-reveal="scale">
+  <p>A stylist you’ll never outgrow.</p>
+  <p>
+    Every returning customer should feel a sentence quieter — the fit already
+    saved, the palette already known, the family already on the roster. That is
+    how a fashion app becomes a wardrobe.
+  </p>
+</div>
+
+<!-- other-projects:start --><style>
+.op-section{width:100%;max-width:1352px;margin:80px auto 0;padding:0 16px 96px;box-sizing:border-box}
+@media (min-width:768px){.op-section{margin-top:180px;padding:0 80px 120px}}
+.op-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:44px;line-height:1.05;letter-spacing:-0.025em;color:#111214;margin:0 0 36px}
+@media (min-width:768px){.op-title{font-size:68px;margin-bottom:56px}}
+.op-title i{font-style:normal;color:#e23a5b}
+.op-grid{display:grid;grid-template-columns:1fr;gap:24px}
+@media (min-width:1024px){.op-grid{grid-template-columns:repeat(3,1fr);gap:28px}}
+.op-card{position:relative;display:block;height:460px;border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;box-shadow:0 1px 2px rgba(60,40,30,.04),0 10px 30px rgba(60,40,30,.06);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s ease}
+@media (min-width:768px){.op-card{height:510px}}
+a.op-card:hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(60,40,30,.05),0 18px 40px rgba(60,40,30,.10)}
+.op-card.pink{background:linear-gradient(165deg,#fdeef1 0%,#f9e1e8 100%)}
+.op-card.peach{background:linear-gradient(165deg,#fcf1e9 0%,#f8e4d8 100%)}
+.op-card.lilac{background:linear-gradient(165deg,#f7eaf5 0%,#ede6fb 100%)}
+.op-card.blue{background:linear-gradient(165deg,#eef4fd 0%,#e2ebfb 100%)}
+.op-body{position:relative;z-index:1;padding:40px 40px 0}
+@media (min-width:768px){.op-body{padding:52px 46px 0}}
+.op-name{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:30px;line-height:1.15;letter-spacing:-0.02em;color:#111214;margin:0}
+@media (min-width:768px){.op-name{font-size:34px}}
+.op-desc{font-family:"Roboto",sans-serif;font-weight:400;font-size:16px;line-height:1.65;color:#6b6f78;margin:14px 0 0;max-width:30em}
+@media (min-width:768px){.op-desc{font-size:17px}}
+.op-more{display:inline-flex;align-items:center;gap:10px;margin-top:22px;font-family:"Roboto",sans-serif;font-weight:500;font-size:17px;color:#4a4f86}
+.op-more svg{width:18px;height:18px;transition:transform .3s ease}
+a.op-card:hover .op-more svg{transform:translateX(4px)}
+.op-shot{position:absolute;left:28px;right:-2px;bottom:-2px;height:236px;border-radius:14px 0 0 0;overflow:hidden;background:#fff;box-shadow:0 -2px 18px rgba(60,40,30,.10)}
+@media (min-width:768px){.op-shot{height:270px}}
+.op-shot img{display:block;width:100%;height:auto}
+.op-shot.crop img{margin-top:-8.4%}
+.op-shot.fit{height:auto}
+.op-shot.tilt{left:24px;right:-18px;bottom:-26px;border-radius:14px;transform:rotate(-4deg);transform-origin:left bottom}
+.op-ph{position:absolute;left:0;right:0;bottom:0;height:270px}
+.op-ph svg{display:block;width:100%;height:100%}
+</style><section class="op-section" aria-labelledby="op-title"><h2 class="op-title" id="op-title">Other Projects<i>.</i></h2><div class="op-grid" data-reveal="card"><a class="op-card pink" data-op="scavvy" href="./scavvy.html"><div class="op-body"><h3 class="op-name">Gaming app</h3><p class="op-desc">A gaming app to be played in park and social groups</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop"><img alt="" loading="lazy" src="./assets/csImage103.png"/></div></a><a class="op-card peach" data-op="full-stack" href="./building-with-ai.html"><div class="op-body"><h3 class="op-name">Full Stack Product</h3><p class="op-desc">4 tech stacks explored to build an end-to-end pet boarding web application using AI</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop tilt"><img alt="" loading="lazy" src="./assets/csImage98.png"/></div></a><a class="op-card lilac" data-op="decision-flow" href="./decision-flow.html"><div class="op-body"><h3 class="op-name">Decision Flow</h3><p class="op-desc">All new decision flow to analyse then the optimise the decisions making workflow</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot fit"><img alt="" loading="lazy" src="./assets/aiCardDecisionFlow.png"/></div></a></div></section><!-- other-projects:end --></div></div>
+    
+<!-- page-transition:start -->
+<script>
+/* Page transition between the home page's case study cards and the case
+   studies, timed after the menu on delassus.com. The clicked card grows, in
+   its own colour and with its own rounded corners, until it fills the
+   screen; the title rises into it; the case study then opens as that cover
+   lifts away upwards. Going back home plays it in reverse: the title drops
+   out and the cover shrinks back into the card you left from, with the page
+   scrolled back to where you were.
+
+   The same script runs on every page; it knows the home page by its Case
+   Studies section. Where it is going and where it came from travel in
+   sessionStorage. It is pasted into each page by inject-page-transition.cjs
+   rather than linked, because the single-file build only carries images. */
+(function () {
+  var KEY = "pt-v2";
+  var EASE = "cubic-bezier(0.86, 0, 0.07, 1)";
+  var RISE = "cubic-bezier(0.2, 0.8, 0.2, 1)";
+  var GROW = 800;
+  /* The way back home runs at this fraction of the way in: leaving a case
+     study should feel quick, not like a second entrance. */
+  var BACK = 0.5;
+  var FALLBACK = { bg: "#f3f1ec", fg: "#1c1917" };
+
+  /* The note in <head> (page-transition-head.js) hid the page while it
+     loaded; whatever cover is needed is put up below in this same task, so
+     nothing paints in between. */
+  document.documentElement.classList.remove("pt-wait");
+  document.documentElement.style.removeProperty("background");
+  /* Anything below that wants the early cover takes it synchronously; if
+     nothing did, it must not be left standing. */
+  setTimeout(function () {
+    var stray = document.querySelector(".pt-root[data-early]");
+    if (stray) stray.remove();
+  }, 0);
+
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    try {
+      sessionStorage.removeItem(KEY);
+    } catch (e) {}
+    return;
+  }
+
+  var home = document.getElementById("featured-works");
+
+  function load() {
+    try {
+      return JSON.parse(sessionStorage.getItem(KEY) || "null");
+    } catch (e) {
+      return null;
+    }
+  }
+  function save(v) {
+    try {
+      if (v) sessionStorage.setItem(KEY, JSON.stringify(v));
+      else sessionStorage.removeItem(KEY);
+    } catch (e) {}
+  }
+
+  /* Dark writing on a light card, light writing on a dark one. */
+  function inkFor(colour) {
+    var m = String(colour).match(/\d+(\.\d+)?/g);
+    if (!m || m.length < 3) return FALLBACK.fg;
+    var lum = (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255;
+    return lum > 0.55 ? "#1c1917" : "#f5f5f4";
+  }
+
+  /* ---------- Geometry ---------- */
+
+  function box(el, radius) {
+    var r = el.getBoundingClientRect();
+    return { t: r.top, l: r.left, b: r.bottom, r: r.right, round: radius || 0 };
+  }
+  function clip(b) {
+    if (!b) return "inset(0px 0px 0px 0px round 0px)";
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+    return (
+      "inset(" +
+      b.t.toFixed(1) +
+      "px " +
+      (w - b.r).toFixed(1) +
+      "px " +
+      (h - b.b).toFixed(1) +
+      "px " +
+      b.l.toFixed(1) +
+      "px round " +
+      b.round +
+      "px)"
+    );
+  }
+  /* Nothing left but a sliver along the top edge. */
+  var LIFTED = "inset(0px 0px 100% 0px round 0px)";
+
+  /* ---------- The overlay ---------- */
+
+  function line(text, css) {
+    var el = document.createElement("span");
+    el.textContent = text;
+    el.style.cssText = "display:block;will-change:transform,opacity;opacity:0;" + css;
+    return el;
+  }
+
+  function overlay(s) {
+    /* Arriving: the note in <head> already put this cover up. */
+    var early = document.querySelector(".pt-root[data-early]");
+    if (early) {
+      early.removeAttribute("data-early");
+      return { root: early, lines: [].slice.call(early.querySelectorAll("span")) };
+    }
+    var root = document.createElement("div");
+    root.className = "pt-root";
+    root.setAttribute("aria-hidden", "true");
+    root.style.cssText =
+      "position:fixed;inset:0;z-index:2147483000;pointer-events:auto;overflow:hidden;" +
+      "background:" +
+      (s.bg || FALLBACK.bg) +
+      ";color:" +
+      (s.fg || FALLBACK.fg) +
+      ";" +
+      "clip-path:" +
+      clip(null) +
+      ";will-change:clip-path;";
+    var text = document.createElement("div");
+    text.style.cssText =
+      "position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;" +
+      "justify-content:center;gap:16px;padding:0 24px;text-align:center;";
+    var lines = [
+      line(
+        s.label || "",
+        'font:500 12px/1 Arial,"Helvetica Neue",Helvetica,sans-serif;letter-spacing:.2em;text-transform:uppercase;'
+      ),
+      line(
+        s.title || "",
+        'font:400 clamp(2.4rem,6vw,5rem)/1.05 Georgia,"Times New Roman",serif;letter-spacing:-.015em;'
+      ),
+    ];
+    lines.forEach(function (l) {
+      text.appendChild(l);
+    });
+    root.appendChild(text);
+    document.documentElement.appendChild(root);
+    return { root: root, lines: lines };
+  }
+
+  function shown(l, i) {
+    return i ? 1 : 0.6;
+  }
+
+  function cover(o) {
+    o.root.style.clipPath = clip(null);
+    o.lines.forEach(function (l, i) {
+      l.style.opacity = shown(l, i);
+    });
+  }
+
+  /* The card opens out to the edges, then the words rise in one after the
+     other. */
+  function grow(o, from, k) {
+    k = k || 1;
+    o.root.style.clipPath = clip(from);
+    o.root.animate([{ clipPath: clip(from) }, { clipPath: clip(null) }], {
+      duration: GROW * k,
+      easing: EASE,
+      fill: "forwards",
+    });
+    o.lines.forEach(function (l, i) {
+      l.animate(
+        [
+          { transform: "translateY(90px)", opacity: 0 },
+          { transform: "none", opacity: shown(l, i) },
+        ],
+        { duration: 700 * k, delay: (380 + i * 90) * k, easing: RISE, fill: "both" }
+      );
+    });
+    return new Promise(function (done) {
+      setTimeout(done, (GROW + 180) * k);
+    });
+  }
+
+  /* The words leave, then the cover either folds back into a card (`into`)
+     or lifts off the top of the screen. */
+  function release(o, into, k) {
+    k = k || 1;
+    cover(o);
+    var back = !!into;
+    var off = back ? "translateY(90px)" : "translateY(-70px)";
+    var n = o.lines.length;
+    o.lines.forEach(function (l, i) {
+      l.animate(
+        [
+          { transform: "none", opacity: shown(l, i) },
+          { transform: off, opacity: 0 },
+        ],
+        { duration: 450 * k, delay: (back ? n - 1 - i : i) * 70 * k, easing: EASE, fill: "forwards" }
+      );
+    });
+    var end = back ? clip(into) : LIFTED;
+    var a = o.root.animate([{ clipPath: clip(null) }, { clipPath: end }], {
+      duration: GROW * k,
+      delay: 260 * k,
+      easing: EASE,
+      fill: "forwards",
+    });
+    o.root.style.pointerEvents = "none";
+    /* The card underneath is already there; fading the copy out over the
+       last moment hides the seam between the two. */
+    if (back) {
+      o.root.animate([{ opacity: 1 }, { opacity: 0 }], {
+        duration: 160 * k,
+        delay: (260 + GROW - 120) * k,
+        fill: "forwards",
+      });
+    }
+    a.onfinish = function () {
+      o.root.remove();
+    };
+  }
+
+  /* Follow the link once the cover is up. Clicking it again, flagged, lets
+     the browser (or the single-file build's router) take it from there. */
+  function go(a) {
+    a.__pt = true;
+    a.click();
+    setTimeout(function () {
+      a.__pt = false;
+    }, 0);
+  }
+
+  function plain(e) {
+    return !(e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey);
+  }
+
+  /* After the page has its styles and fonts in place, so positions are real. */
+  function settled(fn) {
+    function next() {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(fn);
+      });
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", next);
+    else next();
+  }
+
+  function radiusOf(el) {
+    return parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0;
+  }
+
+  /* The colour the page shows up top: whatever paints behind the middle of
+     the first screen, looking past the cover and past pictures to the first
+     thing with a background of its own. */
+  function pageTint() {
+    var x = window.innerWidth / 2;
+    var y = Math.min(window.innerHeight * 0.3, 260);
+    var hits = document.elementsFromPoint ? document.elementsFromPoint(x, y) : [];
+    for (var i = 0; i < hits.length; i++) {
+      if (hits[i].closest(".pt-root")) continue;
+      for (var el = hits[i]; el && el.nodeType === 1; el = el.parentElement) {
+        var c = getComputedStyle(el).backgroundColor;
+        var m = c.match(/[\d.]+/g);
+        if (m && (m.length < 4 || +m[3] > 0.5)) return c;
+      }
+    }
+    return getComputedStyle(document.body).backgroundColor || FALLBACK.bg;
+  }
+
+  /* Cross-fade the cover (and its writing) from one colour to another. */
+  var MORPH = 650;
+  function morph(o, from, to, k) {
+    k = k || 1;
+    if (!from || !to || from === to) return 0;
+    o.root.style.background = to;
+    o.root.style.color = inkFor(to);
+    o.root.animate(
+      [
+        { backgroundColor: from, color: inkFor(from) },
+        { backgroundColor: to, color: inkFor(to) },
+      ],
+      { duration: MORPH * k, easing: "cubic-bezier(0.65, 0, 0.35, 1)" }
+    );
+    return MORPH * k;
+  }
+
+  /* A cover in the colour it left the case study in, if it has been to one. */
+  function returning(s) {
+    var start = {};
+    for (var k in s) start[k] = s[k];
+    if (s.page) {
+      start.bg = s.page;
+      start.fg = inkFor(s.page);
+    }
+    return overlay(start);
+  }
+
+  /* ---------- Home ---------- */
+
+  if (home) {
+    var cards = home.querySelectorAll(".cs-card");
+
+    window.addEventListener(
+      "click",
+      function (e) {
+        var a = e.target.closest && e.target.closest("#featured-works .cs-card");
+        if (!a || a.__pt || !plain(e)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        var bg = getComputedStyle(a).backgroundColor;
+        var num = a.querySelector(".cs-meta span");
+        var h3 = a.querySelector("h3");
+        var s = {
+          idx: Array.prototype.indexOf.call(cards, a),
+          y: window.scrollY,
+          bg: bg,
+          fg: inkFor(bg),
+          label: "Case study " + (num ? num.textContent.trim() : ""),
+          title: h3 ? h3.textContent.trim() : "",
+        };
+        save(s);
+        grow(overlay(s), box(a, radiusOf(a))).then(function () {
+          go(a);
+        });
+      },
+      true
+    );
+
+    function arrive(o, s) {
+      cover(o);
+      save(null);
+      settled(function () {
+        if (s && typeof s.y === "number")
+          window.scrollTo({ top: s.y, left: 0, behavior: "instant" });
+        requestAnimationFrame(function () {
+          var card = s && cards[s.idx];
+          /* Back from the case study's own colour to the card's, then
+             into the card. */
+          var wait = morph(o, s && s.page, s && s.bg, BACK);
+          setTimeout(function () {
+            release(o, card && !card.hidden ? box(card, radiusOf(card)) : null, BACK);
+          }, wait * 0.55);
+        });
+      });
+    }
+
+    var back = load();
+    if (back) arrive(returning(back), back);
+
+    /* Back button with the page kept in memory: it comes back exactly as it
+       was left, cover and all. */
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted) return;
+      var left = document.querySelector(".pt-root");
+      if (!left) return;
+      left.remove();
+      var s = load() || {};
+      arrive(returning(s), s);
+    });
+    return;
+  }
+
+  /* ---------- A case study ---------- */
+
+  var came = load();
+  if (came && came.stage !== "in") {
+    var o = overlay(came);
+    cover(o);
+    came.stage = "in";
+    save(came);
+    settled(function () {
+      setTimeout(function () {
+        /* Turn from the card's colour to this page's own, then lift. */
+        var page = pageTint();
+        came.page = page;
+        save(came);
+        var wait = morph(o, came.bg, page);
+        setTimeout(function () {
+          release(o, null);
+        }, wait * 0.55);
+      }, 80);
+    });
+  }
+
+  window.addEventListener(
+    "click",
+    function (e) {
+      var a =
+        e.target.closest &&
+        e.target.closest('a[href$="/index.html"], a[href="index.html"], a[data-page-link="home"]');
+      if (!a || a.__pt || !plain(e)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      var s = load() || {};
+      var h1 = document.querySelector("h1");
+      s.label = s.label || "Case study";
+      s.title = s.title || (h1 ? h1.textContent.trim() : document.title.split(/\s[—|-]\s/)[0]);
+      s.stage = "back";
+      /* Leave in this page's colour; home turns it back into the card's. */
+      s.page = s.page || pageTint();
+      save(s);
+      grow(returning(s), box(a, 12), BACK).then(function () {
+        go(a);
+      });
+    },
+    true
+  );
+
+  window.addEventListener("pageshow", function (e) {
+    if (!e.persisted) return;
+    var left = document.querySelector(".pt-root");
+    if (left) left.remove();
+  });
+})();
+</script>
+<!-- page-transition:end -->
+</body>
+</html>
