@@ -1899,6 +1899,14 @@
       .draggable-item.is-dragging {
         transition: none;
       }
+      /* Phones: the collage stays put. A touch that starts on a card scrolls
+         the page like anywhere else. */
+      @media (max-width: 639px) {
+        .draggable-item {
+          cursor: default;
+          touch-action: auto;
+        }
+      }
 
       /* 3D Flip Cards */
       .perspective-1000 {
@@ -9635,6 +9643,8 @@
       // -------------------------------------------------------------------------
       let currentHeroMode = "chaos";
       const draggableItems = document.querySelectorAll(".draggable-item");
+      // No dragging on a phone; the cards hold the layout the page gives them.
+      const dragIsPhone = window.matchMedia("(max-width: 639px)");
 
       draggableItems.forEach((item) => {
         let isDragging = false;
@@ -9649,6 +9659,7 @@
         });
 
         const onPointerDown = (e) => {
+          if (dragIsPhone.matches) return;
           if (
             e.target.tagName.toLowerCase() === "button" ||
             e.target.tagName.toLowerCase() === "a"
