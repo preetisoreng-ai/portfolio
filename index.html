@@ -2408,32 +2408,8 @@
         border-top-color: #2a2b30;
         color: #a8a29e;
       }
-      .books-back {
-        display: grid;
-        place-items: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        flex-shrink: 0;
-        border-radius: 999px;
-        border: 1.5px solid #292524;
-        color: #292524;
-        background: transparent;
-        cursor: pointer;
-        transition:
-          background-color 0.2s,
-          color 0.2s;
-      }
-      .books-back:hover {
-        background: #292524;
-        color: #fff;
-      }
-      .books-back svg {
-        width: 1.1rem;
-        height: 1.1rem;
-      }
-      .dark .books-back {
-        border-color: #d6d3d1;
-        color: #d6d3d1;
+      .books-hint-swipe {
+        display: none;
       }
       .books-foot-copy {
         flex: 1;
@@ -2470,8 +2446,9 @@
         filter: grayscale(0.85);
         transform: scale(0.96);
       }
-      /* Opened out to its cover's width, so the neighbours slide along. */
-      .shelf-book-item:hover,
+      /* Opened out to its cover's width, so the neighbours slide along.
+         The flip is driven by .is-expanded, which the hover handler sets, so
+         a phone can leave it off. */
       .shelf-book-item.is-expanded {
         width: 170px !important;
         z-index: 50;
@@ -2491,7 +2468,6 @@
           2px 6px 10px -4px rgba(40, 30, 20, 0.3);
         overflow: hidden;
       }
-      .shelf-book-item:hover .shelf-book-card,
       .shelf-book-item.is-expanded .shelf-book-card {
         transform: rotateY(-3deg);
         box-shadow:
@@ -2541,7 +2517,6 @@
         max-width: 100%;
         opacity: 0.85;
       }
-      .shelf-book-item:hover .shelf-book-spine,
       .shelf-book-item.is-expanded .shelf-book-spine {
         opacity: 0;
         pointer-events: none;
@@ -2589,7 +2564,6 @@
           transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
         z-index: 20;
       }
-      .shelf-book-item:hover .shelf-book-front,
       .shelf-book-item.is-expanded .shelf-book-front {
         opacity: 1;
         pointer-events: auto;
@@ -2616,7 +2590,6 @@
         border-radius: 0 2px 2px 0;
         box-shadow: inset 1px 0 2px rgba(0, 0, 0, 0.12);
       }
-      .shelf-book-item:hover .shelf-book-card::after,
       .shelf-book-item.is-expanded .shelf-book-card::after {
         opacity: 1;
       }
@@ -2648,14 +2621,47 @@
           padding: 0.6rem 1rem;
           font-size: 0.85rem;
         }
+        /* Filters in a single row that swipes sideways; no search. */
+        .books-tools > div:first-child {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          margin: 0 -1rem;
+          padding: 0 1rem 2px;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+        .books-tools > div:first-child::-webkit-scrollbar {
+          display: none;
+        }
+        .books-tools > div:first-child > * {
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
         .books-search {
-          width: 100%;
+          display: none;
+        }
+        /* The shelf swipes sideways; the spines stay put. */
+        .books-shelf-scroll {
+          touch-action: pan-x pan-y;
+          overscroll-behavior-x: contain;
+          -webkit-overflow-scrolling: touch;
+        }
+        .shelf-book-item {
+          cursor: default;
+        }
+        .books-hint-flip {
+          display: none !important;
+        }
+        .books-hint-swipe {
+          display: inline !important;
         }
         .books-shelf {
           justify-content: flex-start;
           padding: 3rem 1.5rem 1.6rem;
         }
-        .books-foot-sign {
+        /* With the sign already gone and no hint to give, the footer line
+           has nothing left to say on a phone. */
+        .books-foot {
           display: none;
         }
       }
@@ -3654,8 +3660,8 @@
           padding: calc(8 * var(--hero-u)) calc(18 * var(--hero-u));
           gap: calc(10 * var(--hero-u));
         }
-        body > header > div > div:last-child > button,
-        body > header > div > div:last-child > a {
+        #headerControls > button,
+        #headerControls > a {
           width: calc(46 * var(--hero-u));
           height: calc(46 * var(--hero-u));
         }
@@ -3848,6 +3854,458 @@
         }
       }
     </style>
+    <style id="hero-mobile-scrapbook">
+      /* Phones: the cover as one scrapbook page, read top to bottom. A
+         wordmark and a menu button, the note and the name, a narrow centred
+         column of copy and buttons, the collage laid out under it, then the
+         four categories (no scroll cue). Read off the scrapbook mockup. */
+      .hero-trail-m,
+      #headerMenuBtn {
+        display: none;
+      }
+      @media (max-width: 639px) {
+        /* ---- Header: wordmark left, menu right. ---- */
+        body > header {
+          padding: 14px 20px;
+          background: rgba(251, 249, 247, 0.86);
+          -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+        }
+        html.dark body > header {
+          background: rgba(20, 21, 23, 0.86);
+        }
+        #brandBadge {
+          background: none;
+          border: 0;
+          box-shadow: none;
+          padding: 0;
+          -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+        }
+        #brandBadge:hover {
+          transform: none;
+        }
+        #brandBadge > a:first-child > div,
+        #brandBadge > div,
+        #brandBadgeSubtitle {
+          display: none;
+        }
+        #brandBadge .brand-name {
+          position: static;
+          width: auto;
+          height: auto;
+          margin: 0;
+          overflow: visible;
+          clip: auto;
+          white-space: nowrap;
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-family: "Fraunces", Georgia, serif;
+          font-size: 22px;
+          letter-spacing: -0.02em;
+          color: #1c1917;
+        }
+        .dark #brandBadge .brand-name {
+          color: #f5f5f4;
+        }
+        #brandBadge .brand-name::after {
+          content: "";
+          width: 7px;
+          height: 7px;
+          border-radius: 999px;
+          background: #b99cf2;
+          transform: translateY(1px);
+        }
+        #headerMenuBtn {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 6px;
+          width: 44px;
+          height: 44px;
+          margin-right: -6px;
+          padding: 0 6px;
+        }
+        #headerMenuBtn span {
+          display: block;
+          height: 1.6px;
+          border-radius: 2px;
+          background: #1c1917;
+          transition:
+            transform 0.25s ease,
+            opacity 0.2s ease;
+        }
+        .dark #headerMenuBtn span {
+          background: #f5f5f4;
+        }
+        #headerMenuBtn[aria-expanded="true"] span:nth-child(1) {
+          transform: translateY(7.6px) rotate(45deg);
+        }
+        #headerMenuBtn[aria-expanded="true"] span:nth-child(2) {
+          opacity: 0;
+        }
+        #headerMenuBtn[aria-expanded="true"] span:nth-child(3) {
+          transform: translateY(-7.6px) rotate(-45deg);
+        }
+        body > header > div > div:last-child {
+          position: relative;
+        }
+        /* The four controls drop down as a row under the button. */
+        #headerControls {
+          position: absolute;
+          right: -6px;
+          top: calc(100% + 8px);
+          padding: 8px;
+          gap: 8px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid #e7e5e4;
+          box-shadow: 0 10px 28px rgba(28, 25, 23, 0.12);
+          opacity: 0;
+          visibility: hidden;
+          transform: translateY(-6px);
+          transition:
+            opacity 0.2s ease,
+            transform 0.2s ease,
+            visibility 0s 0.2s;
+        }
+        .dark #headerControls {
+          background: rgba(28, 25, 23, 0.95);
+          border-color: #292524;
+        }
+        #headerControls.is-open {
+          opacity: 1;
+          visibility: visible;
+          transform: none;
+          transition:
+            opacity 0.2s ease,
+            transform 0.2s ease;
+        }
+        #headerControls > button,
+        #headerControls > a {
+          width: 44px;
+          height: 44px;
+          box-shadow: none;
+        }
+
+        /* ---- The cover. ---- */
+        #hero {
+          padding: 72px 0 24px !important;
+          min-height: 0;
+        }
+        #heroComposition {
+          padding: 0 !important;
+        }
+        #heroMain {
+          gap: 0;
+          margin: 0;
+        }
+
+        /* One centred column. The note hangs out to its left, the name is
+           set in from it, and the arrow drops from the note to the name. */
+        #heroIntro {
+          display: block;
+          position: relative;
+          width: min(300px, calc(100% - 72px));
+          margin: 0 auto;
+          padding: 30px 0 0;
+        }
+        #heroIntro > #heroAnnotation {
+          display: block;
+          margin: 0 0 0 -34px;
+        }
+        #heroAnnotation > div {
+          display: block;
+        }
+        #heroAnnotation p {
+          font-size: 19px;
+          line-height: 1.12;
+          transform: rotate(-8deg);
+          transform-origin: 0 0;
+          margin-top: 10px;
+        }
+        #heroAnnotation svg {
+          position: absolute;
+          left: 36px;
+          top: 100%;
+          width: 26px;
+          height: 34px;
+          margin: 4px 0 0;
+          rotate: 6deg;
+        }
+        #heroIntro > h1 {
+          justify-self: auto;
+          margin: 10px 0 0 22px;
+          font-size: clamp(56px, 18vw, 72px);
+          line-height: 0.86;
+          letter-spacing: -0.035em;
+        }
+        #heroIntro h1 > span:first-child {
+          gap: 12px;
+        }
+        #heroIntro h1 .hero-name-bloom {
+          width: 30px;
+          height: 30px;
+          transform: translateY(8px);
+        }
+        #heroIntro h1 > span:last-child {
+          margin-top: 0;
+        }
+        /* The floating blossom, out in the right margin. */
+        #heroIntro > [title="Levitating Blossom"] {
+          display: block;
+          left: auto;
+          right: -40px;
+          top: 74px;
+          transform: none;
+        }
+        #heroIntro > [title="Levitating Blossom"] img {
+          width: 44px;
+        }
+        /* The line all one voice, with the pink stroke under the whole of
+           it rather than under the last phrase. */
+        #heroIntro > p {
+          position: relative;
+          margin: 22px 0 0;
+          padding-bottom: 14px;
+          font-size: 17px;
+          line-height: 1.45;
+          font-weight: 300;
+          letter-spacing: -0.01em;
+          color: #57534e;
+        }
+        .dark #heroIntro > p {
+          color: #d6d3d1;
+        }
+        #heroIntro > p > span {
+          display: inline;
+          font-weight: inherit;
+          color: inherit !important;
+        }
+        #heroIntro > p > span svg {
+          display: none;
+        }
+        #heroIntro > p::after {
+          content: "";
+          position: absolute;
+          left: -4px;
+          right: -4px;
+          bottom: 0;
+          height: 9px;
+          background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 9' preserveAspectRatio='none'%3E%3Cpath d='M2 6 C80 3.5, 190 6.5, 298 3' stroke='%23f06b8a' stroke-width='2.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")
+            center / 100% 100% no-repeat;
+        }
+        /* Stacked, full column width. */
+        #heroIntro > div:last-child {
+          display: flex;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+          margin-top: 22px;
+        }
+        #heroIntro > div:last-child a {
+          justify-content: center;
+          min-height: 50px;
+          font-size: 16px;
+          font-weight: 600;
+        }
+        #heroIntro #btnSecondaryCta {
+          display: flex;
+          align-items: center;
+          background: transparent;
+          border-color: #a8a29e;
+          box-shadow: none;
+        }
+
+        /* ---- The collage, laid out as one page. ---- */
+        #interactiveDesktopArea {
+          width: min(100%, 380px);
+          height: 400px;
+          min-height: 0;
+          margin: 26px auto 0;
+          overflow: visible;
+        }
+        #hero .hero-trail {
+          display: none;
+        }
+        #hero .hero-trail-m {
+          display: block;
+          right: 4%;
+          top: 74%;
+          width: 30%;
+          height: auto;
+        }
+        #hero .hero-sprig {
+          left: 0;
+          top: 0;
+          width: 82px;
+          z-index: 5;
+        }
+        #hero .polaroid-frame {
+          width: 168px;
+          padding: 8px 8px 12px;
+        }
+        #hero #dragItem2 .polaroid-frame {
+          width: 148px;
+        }
+        #hero .polaroid-frame > div:not(.washi-tape) {
+          aspect-ratio: 1.08;
+          margin-bottom: 6px;
+        }
+        #hero .polaroid-frame p {
+          font-size: 15px;
+          letter-spacing: 0;
+          gap: 3px;
+        }
+        #hero .polaroid-frame p span:last-child {
+          font-size: 12px;
+        }
+        #hero .polaroid-frame .washi-tape {
+          width: 44px !important;
+          height: 14px !important;
+          top: -8px;
+        }
+        #hero .award-card {
+          width: 156px;
+          padding: 9px;
+          gap: 7px;
+        }
+        #hero .award-trophy {
+          width: 34px;
+          height: 34px;
+          font-size: 18px;
+        }
+        #hero .award-kicker {
+          font-size: 7.5px;
+        }
+        #hero .award-title {
+          font-size: 13px;
+          line-height: 1.15;
+        }
+        #hero .award-meta {
+          font-size: 8.5px;
+        }
+        #hero .award-bloom {
+          width: 30px;
+          top: -12px;
+          right: -12px;
+        }
+        #hero #dragItem4 {
+          margin: 0;
+        }
+        #hero .note-sticky {
+          width: 122px;
+          padding: 14px 12px 12px;
+        }
+        #hero .note-sticky p {
+          font-size: 15px;
+          line-height: 1.2;
+        }
+        #hero .note-sticky p:nth-child(2) {
+          padding-left: 8px;
+        }
+        #hero .note-sticky p:nth-child(3) {
+          padding-left: 16px;
+        }
+        #hero .note-sticky p:nth-child(4) {
+          padding-left: 22px;
+          font-size: 14px;
+        }
+        #hero .note-sticky > div {
+          margin: 8px 0 0 42px;
+          width: 40px;
+          height: 1.5px;
+          transform: rotate(-6deg);
+        }
+        #hero [title="Levitating Daisy"] {
+          left: 3% !important;
+          top: 73% !important;
+        }
+        #hero [title="Levitating Daisy"] img {
+          width: 58px;
+        }
+        #hero .bloom-butterfly {
+          width: 46px;
+        }
+
+        /* ---- Four categories, icon over label, ruled apart. ---- */
+        #heroCategories {
+          position: relative;
+          flex-direction: column;
+          gap: 18px;
+          width: calc(100% - 40px);
+          margin: 28px auto 0;
+          padding-top: 16px;
+        }
+        #heroCategories > div:first-child {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 0;
+          padding: 0;
+          width: 100%;
+          overflow: visible;
+        }
+        #heroCategories > div:first-child > div {
+          display: none;
+        }
+        #heroCategories > div:first-child > a {
+          flex-direction: column;
+          align-items: center;
+          gap: 7px;
+          text-align: center;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 1.3;
+          padding: 2px;
+        }
+        #heroCategories > div:first-child > a + div + a {
+          border-left: 1px solid #e2ded6;
+        }
+        .dark #heroCategories > div:first-child > a + div + a {
+          border-left-color: #2f3238;
+        }
+        /* Consumer Apps is the one the mockup leaves out. */
+        #heroCategories > div:first-child > a:nth-of-type(4) {
+          display: none;
+        }
+        #heroCategories .cat-icon {
+          display: flex;
+          width: 22px;
+          height: 22px;
+        }
+        #heroCategories .cat-icon svg {
+          width: 22px;
+          height: 22px;
+        }
+        /* No scroll cue on a phone: the mouse icon means nothing to a thumb. */
+        #heroCategories > a {
+          display: none;
+        }
+        /* The ladybird stops patrolling and sits at the bottom right. */
+        #hero .bloom-ladybird {
+          display: block;
+          position: absolute;
+          left: auto;
+          right: 30px;
+          bottom: 4px;
+          top: auto;
+          width: 32px;
+          z-index: 20;
+        }
+        #hero .bug-walk,
+        #hero .bug-turn {
+          animation: none !important;
+        }
+        #hero .bug-turn {
+          transform: scaleX(-1);
+        }
+        /* Short enough to stay on the screen. */
+        #hero .bug-trail {
+          width: 80%;
+        }
+      }
+    </style>
     <style id="case-studies">
       /* Case Studies: the second screen. A plain sheet, a
          handwritten masthead, six tinted cards and a one-line sign-off. */
@@ -3923,6 +4381,13 @@
         display: flex;
         flex-wrap: wrap;
         gap: 0.5rem;
+      }
+      /* On a phone the six cards are a short scroll, so they all show and
+         the filter row goes. */
+      @media (max-width: 639px) {
+        .cs-filters {
+          display: none;
+        }
       }
       .cs-pill {
         padding: 0.55rem 1.05rem;
@@ -4674,8 +5139,10 @@
     <!-- TOP APP BAR / CORNER CONTROLLER (Jackie Hu Fixed Island Layout) -->
     <header class="fixed top-0 left-0 right-0 z-40 px-4 sm:px-8 py-4 pointer-events-none">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
-        <!-- Top Left Brand Badge -->
+        <!-- Top Left Brand Badge. On a phone it drops the pill and reads as a
+             plain wordmark: see #header-mobile below. -->
         <div
+          id="brandBadge"
           class="pointer-events-auto bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full px-4 py-2 flex items-center gap-3 transition-transform hover:scale-102"
         >
           <a href="#hero" class="flex items-center gap-2 group">
@@ -4688,7 +5155,7 @@
                 class="w-full h-full object-cover"
               />
             </div>
-            <span class="sr-only">Preeti Soreng</span>
+            <span class="brand-name sr-only">Preeti Soreng</span>
           </a>
           <div class="h-3.5 w-px bg-stone-300 dark:bg-stone-700"></div>
           <a
@@ -4701,64 +5168,77 @@
           </a>
         </div>
 
-        <!-- Top Right Interactive Modes + Controls Island -->
+        <!-- Top Right Interactive Modes + Controls Island. On a phone the
+             controls fold away behind the menu button. -->
         <div class="pointer-events-auto flex items-center gap-2">
-          <!-- Flight Mode Icon Button -->
           <button
-            id="flightModeBtn"
-            onclick="toggleFlightMode()"
-            class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all"
-            title="Flight Mode"
-            aria-label="Flight Mode"
+            id="headerMenuBtn"
+            type="button"
+            class="sm:hidden"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="headerControls"
           >
-            <span class="text-sm">✈️</span>
+            <span></span><span></span><span></span>
           </button>
-
-          <!-- Download Resume -->
-          <a
-            id="downloadResumeBtn"
-            href="./assets/resume-preeti-soreng.pdf"
-            target="_blank"
-            rel="noopener"
-            class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all"
-            title="Open resume"
-            aria-label="Open resume (opens in a new tab)"
-          >
-            <svg
-              class="w-4 h-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
+          <div id="headerControls" class="flex items-center gap-2 sm:contents">
+            <!-- Flight Mode Icon Button -->
+            <button
+              id="flightModeBtn"
+              onclick="toggleFlightMode()"
+              class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all"
+              title="Flight Mode"
+              aria-label="Flight Mode"
             >
-              <path d="M12 4v11" />
-              <path d="m7 10 5 5 5-5" />
-              <path d="M5 19h14" />
-            </svg>
-          </a>
+              <span class="text-sm">✈️</span>
+            </button>
 
-          <!-- Sound & Ambient Music Toggle (Clean Icon Only, No Graph) -->
-          <button
-            id="soundToggleBtn"
-            onclick="toggleAudioFX()"
-            class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all text-sm"
-            title="Toggle Sound / Ambient Music"
-          >
-            <span id="soundIcon">🔇</span>
-          </button>
+            <!-- Download Resume -->
+            <a
+              id="downloadResumeBtn"
+              href="./assets/resume-preeti-soreng.pdf"
+              target="_blank"
+              rel="noopener"
+              class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all"
+              title="Open resume"
+              aria-label="Open resume (opens in a new tab)"
+            >
+              <svg
+                class="w-4 h-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 4v11" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 19h14" />
+              </svg>
+            </a>
 
-          <!-- Dark/Light Mode Switcher -->
-          <button
-            onclick="toggleDarkMode()"
-            class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-transform"
-            title="Toggle Theme"
-          >
-            <span class="dark:hidden">🌙</span>
-            <span class="hidden dark:inline">☀️</span>
-          </button>
+            <!-- Sound & Ambient Music Toggle (Clean Icon Only, No Graph) -->
+            <button
+              id="soundToggleBtn"
+              onclick="toggleAudioFX()"
+              class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-all text-sm"
+              title="Toggle Sound / Ambient Music"
+            >
+              <span id="soundIcon">🔇</span>
+            </button>
+
+            <!-- Dark/Light Mode Switcher -->
+            <button
+              onclick="toggleDarkMode()"
+              class="bg-white/90 dark:bg-stone-900/90 backdrop-blur-md border border-stone-200/80 dark:border-stone-800 shadow-sm rounded-full w-9 h-9 flex items-center justify-center text-stone-700 dark:text-stone-300 hover:scale-105 transition-transform"
+              title="Toggle Theme"
+            >
+              <span class="dark:hidden">🌙</span>
+              <span class="hidden dark:inline">☀️</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -5023,6 +5503,23 @@
                 />
               </svg>
 
+              <!-- The same flight on a phone: off the butterfly, a loop, and away
+                   under the note. Drawn in the phone collage's units. -->
+              <svg
+                class="hero-trail-m absolute pointer-events-none z-0"
+                viewBox="0 0 120 110"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M 70 6 C 104 20, 112 56, 86 72 C 70 82, 56 74, 64 64 C 72 56, 82 70, 70 84 C 56 100, 26 104, 4 98"
+                  stroke="#b8b2a8"
+                  stroke-width="1.4"
+                  stroke-dasharray="4 5"
+                  stroke-linecap="round"
+                />
+              </svg>
+
               <!-- Dried baby's breath, standing behind the front polaroid -->
               <img
                 class="hero-sprig absolute z-10 select-none pointer-events-none"
@@ -5040,6 +5537,9 @@
                 data-chaos-left="2%"
                 data-chaos-top="25%"
                 data-chaos-rot="3"
+                data-m-left="6%"
+                data-m-top="19%"
+                data-m-rot="4"
                 data-clean-left="4%"
                 data-clean-top="14%"
                 data-clean-rot="0"
@@ -5086,6 +5586,9 @@
                 data-chaos-left="24%"
                 data-chaos-top="9%"
                 data-chaos-rot="-9"
+                data-m-left="38%"
+                data-m-top="3%"
+                data-m-rot="-8"
                 data-clean-left="38%"
                 data-clean-top="14%"
                 data-clean-rot="0"
@@ -5130,6 +5633,9 @@
                 data-chaos-left="61.5%"
                 data-chaos-top="13%"
                 data-chaos-rot="6"
+                data-m-left="53%"
+                data-m-top="47%"
+                data-m-rot="4"
                 data-clean-left="70%"
                 data-clean-top="2%"
                 data-clean-rot="0"
@@ -5305,6 +5811,9 @@
                 data-chaos-left="62.5%"
                 data-chaos-top="47%"
                 data-chaos-rot="-12"
+                data-m-left="27%"
+                data-m-top="65%"
+                data-m-rot="-9"
                 data-clean-left="70%"
                 data-clean-top="40%"
                 data-clean-rot="0"
@@ -6308,8 +6817,10 @@
               <p class="books-lede">
                 A selection of foundational readings on systems thinking, product architecture,
                 visual typography, and craft philosophy.
-                <span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any book
-                spine or row to reveal its cover.
+                <span class="books-hint-flip"
+                  ><span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any
+                  book spine or row to reveal its cover.</span
+                ><span class="books-hint-swipe">Swipe the shelf to browse.</span>
               </p>
             </div>
 
@@ -7514,27 +8025,11 @@
           <p class="books-empty" id="shelfEmpty" hidden>No books match that search.</p>
 
           <div class="books-foot">
-            <button
-              type="button"
-              class="books-back"
-              id="bookshelfBack"
-              aria-label="Back to the start of the shelf"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M19 12H5M11 6l-6 6 6 6" />
-              </svg>
-            </button>
             <span class="books-foot-copy"
-              ><span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any spine
-              to rotate and reveal front cover</span
+              ><span class="books-hint-flip"
+                ><span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any
+                spine to rotate and reveal front cover</span
+              ><span class="books-hint-swipe">Swipe sideways to browse the shelf</span></span
             >
             <span class="books-foot-sign">Curated Personal Reading</span>
           </div>
@@ -9111,6 +9606,8 @@
         let isDragging = false;
         let startX, startY;
         let initialLeft, initialTop;
+        // Where the card is allowed to go, worked out once per drag.
+        let minLeft, maxLeft, minTop, maxTop;
 
         // Sound on hover
         item.addEventListener("mouseenter", () => {
@@ -9128,14 +9625,29 @@
           item.classList.add("is-dragging");
           playPop();
 
+          const parent = item.parentElement;
           const rect = item.getBoundingClientRect();
-          const parentRect = item.parentElement.getBoundingClientRect();
+          const parentRect = parent.getBoundingClientRect();
+          const style = getComputedStyle(item);
 
           startX = e.clientX || (e.touches && e.touches[0].clientX);
           startY = e.clientY || (e.touches && e.touches[0].clientY);
 
-          initialLeft = rect.left - parentRect.left;
-          initialTop = rect.top - parentRect.top;
+          // Start from the card's own left/top, not its drawn box: a tilted
+          // card's box is wider than the card, and starting from it made the
+          // card jump sideways the moment it was picked up.
+          initialLeft = parseFloat(style.left) || 0;
+          initialTop = parseFloat(style.top) || 0;
+
+          // Held inside the collage: the drawn (tilted) card can go right up
+          // to the collage's edge but never past it. boxX/boxY is how far the
+          // drawn box sits from left/top, which a drag doesn't change.
+          const boxX = rect.left - parentRect.left - parent.clientLeft - initialLeft;
+          const boxY = rect.top - parentRect.top - parent.clientTop - initialTop;
+          minLeft = -boxX;
+          minTop = -boxY;
+          maxLeft = Math.max(minLeft, parent.clientWidth - rect.width - boxX);
+          maxTop = Math.max(minTop, parent.clientHeight - rect.height - boxY);
 
           // Bring to front
           draggableItems.forEach((i) => (i.style.zIndex = "10"));
@@ -9153,8 +9665,11 @@
           const dx = clientX - startX;
           const dy = clientY - startY;
 
-          item.style.left = `${initialLeft + dx}px`;
-          item.style.top = `${initialTop + dy}px`;
+          const left = Math.min(maxLeft, Math.max(minLeft, initialLeft + dx));
+          const top = Math.min(maxTop, Math.max(minTop, initialTop + dy));
+
+          item.style.left = `${left}px`;
+          item.style.top = `${top}px`;
         };
 
         const onPointerUp = () => {
@@ -9861,10 +10376,8 @@
         }
       }
 
-      if (
-        localStorage.getItem("theme") === "dark" ||
-        (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches)
-      ) {
+      // Light by default on every device; dark only once a visitor picks it.
+      if (localStorage.getItem("theme") === "dark") {
         document.documentElement.classList.add("dark");
       } else {
         document.documentElement.classList.remove("dark");
@@ -10212,8 +10725,11 @@
       ];
 
       let activeShelfBookIdx = null;
+      /* On a phone the spines don't turn: a tap would fight the sideways swipe. */
+      const shelfIsPhone = window.matchMedia("(max-width: 639px)");
 
       function handleShelfBookHover(idx) {
+        if (shelfIsPhone.matches) return;
         activeShelfBookIdx = idx;
         const book = curatedBooksData[idx];
         if (!book) return;
@@ -10273,18 +10789,10 @@
             applyShelfFilter();
           });
         }
-        /* Back to the start of the shelf, which scrolls sideways once the
-           screen is narrower than it. */
-        const back = document.getElementById("bookshelfBack");
-        const scroller = document.getElementById("bookshelfScroll");
-        if (back && scroller) {
-          back.addEventListener("click", () => {
-            scroller.scrollTo({ left: 0, behavior: "smooth" });
-          });
-        }
       })();
 
       function handleBookClick(idx) {
+        if (shelfIsPhone.matches) return;
         playPop();
         const item = document.querySelector(`.shelf-book-item[data-book-idx="${idx}"]`);
         if (item) {
@@ -10846,6 +11354,15 @@
           var mobileCover = window.innerWidth < 768;
           var homeX = h.left + h.width * (mobileCover ? 0.72 : 1489 / 1672);
           var homeY = h.top + h.height * (mobileCover ? 0.42 : 432 / 941);
+          /* On a phone the collage is its own page under the copy, and the
+             butterfly rests at its lower right, beside the note. */
+          var collage =
+            window.innerWidth < 640 && document.getElementById("interactiveDesktopArea");
+          if (collage) {
+            var c = collage.getBoundingClientRect();
+            homeX = c.left + c.width * 0.66;
+            homeY = c.top + c.height * 0.77;
+          }
           var kc = pull * 1.6;
           sx += homeX * kc;
           sy += homeY * kc;
@@ -11879,5 +12396,69 @@
       })();
     </script>
     <!-- page-transition:end -->
+    <script>
+      /* Phones. The collage pieces take the scrapbook positions written on
+         them as data-m-*, and go back to their desktop places if the window
+         grows past the breakpoint. Only on crossing it, so a card someone
+         has dragged stays where they put it. Plus the header's menu button. */
+      (function () {
+        var phone = window.matchMedia("(max-width: 639px)");
+        var pieces = document.querySelectorAll(
+          "#interactiveDesktopArea .draggable-item[data-m-left]"
+        );
+
+        function place(isPhone) {
+          if (typeof currentHeroMode !== "undefined" && currentHeroMode !== "chaos") return;
+          pieces.forEach(function (el) {
+            var key = isPhone ? "m" : "chaos";
+            el.style.left = el.getAttribute("data-" + key + "-left");
+            el.style.top = el.getAttribute("data-" + key + "-top");
+            el.style.transform = "rotate(" + el.getAttribute("data-" + key + "-rot") + "deg)";
+          });
+        }
+        /* The case-study filters are hidden on a phone, so a filter picked
+           at a wider size is cleared rather than left with no way back. */
+        function showAllWork() {
+          var all = document.querySelector('.cs-filters [data-cs-filter="all"]');
+          if (all && !all.classList.contains("is-active")) all.click();
+        }
+        if (phone.matches) place(true);
+        var onChange = function (e) {
+          place(e.matches);
+          if (e.matches) showAllWork();
+        };
+        if (phone.addEventListener) phone.addEventListener("change", onChange);
+        else if (phone.addListener) phone.addListener(onChange);
+
+        var btn = document.getElementById("headerMenuBtn");
+        var menu = document.getElementById("headerControls");
+        if (!btn || !menu) return;
+        function setOpen(open) {
+          menu.classList.toggle("is-open", open);
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          btn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        }
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          setOpen(!menu.classList.contains("is-open"));
+        });
+        document.addEventListener("click", function (e) {
+          if (!menu.contains(e.target)) setOpen(false);
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && menu.classList.contains("is-open")) {
+            setOpen(false);
+            btn.focus();
+          }
+        });
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (menu.classList.contains("is-open")) setOpen(false);
+          },
+          { passive: true }
+        );
+      })();
+    </script>
   </body>
 </html>
