@@ -1228,6 +1228,32 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
     [data-df="persona"] > ul li > span[aria-hidden="true"] { display: inline; }
     [data-df] h2 + div[class*="h-px"] { margin-top: 28px; }
 
+    /* ---- Overview, Role, Product ---- */
+    [data-df="overview"] p[class*="tracking-[2.6px]"],
+    [data-df="goals"] p[class*="tracking-[2.6px]"] { text-transform: uppercase; }
+    [data-df="overview"] > div:first-child > div:first-child > p + p { font-size: 13px; line-height: 22px; }
+    [data-df="overview"] > div:first-child > div:first-child > p:nth-child(2) { margin-top: 12px; }
+    [data-df="overview"] > div:first-child > div:nth-child(2) { margin-top: 33px; }
+    [data-df="overview"] > div:first-child > div:nth-child(2) > p:nth-child(2) { margin-top: 8px; font-size: 20px; line-height: 28px; font-weight: 300; }
+    [data-df="overview"] > div:first-child > div:nth-child(2) > p:nth-child(3) { margin-top: 0; font-size: 13px; line-height: 22px; }
+    [data-df="overview"] > div:first-child > div:nth-child(2) > div { margin-top: 38px; }
+    [data-df="overview"] > div:first-child > div:nth-child(2) > div > p { font-size: 13px; line-height: 22px; }
+    [data-df="overview"] > div:nth-child(2) { margin-top: 22px; }
+    [data-df="overview"] > div:nth-child(2) > p:first-child { font-size: 13px; line-height: 24px; text-transform: uppercase; }
+    [data-df="overview"] > div:nth-child(2) > p + p { margin-top: 0; font-size: 26px; line-height: 39px; }
+
+    /* ---- Problem Statement ---- */
+    [data-df="problem"] { margin-top: 12px; padding-top: 32px; padding-bottom: 38px; }
+    [data-df="problem"] h2 + p { margin-top: 8px; }
+    [data-df="problem"] p { font-size: 13px; line-height: 22px; }
+
+    /* ---- Goals ---- */
+    [data-df="goals"] p.whitespace-nowrap { font-size: 13px; line-height: 24px; }
+
+    /* ---- User Research Insights ---- */
+    [data-df="research"] h2 { font-size: 24px !important; line-height: 37px !important; }
+    [data-df="research"] .ja { margin-top: 32px; }
+
     /* ---- User Interview ---- */
     [data-df="interview"] > div:nth-child(2) { margin-top: 32px; }
     [data-df="interview"] > div:nth-child(2) > p:first-child,
@@ -1306,6 +1332,26 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
     var sec = key && h.closest("div.mx-auto");
     if (sec) sec.setAttribute("data-df", key);
   });
+  // Sections without an h2 of their own, found by their label or heading.
+  var tag = function (el, sel, key) {
+    var sec = el && el.closest(sel);
+    if (sec) sec.setAttribute("data-df", key);
+  };
+  var label = function (t) {
+    return Array.prototype.find.call(document.querySelectorAll("p"), function (p) {
+      return p.textContent.trim() === t;
+    });
+  };
+  tag(label("Overview"), "div.mx-auto", "overview");
+  tag(label("Goals"), "div[class*='bg-[#e9effb]']", "goals");
+  var problem = Array.prototype.find.call(document.querySelectorAll("h2"), function (h) {
+    return h.textContent.trim() === "Problem Statement";
+  });
+  tag(problem, "div[class*='bg-[#101124]']", "problem");
+  var research = Array.prototype.find.call(document.querySelectorAll("h2"), function (h) {
+    return h.textContent.trim() === "User Research Insights";
+  });
+  tag(research, "div.mx-auto", "research");
 })();
 </script>
 <!-- df-figma-mobile:end -->
@@ -1321,13 +1367,13 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
     .ja summary { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: var(--ja-head); cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; }
     .ja summary::-webkit-details-marker { display: none; }
     .ja-num { flex-shrink: 0; display: grid; place-items: center; min-width: 40px; height: 32px; padding: 0 10px; border-radius: 999px; background: var(--ja-chip); color: #3a3a4d; font-size: 14px; font-weight: 500; }
-    .ja-title { flex: 1; font-size: 16px; line-height: 22px; font-weight: 700; color: #090a0a; }
+    .ja-title { flex: 1; font-size: 14px; line-height: 22px; font-weight: 700; color: #090a0a; }
     .ja-chev { flex-shrink: 0; display: flex; }
     .ja-chev .ja-down { display: block; }
     .ja-chev .ja-up, .ja details[open] .ja-chev .ja-down { display: none; }
     .ja details[open] .ja-chev .ja-up { display: block; }
     .ja-rows { padding: 4px 16px 8px; }
-    .ja-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ja-line); font-size: 14px; line-height: 20px; color: #302f2f; }
+    .ja-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--ja-line); font-size: 12px; line-height: 20px; color: #302f2f; }
     .ja-row:last-child { border-bottom: 0; }
     .ja-label { font-weight: 700; color: #090a0a; }
     .ja-val { border-left: 1px solid var(--ja-line); padding-left: 16px; min-width: 0; }
@@ -1340,8 +1386,8 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
 </style>
 <script>
 (function () {
-  /* ArrowCircleDown / ArrowCircleUp from the icon section of the Portfolio Figma file. */
-  var chev = '<span class="ja-chev" aria-hidden="true"><img class="ja-down" src="./assets/iconArrowCircleDown.svg" width="24" height="24" alt=""/><img class="ja-up" src="./assets/iconArrowCircleUp.svg" width="24" height="24" alt=""/></span>';
+  /* CaretDown / CaretUp from the mobile frame in the Portfolio Figma file. */
+  var chev = '<span class="ja-chev" aria-hidden="true"><img class="ja-down" src="./assets/iconCaretDown.svg" width="24" height="24" alt=""/><img class="ja-up" src="./assets/iconCaretUp.svg" width="24" height="24" alt=""/></span>';
   function label(t) {
     t = t.trim();
     if (t !== t.toUpperCase()) return t;
