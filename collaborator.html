@@ -6095,6 +6095,10 @@
         .case-gate__form {
           flex-direction: column;
         }
+        .case-gate__input {
+          flex: none;
+          height: 52px;
+        }
         .case-gate__button {
           width: 100%;
         }
@@ -6471,9 +6475,7 @@
           id="csHeader"
           class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"
         >
-          <a id="csBack" href="./index.html" aria-label="Back to the portfolio"
-            ><img src="./assets/iconCaretLeft.svg" width="24" height="24" alt="" /></a
-          ><a
+          <a
             class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group"
             data-node-id="40000695:1832"
             href="./index.html"
@@ -7864,24 +7866,7 @@
      frame in the Portfolio Figma file (landing page ideation > mobile screen).
      Each section is tagged with data-co by the script below, so these rules
      touch nothing else on the page; tablet and desktop are unchanged. */
-      #csBack {
-        display: none;
-      }
       @media (max-width: 767px) {
-        /* ---- Header: a back arrow at the left of the name ---- */
-        #root #csHeader > #csBack {
-          display: block;
-          position: absolute;
-          left: 14px;
-          top: 18px;
-          width: 24px;
-          height: 24px !important;
-        }
-        #csBack img {
-          display: block;
-          width: 24px;
-          height: 24px;
-        }
 
         /* ---- Cover: 641px tall; the card keeps its size ---- */
         #root #csHeader + div {
@@ -8088,5 +8073,140 @@
       })();
     </script>
     <!-- co-figma-mobile:end -->
-  </body>
+  <!-- cs-back-caret:start -->
+<style>
+  /* Phones: a back caret at the left of the top bar, centred on the
+         "Preeti Soreng" wordmark. It goes back a page; the script below
+         places it and wires it up. */
+  #csBack {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    #csBack {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      left: 6px;
+      z-index: 60;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border: 0;
+      background: none;
+      color: #1c1917;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #csBack img {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+    /* Where there is no wordmark in the bar it floats over the cover. */
+    #csBack.cs-back--float {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 0 0 1px rgba(20, 20, 20, 0.12);
+      -webkit-backdrop-filter: blur(8px);
+      backdrop-filter: blur(8px);
+    }
+    #csBack.cs-back--float img {
+      width: 20px;
+      height: 20px;
+    }
+    /* A wordmark that starts at the left edge moves over for it. */
+    .cs-back-shift {
+      margin-left: 30px !important;
+    }
+  }
+</style>
+<script>
+  (function () {
+    var phone = window.matchMedia("(max-width: 767px)");
+
+    function goBack() {
+      var ref = document.referrer;
+      var sameSite = false;
+      try {
+        sameSite = !!ref && new URL(ref).origin === location.origin;
+      } catch (e) {}
+      if (sameSite && history.length > 1) history.back();
+      else location.href = "./index.html";
+    }
+
+    function wordmark() {
+      var all = document.querySelectorAll("a, span, p");
+      for (var i = 0; i < all.length; i++) {
+        var el = all[i];
+        if (
+          el.textContent.trim() !== "Preeti Soreng" ||
+          !el.getClientRects().length
+        )
+          continue;
+        if (el.getBoundingClientRect().top > 150) continue;
+        // The innermost element holding the name.
+        var inner = el.querySelector("span, p");
+        return inner && inner.textContent.trim() === "Preeti Soreng"
+          ? inner
+          : el;
+      }
+      return null;
+    }
+
+    function bar(el) {
+      for (var e = el; e && e !== document.body; e = e.parentElement) {
+        var pos = getComputedStyle(e).position;
+        if (pos === "sticky" || pos === "fixed") return e;
+      }
+      return el.parentElement;
+    }
+
+    function init() {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.id = "csBack";
+      btn.setAttribute("aria-label", "Go back");
+      btn.innerHTML =
+        '<img src="./assets/iconCaretLeft.svg" width="24" height="24" alt="" />';
+      btn.addEventListener("click", goBack);
+
+      var mark = wordmark();
+      if (!mark) {
+        btn.className = "cs-back--float";
+        document.body.appendChild(btn);
+        return;
+      }
+      var host = bar(mark);
+      if (getComputedStyle(host).position === "static")
+        host.style.position = "relative";
+      host.insertBefore(btn, host.firstChild);
+
+      function place() {
+        if (!phone.matches) return;
+        var link = mark.closest("a") || mark;
+        if (mark.getBoundingClientRect().left < 48)
+          link.classList.add("cs-back-shift");
+        var h = host.getBoundingClientRect(),
+          m = mark.getBoundingClientRect();
+        btn.style.top = Math.round(m.top - h.top + m.height / 2 - 20) + "px";
+      }
+      place();
+      window.addEventListener("resize", place);
+      if (document.fonts && document.fonts.ready)
+        document.fonts.ready.then(place);
+    }
+
+    if (document.readyState === "loading")
+      document.addEventListener("DOMContentLoaded", init);
+    else init();
+  })();
+</script>
+<!-- cs-back-caret:end -->
+</body>
 </html>
