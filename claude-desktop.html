@@ -303,7 +303,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&family=Bakbak+One&family=Bonheur+Royale&family=Caveat:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&family=Jost:wght@400;600;700&family=Roboto:wdth,wght@100,300;100,400;100,500;100,600;100,700;100,800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600&family=Bakbak+One&family=Bonheur+Royale&family=Caveat:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..700&family=Inter:wght@400;500;600&family=Jost:wght@400;600;700&family=Roboto:wdth,wght@100,300;100,400;100,500;100,600;100,700;100,800&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -328,7 +328,7 @@ body {
 .font-mono,
 .font-\[\'IBM_Plex_Mono\'\,monospace\],
 [class*="font-['IBM_Plex_Mono'"] {
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Roboto', Arial, sans-serif !important;
 }
 .font-hand,
 .font-notes,
@@ -362,6 +362,84 @@ body {
   #root div[style*="background-image:linear-gradient(180deg"]>div:nth-of-type(2) img{width:100%!important;margin:auto}
 }
 </style>
+<!-- ai-topbar-style:start -->
+<style>
+  /* Desktop: the top bar matches the Building with AI page, full width
+     with grey tabs and the current one in indigo, underlined. The tabs
+     are found by their node id, since the back caret is put in front of
+     them once the page loads. */
+  @media (min-width: 768px) {
+    #root {
+      align-self: stretch;
+      width: 100%;
+    }
+    [data-name="Claude Desktop"] > div:first-child {
+      border-bottom: 1px solid #f0f0f3 !important;
+      box-shadow: none !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] a {
+      opacity: 1 !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] p {
+      font-family: "Roboto", Arial, sans-serif !important;
+      font-size: 16px !important;
+      line-height: 1.4 !important;
+      letter-spacing: 0 !important;
+      font-variation-settings: normal !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] a p {
+      font-weight: 400 !important;
+      color: #8a8da2 !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] a:hover p {
+      color: #4a4a8f !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] > div p {
+      font-weight: 600 !important;
+      color: #34349a !important;
+    }
+    [data-name="Claude Desktop"] > div:first-child > [data-node-id="40000674:1853"] > div span {
+      height: 1px !important;
+      background: #514fd6 !important;
+    }
+  }
+</style>
+<!-- ai-topbar-style:end -->
+<!-- figma-mobile:start -->
+<style>
+  /* Phones: spacing, type and labels from the Claude Desktop mobile frame in Figma (mobile screen section). */
+  /* Phones: copy that differs from desktop. */
+  .fm-m, .fm-m-block { display: none; }
+  @media (max-width: 767px) {
+    .fm-d { display: none; }
+    .fm-m { display: inline; }
+    .fm-m-block { display: flex; }
+  }
+  @media (max-width: 767px) {
+    #root > [data-name="Claude Desktop"] > div:nth-child(3) > div > div > p:first-child { text-transform: uppercase; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(3) > div > div:nth-child(1) > p:nth-child(2) { margin-top: 8px !important; font-size: 15px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(3) > div > div:nth-child(1) > img { margin-top: 46px !important; width: 337px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(3) > div > div:nth-child(2) > p:nth-child(2) { margin-top: 12px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(3) > div > div:nth-child(2) > div:nth-child(3) { margin-top: 36px !important; }
+    /* Stage 1: no label, the prompts start under the heading. */
+    #root > [data-name="Claude Desktop"] > div:nth-child(4) { padding-top: 63px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(4) > div:nth-child(2) { margin-top: 0 !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(4) > div:nth-child(2) > p:first-child { display: none !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(4) ul { margin-top: 13px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(4) li + li { margin-top: 22px; }
+    #root > [data-name="Claude Desktop"] li > span:last-child,
+    #root > [data-name="Claude Desktop"] p[class*="bg-[#dce8e8]"],
+    #root > [data-name="Claude Desktop"] > div:nth-child(6) > div:nth-child(2) > p:nth-child(4),
+    #root > [data-name="Claude Desktop"] > div:nth-child(7) > div:nth-child(2) > p:nth-child(2) {
+      font-size: 15px !important;
+    }
+    #root > [data-name="Claude Desktop"] > div:nth-child(5) > div:nth-child(2) > img { margin-top: 0 !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(5) > div:nth-child(2) > p:nth-child(4) { margin-top: 36px !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(6) > div:nth-child(2) > img { margin-top: 0 !important; }
+    #root > [data-name="Claude Desktop"] > div:nth-child(7) { padding-top: 65px !important; }
+  }
+</style>
+<!-- figma-mobile:end -->
 </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
     <div id="root"><link rel="preload" as="image" href="./assets/desktopHero.png"/><link rel="preload" as="image" href="./assets/desktopStack.png"/><link rel="preload" as="image" href="./assets/desktopSupabase.png"/><link rel="preload" as="image" href="./assets/desktopEdgeFunctions.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/aiCardDecisionFlow.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Claude Desktop"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="ai:building" href="./building-with-ai.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Building with AI</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="ai:claude-cli" href="./claude-cli.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Claude CLI</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="ai:bolt" href="./bolt.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Bolt</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="ai:lovable" href="./lovable.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Lovable</p></a><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="ai:claude-desktop"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Claude Desktop</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div></div></div><div class="flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[866px] overflow-clip relative w-full" style="background-image:linear-gradient(180deg, #ffffff 0%, #eef6ff 100%)"><p data-reveal="top" class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[72px] text-black md:top-[75px] whitespace-nowrap">Paw Nest</p><div data-reveal="top" data-reveal-delay="1" class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[182px]"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><span class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" style="font-variation-settings:&quot;wdth&quot; 100">Pet boarding</span><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div data-reveal="bottom" data-reveal-delay="2" class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[254px] w-[88%] md:w-[886px]"><img alt="The Paw Nest landing page — No Cages. Just Cuddles." class="block h-auto max-w-full w-full md:w-[886px]" src="./assets/desktopHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[105px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[21px]" style="font-variation-settings:&quot;wdth&quot; 100">This version includes the following tech stack :</p><img alt="Claude, Supabase, Edge Functions, GitHub, Gmail and VS Code" class="block h-auto max-w-full mt-[33px] w-full md:w-[411px]" src="./assets/desktopStack.png"/></div><div class="mt-[40px] w-full md:ml-[124px] md:mt-0 md:w-[333px]" data-reveal="right" data-reveal-delay="1"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[26px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Product Builder</p><div class="mt-[22px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">June 2026- July 2026</p></div><a class="font-[&#x27;Roboto&#x27;] inline-block px-[16px] py-[7px] text-[16px] text-black underline border border-[#b4d9ed] rounded-[4px] mt-[46px]" href="https://preetisoreng-ai.github.io/Paw-Nest/" rel="noreferrer" style="font-variation-settings:&quot;wdth&quot; 100" target="_blank">Link to app</a></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[58px] md:pt-[181px]" data-reveal="scale"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 1</h2><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Built front end with prompt</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] mt-[29px] pl-[10px] text-black w-full md:w-[655px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span><span><strong>Prompt 1</strong><br/>“Build a pet boarding responsive website, which highlights no caging, love and care for the pets. use funny cutre images of dogs and cats. add interaction to book a slot by filling details of owner and pets and dtaes of noking the slot. give me drop down for top 10 breeds to pick from on the form. also price will differ based on the size of teh pet which is small, medium, large. the form should appaer as popup when clicked on cta. refer image attacched for styling and inspiration. generat new funny images and add to landing page.”</span></span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span><span><strong>Prompt 2</strong><br/>“Add an admin page link on top right of the landing page password protected, keep the password- pawaandfriends2024. a table with the list of request and and column with approve and reject button will be visible . use entire page for the admin section and give link on top right of admin page that says back to home”</span></span></li></ul><p class="bg-[#dce8e8] font-[&#x27;Roboto&#x27;] px-[18px] py-[10px] text-[16px] leading-[24px] text-black w-full md:w-[638px] mt-[37px]" style="font-variation-settings:&quot;wdth&quot; 100">A html file of front end file for backend configuration of email and db was generated and autosaved in Downloads folder of local system</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[111px]" data-reveal="scale"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 2</h2><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Supabase configuartion</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[20px]" style="font-variation-settings:&quot;wdth&quot; 100">Create new project and run Sql command as given by Claude</p><img alt="App Admin page Secret Vault connecting to Supabase keys" class="block h-auto max-w-full ml-[53px] mt-[50px] w-full md:w-[515px]" src="./assets/desktopSupabase.png"/><p class="bg-[#dce8e8] font-[&#x27;Roboto&#x27;] px-[18px] py-[10px] text-[16px] leading-[24px] text-black w-full md:w-[638px] mt-[37px]" style="font-variation-settings:&quot;wdth&quot; 100">Secret Vault key space was created in admin page to add Supabase key.</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[106px]" data-reveal="scale"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 3</h2><div class="mt-[31px]"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Email configuration</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] mt-[29px] pl-[10px] text-black w-full md:w-[655px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span><span><strong>Prompt 3</strong><br/>“Need a email trigger using Supabase edge function in three scenarios. At the time of new booking one email will be sent to the owner of the pet boarding service and another email will be sent to customer as acknowledgement. Also in case of approval or rejection another email will be triggered to the customer. Service provider for both the email will be gmail”</span></span></li></ul><p class="bg-[#dce8e8] font-[&#x27;Roboto&#x27;] px-[18px] py-[10px] text-[16px] leading-[24px] text-black w-full md:w-[638px] mt-[25px]" style="font-variation-settings:&quot;wdth&quot; 100">TS file was generated in Downloads folder of Local system</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[45px]" style="font-variation-settings:&quot;wdth&quot; 100">Added TS file code in The Supabase edge function ( Type Script file is an email engine- a small program that runs Supabase&#x27;s servers and sends tgeh branded emails</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[35px]" style="font-variation-settings:&quot;wdth&quot; 100">Added secret keys to the Supabase edge functions</p><img alt="Adding GMAIL_USER, GMAIL_APP_PASSWORD and OWNER_EMAIL secret keys to Supabase edge functions" class="block h-auto max-w-full ml-[53px] mt-[30px] w-full md:w-[850px]" src="./assets/desktopEdgeFunctions.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[106px]" data-reveal="scale"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 4</h2><div class="mt-[31px]"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Hosting</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[29px]" style="font-variation-settings:&quot;wdth&quot; 100">The file was deployed via Github in a new Repo</p><p class="bg-[#dce8e8] font-[&#x27;Roboto&#x27;] px-[18px] py-[10px] text-[16px] leading-[24px] text-black w-full md:w-[638px] mt-[37px]" style="font-variation-settings:&quot;wdth&quot; 100">Supabase keys need to be again entered in the secret valt in Admin page, since before deployment, they keys ere saved in browser</p><a class="font-[&#x27;Roboto&#x27;] inline-block px-[16px] py-[7px] text-[16px] text-black underline bg-[#abe3f6] mt-[48px]" href="https://preetisoreng-ai.github.io/Paw-Nest/" rel="noreferrer" style="font-variation-settings:&quot;wdth&quot; 100" target="_blank">Link to app</a></div></div><!-- other-projects:start --><style>
