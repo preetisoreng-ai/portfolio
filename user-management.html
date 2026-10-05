@@ -371,9 +371,232 @@ body {
     </style>
 <style id="protected-case-gate-styles">.protected-case-content{display:none!important}.case-gate{width:min(1112px,calc(100% - 32px));margin:110px auto 40px;padding:72px 24px;text-align:center;border:1px solid #e7e5ef;border-radius:20px;background:linear-gradient(145deg,#fbfbff 0%,#f4f2ff 52%,#f5fbf8 100%);box-shadow:0 20px 60px rgba(68,58,132,.08)}.case-gate__eyebrow{margin:0;color:#5553a5;font:600 12px/1.2 'Roboto',Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase}.case-gate__title{margin:18px 0 0;color:#111217;font:600 clamp(32px,4vw,50px)/1.08 'Fraunces',Georgia,serif;letter-spacing:-.025em}.case-gate__copy{max-width:520px;margin:18px auto 0;color:#6f7180;font:400 16px/1.6 'Roboto',Arial,sans-serif}.case-gate__form{display:flex;justify-content:center;gap:10px;max-width:500px;margin:34px auto 0}.case-gate__input{min-width:0;flex:1;height:48px;padding:0 16px;border:1px solid #d8d6e5;border-radius:10px;background:#fff;color:#15151a;font:400 16px/1 'Roboto',Arial,sans-serif;outline:none}.case-gate__input:focus{border-color:#625fd9;box-shadow:0 0 0 3px rgba(98,95,217,.12)}.case-gate__button{height:48px;padding:0 22px;border:0;border-radius:10px;background:#4f4dc5;color:#fff;font:600 15px/1 'Roboto',Arial,sans-serif;cursor:pointer}.case-gate__button:hover{background:#403eac}.case-gate__error{min-height:22px;margin:12px 0 0;color:#b33b52;font:500 13px/1.5 'Roboto',Arial,sans-serif}.case-gate__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}@media(max-width:600px){.case-gate{margin-top:64px;padding:48px 20px}.case-gate__form{flex-direction:column}.case-gate__button{width:100%}}</style>
 <script>(function(){var K='user-management-access-v1',P='ps@design0815',N='User Management';function init(){var p=document.querySelector('[data-name="'+N+'"]');if(!p)return;var l=Array.prototype.find.call(p.querySelectorAll('p'),function(x){return x.textContent.trim()==='Overview'});if(!l)return;var o=l;while(o.parentElement&&o.parentElement!==p)o=o.parentElement;if(o.parentElement!==p)return;var g=document.createElement('section');g.className='case-gate';g.setAttribute('aria-labelledby','case-gate-title');g.innerHTML='<p class="case-gate__eyebrow">Protected case study</p><h2 class="case-gate__title" id="case-gate-title">Enter password to continue</h2><p class="case-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="case-gate__form"><label class="case-gate__sr" for="case-password">Password</label><input class="case-gate__input" id="case-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="case-gate__button" type="submit">View case study</button></form><p class="case-gate__error" role="alert" aria-live="polite"></p>';o.insertAdjacentElement('afterend',g);var a=[];for(var x=g.nextElementSibling;x;x=x.nextElementSibling){a.push(x);x.classList.add('protected-case-content')}function u(){a.forEach(function(e){e.classList.remove('protected-case-content')});g.remove();try{sessionStorage.setItem(K,'1')}catch(e){}}try{if(sessionStorage.getItem(K)==='1'){u();return}}catch(e){}var f=g.querySelector('form'),i=g.querySelector('input'),r=g.querySelector('.case-gate__error');f.addEventListener('submit',function(e){e.preventDefault();if(i.value===P){u();return}r.textContent='Incorrect password. Please try again.';i.value='';i.focus()})}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()})();</script>
+<!-- mobile-hero:start -->
+<style>
+  /* Phones: the same header and cover as Decision Flow. Copied from there;
+     the cover's screenshot is wider than Decision Flow's diagram, so its
+     card takes the picture's own height rather than cropping it. */
+  #csMenuBtn {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    #csHeader {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      min-height: 0;
+      padding: 10px 0 0 !important;
+      border-bottom: 1px solid #ececf3;
+      box-shadow: none;
+      background: rgba(255, 255, 255, 0.92);
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+    }
+    #csHeader > a {
+      justify-content: center;
+      height: 40px !important;
+    }
+    #csHeader > a > span:first-child {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 500 !important;
+      font-size: 22px !important;
+      letter-spacing: -0.02em;
+      color: #1c1917 !important;
+    }
+    #csHeader > a > span:first-child::after {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #b9a8f2;
+    }
+    /* The tabs: one row under the name, the current study underlined. */
+    #csTabs {
+      justify-content: flex-start;
+      height: auto !important;
+      gap: 6px !important;
+      margin-top: 4px;
+      padding: 0 12px !important;
+      scrollbar-width: none;
+    }
+    #csTabs::-webkit-scrollbar {
+      display: none;
+    }
+    #csTabs > * {
+      padding: 12px 10px 13px !important;
+    }
+    #csTabs > * > p {
+      font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 400 !important;
+      letter-spacing: 0 !important;
+      color: #535398 !important;
+    }
+    #csTabs > div > p {
+      font-weight: 600 !important;
+    }
+    #csTabs > div > span {
+      left: 10px !important;
+      right: 10px !important;
+      height: 1.5px !important;
+    }
+
+    #root [data-name="User Management"] > div:nth-child(2) {
+      isolation: isolate;
+      height: auto !important;
+      min-height: 0 !important;
+      align-items: center !important;
+      justify-content: center;
+      gap: 0 !important;
+      padding: 40px 0 48px !important;
+      text-align: center;
+      background:
+        radial-gradient(ellipse 42% 54% at 15% 50%, rgba(213, 224, 255, .72) 0%, rgba(230, 235, 255, .34) 48%, transparent 72%),
+        radial-gradient(ellipse 44% 45% at 82% 43%, rgba(218, 225, 255, .72) 0%, rgba(235, 238, 255, .28) 58%, transparent 78%),
+        linear-gradient(180deg, #f9fbff 0%, #f3f6ff 48%, #f8f9ff 100%) !important;
+    }
+    #root [data-name="User Management"] > div:nth-child(2)::before,
+    #root [data-name="User Management"] > div:nth-child(2)::after {
+      content: "" !important;
+      display: block !important;
+      position: absolute !important;
+      z-index: -1 !important;
+      margin: 0 !important;
+      border: 0 !important;
+      pointer-events: none;
+      filter: blur(.2px);
+    }
+    #root [data-name="User Management"] > div:nth-child(2)::before {
+      width: 82% !important;
+      height: 78% !important;
+      left: auto !important;
+      right: -25%;
+      top: 12% !important;
+      border-radius: 50% 0 0 50% !important;
+      background: linear-gradient(138deg, rgba(235, 239, 255, .08) 18%, rgba(221, 215, 255, .52) 55%, rgba(244, 242, 255, .12) 78%);
+      transform: rotate(-8deg) !important;
+    }
+    #root [data-name="User Management"] > div:nth-child(2)::after {
+      width: 64% !important;
+      height: 52% !important;
+      left: -21% !important;
+      top: auto !important;
+      bottom: -24%;
+      border-radius: 0 70% 0 0;
+      background: linear-gradient(35deg, rgba(209, 202, 255, .62), rgba(230, 229, 255, .18) 65%, transparent) !important;
+      transform: rotate(6deg);
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > p:first-child {
+      width: 88% !important;
+      margin: 0;
+      font-family: 'Fraunces', Georgia, serif !important;
+      font-size: clamp(40px, 12.4vw, 50px) !important;
+      font-weight: 600 !important;
+      line-height: 1.05 !important;
+      letter-spacing: -.025em;
+      text-align: center !important;
+      white-space: normal !important;
+      color: #000;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > p:first-child::before {
+      content: none !important;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > p:nth-child(2) {
+      width: min(86%, 330px) !important;
+      margin-top: 16px;
+      color: #6f748a !important;
+      font-size: 18px !important;
+      line-height: 1.42 !important;
+      text-align: center !important;
+    }
+    /* The line, dot and line under the subtitle. */
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(3) {
+      display: flex !important;
+      position: relative !important;
+      margin-top: 26px;
+      gap: 16px;
+      z-index: 2;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(3) > :first-child,
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(3) > :last-child {
+      width: 42px;
+      height: 1px;
+      overflow: hidden;
+      color: transparent;
+      background: #9399aa;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(3) > :nth-child(2) {
+      width: 13px;
+      height: 13px;
+      overflow: hidden;
+      border-radius: 50%;
+      color: transparent;
+      font-size: 0;
+      background: #5554e8;
+      box-shadow: 0 3px 9px rgba(71, 70, 215, .22);
+      pointer-events: none;
+    }
+    /* The card, with two sheets fanned out behind it. */
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4) {
+      position: relative !important;
+      top: auto !important;
+      right: auto !important;
+      left: auto !important;
+      z-index: 2;
+      width: calc(100% - 64px) !important;
+      margin-top: 48px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, .96);
+      box-shadow: 0 22px 65px rgba(83, 83, 152, .12), inset 0 1px rgba(255, 255, 255, .9);
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4) img {
+      border-radius: 8px;
+      filter: none !important;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4)::before,
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4)::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      pointer-events: none;
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4)::before {
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-18px, -10px) rotate(-3.5deg);
+      box-shadow: 0 12px 34px rgba(83, 83, 152, 0.08);
+    }
+    #root [data-name="User Management"] > div:nth-child(2) > div:nth-child(4)::after {
+      background: rgba(255, 255, 255, 0.62);
+      transform: translate(18px, 12px) rotate(3deg);
+      box-shadow: 0 18px 40px rgba(83, 83, 152, 0.1);
+    }
+  }
+</style>
+<script>
+  /* Phones: the tab row scrolls sideways, so bring the current study into
+     view rather than leave it cut off at the right edge. */
+  (function () {
+    function centre() {
+      var row = document.getElementById("csTabs");
+      var cur = row && row.querySelector(":scope > div");
+      if (!row || !cur || row.scrollWidth <= row.clientWidth) return;
+      var r = row.getBoundingClientRect(), c = cur.getBoundingClientRect();
+      row.scrollLeft += c.left - r.left - (r.width - c.width) / 2;
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", centre);
+    else centre();
+  })();
+</script>
+<!-- mobile-hero:end -->
 </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
-    <div id="root"><link rel="preload" as="image" href="./assets/umHero.png"/><link rel="preload" as="image" href="./assets/umTree.png"/><link rel="preload" as="image" href="./assets/umFig1.png"/><link rel="preload" as="image" href="./assets/umFig2.png"/><link rel="preload" as="image" href="./assets/umFig3.png"/><link rel="preload" as="image" href="./assets/umFig4.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="User Management"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1852" href="./decision-flow.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1860"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1863" href="./studios.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p></a></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-reveal="top">User Management</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Manages users, roles, and permissions to ensure secure collaboration and decision authority</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><a class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" href="./decision-flow.html" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</a><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[377px] w-[88%] md:w-[1101px]" data-reveal="bottom" data-reveal-delay="2"><img alt="The roles and access drawer open over an assortment planner in NucliOS" class="block h-auto max-w-full w-full md:w-[1101px]" src="./assets/umHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[42px] md:pt-[132px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[29px]" style="font-variation-settings:&quot;wdth&quot; 100">User management established the foundation for secure and structured collaboration throughout the decision-making journey. By defining user roles, permissions and access levels, it ensures that Executives, managers and analysts can access relevant information, contribute within their responsibilities and participate in decision appropriately. This role-based governance protects sensitive data, streamlines cross functional collaboration, and maintains accountability by ensuring every stakeholder has the right level of visibility, editing rights and decision authority at every stage of the workflow.</p></div><div class="mt-[40px] w-full md:ml-[148px] md:mt-[10px] md:w-[309px]" data-reveal="right" data-reveal-delay="1"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[14px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">October 2025 - January 2026</p></div></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[75px] md:pt-[234px] reveal"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Scenario</p><div class="bg-[#f3f9fc] mt-[34px] px-[26px] py-[64px] rounded-[36px] space-y-[40px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Workspace 1 admin adds a Artifact contributor to this space. This new user has access to all the projects and artifacts inside this workspace. Though this user do not have access to <span class="text-[#d53535]">Artifact C in project 1</span> and<!-- --> <span class="text-[#d53535]">Artifact B in Project 2</span>. Also he has limited access to artifact E in Project 2 (<span class="text-[#d53535]"> cannot copy or move artifact E in Project 2</span>)</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Design a workflow that will allow workspace admin to make these granular level configurations</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Need flexibity to configure same accesibility to all the apps. Have limited access control on some artifacts.</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[49px] md:pt-[152px] reveal"><img alt="Permission tree from Org 1 down through workspaces, projects and artifacts" class="block h-auto max-w-full mx-auto w-full md:w-[691px]" src="./assets/umTree.png"/></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[88px] md:pt-[286px] reveal"><div class="flex items-start" style="gap:75px"><img alt="The roles and access list showing everyone with access to a file" class="block h-auto max-w-full shrink-0" src="./assets/umFig1.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Roles &amp; Access</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>When user clicks on Roles and Access on the projects page, they can view list of people who have access to the file, with their roles mentioned beside each name</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[53px] md:pt-[166px] reveal"><div class="flex items-start" style="gap:75px"><img alt="A single user&#x27;s detail layer, listing every project and artifact they can reach" class="block h-auto max-w-full shrink-0" src="./assets/umFig2.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Details</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Once clicked on any of the user name another layer of information appears contexual to the user</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the list of projects and artifacts are displayed here, with access type to each artifact as well</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>User also has option to narrow down the search based on roles and workspace</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Back icon besides advanced settings would allow user to go back to the user list</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[50px] md:pt-[156px] reveal"><div class="flex items-start" style="gap:75px"><img alt="The second drawer, where an artifact&#x27;s current access type can be edited" class="block h-auto max-w-full shrink-0" src="./assets/umFig3.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Details</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Once clicked on any of the artifact from the list, another drawer will slide open</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>In the second pannel visible, user can edit and view the current access type</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[58px] md:pt-[182px] reveal"><div class="flex items-start" style="gap:75px"><img alt="Changing an access type, which opens the granular settings for that artifact" class="block h-auto max-w-full shrink-0" src="./assets/umFig4.png"/><div class="flex-1" style="padding-top:3px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Access Type</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Change in access type would allow user to customise the settings at granular level</span></li></ul></div></div></div><!-- other-projects:start --><style>
+    <div id="root"><link rel="preload" as="image" href="./assets/umHero.png"/><link rel="preload" as="image" href="./assets/umTree.png"/><link rel="preload" as="image" href="./assets/umFig1.png"/><link rel="preload" as="image" href="./assets/umFig2.png"/><link rel="preload" as="image" href="./assets/umFig3.png"/><link rel="preload" as="image" href="./assets/umFig4.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="User Management"><div id="csHeader" class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div id="csTabs" class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1852" href="./decision-flow.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1860"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1863" href="./studios.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p></a></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-reveal="top">User Management</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Manages users, roles, and permissions to ensure secure collaboration and decision authority</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><a tabindex="-1" aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" href="./decision-flow.html" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</a><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[377px] w-[88%] md:w-[1101px]" data-reveal="bottom" data-reveal-delay="2"><img alt="The roles and access drawer open over an assortment planner in NucliOS" class="block h-auto max-w-full w-full md:w-[1101px]" src="./assets/umHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[42px] md:pt-[132px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[29px]" style="font-variation-settings:&quot;wdth&quot; 100">User management established the foundation for secure and structured collaboration throughout the decision-making journey. By defining user roles, permissions and access levels, it ensures that Executives, managers and analysts can access relevant information, contribute within their responsibilities and participate in decision appropriately. This role-based governance protects sensitive data, streamlines cross functional collaboration, and maintains accountability by ensuring every stakeholder has the right level of visibility, editing rights and decision authority at every stage of the workflow.</p></div><div class="mt-[40px] w-full md:ml-[148px] md:mt-[10px] md:w-[309px]" data-reveal="right" data-reveal-delay="1"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[14px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">October 2025 - January 2026</p></div></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[75px] md:pt-[234px] reveal"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Scenario</p><div class="bg-[#f3f9fc] mt-[34px] px-[26px] py-[64px] rounded-[36px] space-y-[40px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Workspace 1 admin adds a Artifact contributor to this space. This new user has access to all the projects and artifacts inside this workspace. Though this user do not have access to <span class="text-[#d53535]">Artifact C in project 1</span> and<!-- --> <span class="text-[#d53535]">Artifact B in Project 2</span>. Also he has limited access to artifact E in Project 2 (<span class="text-[#d53535]"> cannot copy or move artifact E in Project 2</span>)</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Design a workflow that will allow workspace admin to make these granular level configurations</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Need flexibity to configure same accesibility to all the apps. Have limited access control on some artifacts.</p></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[49px] md:pt-[152px] reveal"><img alt="Permission tree from Org 1 down through workspaces, projects and artifacts" class="block h-auto max-w-full mx-auto w-full md:w-[691px]" src="./assets/umTree.png"/></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[88px] md:pt-[286px] reveal"><div class="flex items-start" style="gap:75px"><img alt="The roles and access list showing everyone with access to a file" class="block h-auto max-w-full shrink-0" src="./assets/umFig1.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Roles &amp; Access</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>When user clicks on Roles and Access on the projects page, they can view list of people who have access to the file, with their roles mentioned beside each name</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[53px] md:pt-[166px] reveal"><div class="flex items-start" style="gap:75px"><img alt="A single user&#x27;s detail layer, listing every project and artifact they can reach" class="block h-auto max-w-full shrink-0" src="./assets/umFig2.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Details</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Once clicked on any of the user name another layer of information appears contexual to the user</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the list of projects and artifacts are displayed here, with access type to each artifact as well</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>User also has option to narrow down the search based on roles and workspace</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Back icon besides advanced settings would allow user to go back to the user list</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[50px] md:pt-[156px] reveal"><div class="flex items-start" style="gap:75px"><img alt="The second drawer, where an artifact&#x27;s current access type can be edited" class="block h-auto max-w-full shrink-0" src="./assets/umFig3.png"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">User Details</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Once clicked on any of the artifact from the list, another drawer will slide open</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>In the second pannel visible, user can edit and view the current access type</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[58px] md:pt-[182px] reveal"><div class="flex items-start" style="gap:75px"><img alt="Changing an access type, which opens the granular settings for that artifact" class="block h-auto max-w-full shrink-0" src="./assets/umFig4.png"/><div class="flex-1" style="padding-top:3px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Access Type</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Change in access type would allow user to customise the settings at granular level</span></li></ul></div></div></div><!-- other-projects:start --><style>
 .op-section{width:100%;max-width:1352px;margin:80px auto 0;padding:0 16px 96px;box-sizing:border-box}
 @media (min-width:768px){.op-section{margin-top:180px;padding:0 80px 120px}}
 .op-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:44px;line-height:1.05;letter-spacing:-0.025em;color:#111214;margin:0 0 36px}

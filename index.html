@@ -4685,9 +4685,13 @@
         .fig-ic {
           display: block;
         }
-        .hdr-emoji,
-        .cs-go-glyph {
+        .hdr-emoji {
           display: none !important;
+        }
+        /* The case study cards keep the desktop arrow: the glyph carries a
+           text-presentation selector so iOS draws it plain, not as emoji. */
+        .cs-go .fig-ic {
+          display: none;
         }
         .dark .fig-ic {
           filter: invert(1);
@@ -5227,7 +5231,13 @@
               aria-label="Flight Mode"
             >
               <span class="text-sm hdr-emoji">✈️</span>
-              <img class="fig-ic" src="./assets/iconAirplaneTakeoff.svg" width="24" height="24" alt="" />
+              <img
+                class="fig-ic"
+                src="./assets/iconAirplaneTakeoff.svg"
+                width="24"
+                height="24"
+                alt=""
+              />
             </button>
 
             <!-- Download Resume -->
@@ -5254,7 +5264,13 @@
                 <path d="m7 10 5 5 5-5" />
                 <path d="M5 19h14" />
               </svg>
-              <img class="fig-ic" src="./assets/iconArrowCircleDown.svg" width="24" height="24" alt="" />
+              <img
+                class="fig-ic"
+                src="./assets/iconArrowCircleDown.svg"
+                width="24"
+                height="24"
+                alt=""
+              />
             </a>
 
             <!-- Sound & Ambient Music Toggle (Clean Icon Only, No Graph) -->
@@ -5265,8 +5281,20 @@
               title="Toggle Sound / Ambient Music"
             >
               <span id="soundIcon" class="hdr-emoji">🔇</span>
-              <img class="fig-ic snd-off" src="./assets/iconSoundOff.svg" width="24" height="24" alt="" />
-              <img class="fig-ic snd-on" src="./assets/iconSoundOn.svg" width="24" height="24" alt="" />
+              <img
+                class="fig-ic snd-off"
+                src="./assets/iconSoundOff.svg"
+                width="24"
+                height="24"
+                alt=""
+              />
+              <img
+                class="fig-ic snd-on"
+                src="./assets/iconSoundOn.svg"
+                width="24"
+                height="24"
+                alt=""
+              />
             </button>
 
             <!-- Dark/Light Mode Switcher -->
@@ -6142,7 +6170,15 @@
                 <h3>Decision Flow Platform</h3>
                 <p>Multi-model executive AI workflow engine</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
 
             <a href="./aura.html" class="cs-card cs-sand" data-cs-tags="consumer ai">
@@ -6167,7 +6203,15 @@
                 <h3>Aura</h3>
                 <p>Conversational Custom Tailoring</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
 
             <a href="./scavvy.html" class="cs-card cs-sky" data-cs-tags="consumer mobile">
@@ -6193,7 +6237,15 @@
                 <h3>Scavvy Outdoor App</h3>
                 <p>Real-world social treasure hunt &amp; discovery</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
 
             <a href="./building-with-ai.html" class="cs-card cs-mint" data-cs-tags="ai">
@@ -6216,7 +6268,15 @@
                 <h3>Benchmarking AI Systems</h3>
                 <p>Comparative analysis for real-world use</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
 
             <a href="./boring-ui.html" class="cs-card cs-blush" data-cs-tags="enterprise ai">
@@ -6240,7 +6300,15 @@
                 <h3>Boring UI</h3>
                 <p>Turning ordinary UI moments into tiny, game-like interactions</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
 
             <a
@@ -6277,7 +6345,15 @@
                 <h3>Platform Architecture</h3>
                 <p>Modular systems for scalable products</p>
               </div>
-              <span class="cs-go" aria-hidden="true"><span class="cs-go-glyph">&#8599;</span><img class="fig-ic" src="./assets/iconArrowCircleUpRight.svg" width="24" height="24" alt="" /></span>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
             </a>
           </div>
           <p class="cs-empty" hidden>Nothing filed under that yet.</p>
@@ -7931,8 +8007,8 @@
           <div class="books-foot">
             <span class="books-foot-copy"
               ><span class="books-hint-flip"
-                ><span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any
-                spine to rotate and reveal front cover</span
+                ><span class="on-hover">Hover over</span><span class="on-touch">Tap</span> any spine
+                to rotate and reveal front cover</span
               ><span class="books-hint-swipe">Swipe sideways to browse the shelf</span></span
             >
             <span class="books-foot-sign">Curated Personal Reading</span>
@@ -8008,7 +8084,7 @@
                   href="mailto:preeti.soreng@gmail.com"
                   class="w-full py-4 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-display font-bold text-center text-sm transition-colors shadow-lg"
                 >
-                  Send Email Now ✉️
+                  Send Email Now
                 </a>
               </div>
 
@@ -8016,7 +8092,7 @@
                 href="./assets/resume-preeti-soreng.pdf"
                 target="_blank"
                 rel="noopener"
-                class="self-center inline-flex items-center gap-1.5 font-mono text-xs text-stone-300 hover:text-white underline underline-offset-4 decoration-stone-500 hover:decoration-white transition-colors"
+                class="mx-[33px] flex items-center justify-center gap-2 min-h-[44px] px-5 py-2.5 rounded-full border border-stone-500 font-mono text-xs text-stone-200 hover:text-white hover:border-white hover:bg-white/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white transition-colors"
               >
                 <svg
                   class="w-3.5 h-3.5"
@@ -10668,6 +10744,31 @@
           btn.classList.toggle("is-active", btn.id === "shelfFilter-" + cat);
         });
         applyShelfFilter();
+        centreLitBooks();
+      }
+
+      /* When the shelf scrolls sideways (a phone, a tablet), bring the lit
+         books to the middle of the view so a filter never leaves them off
+         screen. If they span more than the view, the first one leads in. */
+      function centreLitBooks() {
+        const scroller = document.getElementById("bookshelfScroll");
+        if (!scroller || scroller.scrollWidth <= scroller.clientWidth) return;
+        const lit = scroller.querySelectorAll(".shelf-book-item:not(.is-dimmed)");
+        if (!lit.length) return;
+        const box = scroller.getBoundingClientRect();
+        const first = lit[0].getBoundingClientRect();
+        const last = lit[lit.length - 1].getBoundingClientRect();
+        const start = first.left - box.left + scroller.scrollLeft;
+        const end = last.right - box.left + scroller.scrollLeft;
+        const gutter = 24;
+        const allLit = !scroller.querySelector(".shelf-book-item.is-dimmed");
+        const target = allLit
+          ? 0
+          : end - start <= scroller.clientWidth - gutter * 2
+            ? (start + end) / 2 - scroller.clientWidth / 2
+            : start - gutter;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        scroller.scrollTo({ left: Math.max(0, target), behavior: reduce ? "auto" : "smooth" });
       }
 
       /* A book stays lit when it is in the chosen category and matches the
@@ -12369,7 +12470,7 @@
         );
       })();
     </script>
-      <script>
+    <script>
       /* On a phone the ladybird walks the rule over the categories; tell the
          cover where that rule is, and again whenever the cover reflows. */
       document.addEventListener("DOMContentLoaded", function () {
@@ -12384,5 +12485,5 @@
         if (window.ResizeObserver) new ResizeObserver(place).observe(cover);
       });
     </script>
-</body>
+  </body>
 </html>
