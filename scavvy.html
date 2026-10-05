@@ -376,38 +376,22 @@ body {
       #root > [data-name="Scavvy"] > :nth-child(-n + 2) {
         display: none !important;
       }
+      /* Phones: the cover is the mobile artwork, shown whole at the
+         screen's width. Its menu icon, top right, links back to the
+         portfolio, so the floating back caret stays hidden here. */
       @media (max-width: 720px) {
-        .scavvy-cover {
-          min-height: 680px;
-        }
         .scavvy-cover__art {
-          width: auto;
-          max-width: none;
-          height: 680px;
-          transform: translateX(-27%);
+          width: 100%;
+          height: auto;
         }
         .scavvy-cover__back {
-          position: fixed;
-          top: 14px;
-          right: 14px;
-          width: auto;
-          height: auto;
-          padding: 9px 13px;
-          border: 1px solid rgba(20,20,20,.12);
-          border-radius: 999px;
-          background: rgba(255,255,255,.88);
-          color: #171717;
-          font: 500 12px/1.2 'IBM Plex Mono', monospace;
-          text-decoration: none;
-          backdrop-filter: blur(8px);
+          top: 0;
+          right: 0;
+          width: 18%;
+          height: 5.4%;
         }
-        .scavvy-cover__back .scavvy-cover__sr {
-          position: static;
-          width: auto;
-          height: auto;
-          margin: 0;
-          clip: auto;
-          white-space: nowrap;
+        #csBack {
+          display: none !important;
         }
       }
     </style>
@@ -422,14 +406,248 @@ body {
         [data-name] > div:first-child > a:last-child{font-size:12px!important}
       }
     </style>
+    <!-- scavvy-mobile-style:start -->
+    <style>
+      /* Phones: the case study is laid out from the Figma frame
+         "Scavvy — Mobile (390)". The desktop sections are hidden and this
+         block takes their place; Other Projects stays as it is. */
+      .sc-m {
+        display: none;
+      }
+      @media (max-width: 720px) {
+        #root > [data-name="Scavvy"] > div:nth-child(n + 3) {
+          display: none !important;
+        }
+        .sc-m {
+          display: block;
+          width: 100%;
+          background: #fff;
+          color: #000;
+          font-family: "Roboto", Arial, sans-serif;
+          overflow-wrap: break-word;
+        }
+        .sc-m__sec {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 40px 16px 0;
+        }
+        .sc-m__sec:first-child {
+          padding-top: 42px;
+        }
+        .sc-m__sec--role {
+          gap: 8px;
+        }
+        .sc-m__sec--stage,
+        .sc-m__sec--stage2 {
+          gap: 20px;
+          padding-top: 56px;
+        }
+        .sc-m__sec--stage2 {
+          padding-top: 72px;
+        }
+        .sc-m__sec--future {
+          padding-top: 48px;
+        }
+        .sc-m h2,
+        .sc-m h3,
+        .sc-m p,
+        .sc-m ul,
+        .sc-m ol {
+          margin: 0;
+        }
+        .sc-m__label {
+          font: 700 13px/13px "Roboto", Arial, sans-serif;
+          letter-spacing: 2.6px;
+          text-transform: uppercase;
+          color: #090a0a;
+        }
+        .sc-m__body,
+        .sc-m__list {
+          font: 400 15px/24px "Roboto", Arial, sans-serif;
+          color: #000;
+        }
+        .sc-m__list {
+          padding: 0 0 0 22.5px;
+          list-style: disc;
+        }
+        .sc-m__role {
+          font: 300 20px/28px "Roboto", Arial, sans-serif;
+          color: #090a0a;
+        }
+        .sc-m__date {
+          font: 400 13px/22px "Roboto", Arial, sans-serif;
+          color: #302f2f;
+        }
+        .sc-m__stage {
+          font: 600 32px/36px "Fraunces", Georgia, serif;
+          letter-spacing: -0.6px;
+          color: #111214;
+        }
+        .sc-m__sub {
+          font: 500 18px/23px "Roboto", Arial, sans-serif;
+          color: #0a0a0a;
+        }
+        .sc-m__steps {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 32px 16px;
+          padding: 0;
+          list-style: none;
+        }
+        .sc-m__step {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          min-width: 0;
+        }
+        .sc-m__step--wide {
+          grid-column: 1 / -1;
+        }
+        .sc-m__panel {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 12px;
+          padding: 16px;
+          border-radius: 12px;
+          background: #f3f1fb;
+        }
+        .sc-m__panel img {
+          display: block;
+          width: 100%;
+          max-width: 139px;
+          height: auto;
+          border-radius: 8px;
+        }
+        .sc-m__step--wide .sc-m__panel img {
+          width: calc((100% - 12px) / 2);
+          max-width: 151px;
+        }
+        .sc-m__cap {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          font: 400 13px/20px "Roboto", Arial, sans-serif;
+          color: #302f2f;
+        }
+        .sc-m__step--wide .sc-m__cap {
+          flex-direction: row;
+          align-items: flex-start;
+        }
+        .sc-m__num {
+          font: 700 11px/16px "Roboto", Arial, sans-serif;
+          letter-spacing: 1.5px;
+          color: #535398;
+        }
+        .sc-m__step--wide .sc-m__num {
+          line-height: 20px;
+        }
+      }
+    </style>
+    <!-- scavvy-mobile-style:end -->
   </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
     <section class="scavvy-cover" aria-labelledby="scavvy-cover-title">
       <h1 id="scavvy-cover-title" class="scavvy-cover__sr">Scavvy — Race and Hunt</h1>
       <p class="scavvy-cover__sr">A platform for turning any place, occasion, or group gathering into a playable social experience.</p>
-      <img class="scavvy-cover__art" src="./assets/scavvy-cover-reference.png" alt="Scavvy case study cover featuring three mobile app screens for creating a hunt, following a map, and viewing the leaderboard" />
+      <picture><source media="(max-width: 720px)" srcset="./assets/scavvy-cover-mobile.jpg" width="852" height="1846" /><img class="scavvy-cover__art" src="./assets/scavvy-cover-reference.png" alt="Scavvy case study cover featuring three mobile app screens for creating a hunt, following a map, and viewing the leaderboard" /></picture>
       <a class="scavvy-cover__back" href="./index.html" aria-label="Back to Portfolio"><span class="scavvy-cover__sr">← Back to Portfolio</span></a>
     </section>
+    <!-- scavvy-mobile:start -->
+    <div class="sc-m">
+      <section class="sc-m__sec">
+        <h2 class="sc-m__label">Overview</h2>
+        <p class="sc-m__body">Scavvy is a location-based mobile application that transforms parks and public spaces into interactive scavenger hunt experiences. By combining QR codes, real-world exploration, and gamified challenges, it encourages users to stay active, discover new places, and engage with others. This project covers the end-to-end product design process, from user journey mapping and gameplay mechanics to designing the complete mobile experience. The goal was to create an intuitive, engaging, and scalable experience that seamlessly blends digital interaction with real-world exploration.</p>
+      </section>
+      <section class="sc-m__sec">
+        <h2 class="sc-m__label">KRA</h2>
+        <ul class="sc-m__list"><li>A fun and engaging activity that can be played outdoor using their mobile phone ina a group.</li><li>Anyone above 10 yrs should find it enjoyable and easy to use</li></ul>
+      </section>
+      <section class="sc-m__sec">
+        <h2 class="sc-m__label">Problems identified</h2>
+        <ul class="sc-m__list"><li>Game ideas outside in playground and park with friends is limited to kids.</li><li>Physical games need to carry some equipemts ouside and some cases and need a physical landscpe such as court, set up, etc.</li><li>Lack of ideas</li><li>Lot of outdoor activites involve sitting at one place</li><li>Outdoor games are time taking or skill required</li><li>Only racing is less motivating to engage in a physical activity.</li><li>Current board games or video games simulate the outdoor environment removing any contact with nature</li></ul>
+      </section>
+      <section class="sc-m__sec">
+        <h2 class="sc-m__label">Hypothesis</h2>
+        <ul class="sc-m__list"><li>We believe that by incorporating a treasure hunt format in a competative run, will motivate more people to participate in a group activity outdoor.</li><li>We believe mobile phones can become tool to encourage phisical movement in fun way.</li><li>We believe a fun easy intreface will encourage people to use this app more often.</li></ul>
+      </section>
+      <section class="sc-m__sec sc-m__sec--role">
+        <h2 class="sc-m__label">Role</h2>
+        <p class="sc-m__role">Product Builder</p>
+        <p class="sc-m__date">June 2026- July 2026</p>
+      </section>
+      <section class="sc-m__sec sc-m__sec--stage">
+        <h2 class="sc-m__stage">Stage 1</h2>
+        <h3 class="sc-m__sub">Built front end with prompt</h3>
+        <p class="sc-m__body">The process of building this app start with a simple ux flow describing landing page, a easy scan on click on link interface to enter the home page. Home page consist of interface to craete new groups and once the game starts a list of tasks will be given to finish. Whoever finfishes first will win . A responsive web app with fewer elements.</p>
+        <ol class="sc-m__steps">
+          <li class="sc-m__step sc-m__step--wide">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep1a.png" width="278" height="647" alt="" loading="lazy" /><img src="./assets/scavvyStep1b.png" width="277" height="647" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">01</span><span>Click on link or scan QR to enter the site</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep2.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">02</span><span>As a first time user, cretae user profile</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep3.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">03</span><span>Once evryone has created their profile, one of the player can create a new playground, or enter the code for previously created ground</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep4.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">04</span><span>Name the playground</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep5.png" width="262" height="567" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">05</span><span>Once new playground is craeted, other players can use this QR code to entre the ground or use the code to enter the ground</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep6.png" width="262" height="567" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">06</span><span>Only the creator of the playground, aka ‘Leader’ can start the game, untill then other players will have to wait.</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep7.png" width="262" height="567" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">07</span><span>Once the leader starts the game, challeneges page with 10 challenegs are displayed. Player can click live photo to upload real time image</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep8.png" width="262" height="576" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">08</span><span>Once all the tasks are finished, player will click done and success message will popup</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep9.png" width="262" height="576" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">09</span><span>Players will be taken to gallery , where they can viote</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep10.png" width="262" height="576" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">10</span><span>Each player will vote by agreeing if the image captured matches the challenge or not</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep11.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">11</span><span>Submit the final votes</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep12.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">12</span><span>Either wait for other player to finish or skip to results</span></p>
+          </li>
+          <li class="sc-m__step">
+            <div class="sc-m__panel"><img src="./assets/scavvyStep13.png" width="262" height="562" alt="" loading="lazy" /></div>
+            <p class="sc-m__cap"><span class="sc-m__num">13</span><span>Once all the players have voted, the final result who won will be displayed on the screen</span></p>
+          </li>
+        </ol>
+      </section>
+      <section class="sc-m__sec sc-m__sec--stage2">
+        <h2 class="sc-m__stage">Stage 2</h2>
+        <h3 class="sc-m__sub">UX scenarios considered</h3>
+        <p class="sc-m__body">After building the first draft of the app, I ran few user testing by myself and by others. This allowed me to identify bugs and opportity areas to improve overall experience of the app and fixed them</p>
+      </section>
+      <section class="sc-m__sec sc-m__sec--future">
+        <h2 class="sc-m__label">Future scope</h2>
+        <p class="sc-m__body">The collaboration feature can evolve into a centralized decision-management system that streamlines approvals, discussions, and actions while improving transparency, accountability, and decision-making efficiency across workflows</p>
+        <ul class="sc-m__list"><li>Introduction of mgame mode such as Race, Team Battle.</li><li>Run LLM to generate challenges based on user preferrences</li><li>Choose between voting or let Ai verify and validate the Proof of challenge.</li><li>Time based challenges</li><li>Occasion packs such as Birthdays, Team outing, Family day out.</li><li>Contextual challenges based on location - Park, Beach, Mall, Office.</li><li>Build custom challenges ( created by users)</li><li>Share memory after the game if over in form of video, collage</li><li>Public access where anyone can join the current active group</li><li>Introduce difficulty levels</li><li>Allow multiple media formats</li><li>Integrate social platforms</li></ul>
+      </section>
+    </div>
+    <!-- scavvy-mobile:end -->
     <div id="root"><link rel="preload" as="image" href="./assets/scavvyHero.png"/><link rel="preload" as="image" href="./assets/scavvyStep1a.png"/><link rel="preload" as="image" href="./assets/scavvyStep1b.png"/><link rel="preload" as="image" href="./assets/scavvyStep2.png"/><link rel="preload" as="image" href="./assets/scavvyStep3.png"/><link rel="preload" as="image" href="./assets/scavvyStep4.png"/><link rel="preload" as="image" href="./assets/scavvyStep5.png"/><link rel="preload" as="image" href="./assets/scavvyStep6.png"/><link rel="preload" as="image" href="./assets/scavvyStep7.png"/><link rel="preload" as="image" href="./assets/scavvyStep8.png"/><link rel="preload" as="image" href="./assets/scavvyStep9.png"/><link rel="preload" as="image" href="./assets/scavvyStep10.png"/><link rel="preload" as="image" href="./assets/scavvyStep11.png"/><link rel="preload" as="image" href="./assets/scavvyStep12.png"/><link rel="preload" as="image" href="./assets/scavvyStep13.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/aiCardDecisionFlow.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Scavvy"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><a class="font-['IBM_Plex_Mono',monospace] text-[12px] md:text-[13px] text-[#535398] hover:underline tracking-wider font-semibold" href="./index.html">← Back to Portfolio</a></div><div class="flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[857px] overflow-clip relative w-full" style="background-image:linear-gradient(180deg, #ffffff 0%, #ffffff 31%, #eef6ff 100%)"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[72px] text-black md:top-[28px] whitespace-nowrap" data-reveal="top">Scavvy</p><p class="md:absolute font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[16px] text-black md:top-[117px] whitespace-nowrap" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">A platform for turning any place, occasion, or group gathering into a playable social experience.</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[155.5px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><span class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-medium text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">Race and Hunt</span><span aria-hidden="true" class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[260px] w-[88%] md:w-[966px]" data-reveal="bottom" data-reveal-delay="2"><img alt="The Scavvy landing page — Turn the park into a race — beside the phone screen that joins the treasure hunt by QR code" class="block h-auto max-w-full w-full md:w-[966px]" src="./assets/scavvyHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[105px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[21px] text-[#302f2f] w-full md:w-[655px]" style="font-variation-settings:&quot;wdth&quot; 100">Scavvy is a location-based mobile application that transforms parks and public spaces into interactive scavenger hunt experiences. By combining QR codes, real-world exploration, and gamified challenges, it encourages users to stay active, discover new places, and engage with others. This project covers the end-to-end product design process, from user journey mapping and gameplay mechanics to designing the complete mobile experience. The goal was to create an intuitive, engaging, and scalable experience that seamlessly blends digital interaction with real-world exploration.</p><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] mt-[51px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">KRA</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[10px] text-[#302f2f] w-full md:w-[655px] mt-[19px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>A fun and engaging activity that can be played outdoor using their mobile phone ina a group.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Anyone above 10 yrs should find it enjoyable and easy to use</span></li></ul><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] mt-[52px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Problems identified</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[10px] text-[#302f2f] w-full md:w-[655px] mt-[19px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Game ideas outside in playground and park with friends is limited to kids.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Physical games need to carry some equipemts ouside and some cases and need a physical landscpe such as court, set up, etc.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Lack of ideas</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Lot of outdoor activites involve sitting at one place</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Outdoor games are time taking or skill required</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Only racing is less motivating to engage in a physical activity.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Current board games or video games simulate the outdoor environment removing any contact with nature</span></li></ul><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] mt-[52px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Hypothesis</p><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[10px] text-[#302f2f] w-full md:w-[655px] mt-[19px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>We believe that by incorporating a treasure hunt format in a competative run, will motivate more people to participate in a group activity outdoor.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>We believe mobile phones can become tool to encourage phisical movement in fun way.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>We believe a fun easy intreface will encourage people to use this app more often.</span></li></ul></div><div class="mt-[40px] w-full md:ml-[124px] md:mt-0 md:w-[333px]" data-reveal="right"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium leading-[1.4] mt-[24px] text-[#0a0a0a] text-[20px]" style="font-variation-settings:&quot;wdth&quot; 100">Product Builder</p><div class="mt-[13px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">June 2026- July 2026</p></div><a class="font-[&#x27;Roboto&#x27;] inline-block border border-[#b4d9ed] rounded-[4px] px-[12px] py-[5px] text-[16px] text-black underline mt-[45px]" href="https://scavvy.netlify.app/" rel="noreferrer" target="_blank" tabindex="0" style="font-variation-settings:&quot;wdth&quot; 100">Link to app</a></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[40px] md:pt-[77px]"><div data-reveal="true"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 1</h2><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] mt-[31px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Built front end with prompt</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[28px] text-[#302f2f] w-full md:w-[655px]" style="font-variation-settings:&quot;wdth&quot; 100">The process of building this app start with a simple ux flow describing landing page, a easy scan on click on link interface to enter the home page. Home page consist of interface to craete new groups and once the game starts a list of tasks will be given to finish. Whoever finfishes first will win . A responsive web app with fewer elements.</p></div><div class="mt-[160px]"><div class="flex h-[802px] items-start justify-between w-full" data-reveal="card"><div class="flex gap-[39px]"><img alt="The Scavvy landing page in a phone browser" class="block h-auto max-w-full w-[278px]" src="./assets/scavvyStep1a.png"/><img alt="The join screen with the treasure hunt QR code" class="block h-auto max-w-full w-[277px]" src="./assets/scavvyStep1b.png"/></div><div class="flex flex-col items-start pt-[481px] w-[262px]" data-reveal="left"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">1</span></div><p class="font-[&#x27;Roboto&#x27;] font-normal leading-[30px] mt-[26px] text-[20px] text-black w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Click on link or scan QR to enter the site</p></div></div><div class="flex justify-between w-full h-[873px] mt-[60px]"><div data-reveal="card" data-reveal-delay="1" class="flex flex-col items-start w-[262px]"><img alt="The player profile screen — name, avatar and team colour" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep2.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">2</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">As a first time user, cretae user profile</p></div><div data-reveal="card" data-reveal-delay="2" class="flex flex-col items-start w-[262px]"><img alt="The home screen — create a playground or enter a ground code" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep3.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">3</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Once evryone has created their profile, one of the player can create a new playground, or enter the code for previously created ground</p></div><div data-reveal="card" data-reveal-delay="3" class="flex flex-col items-start w-[262px]"><img alt="The new playground dialog — name and location" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep4.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">4</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Name the playground</p></div></div><div class="flex justify-between w-full h-[947px] mt-[60px]"><div data-reveal="card" data-reveal-delay="1" class="flex flex-col items-start w-[262px]"><img alt="The created playground with its QR code and four-digit join code" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep5.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">5</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Once new playground is craeted, other players can use this QR code to entre the ground or use the code to enter the ground</p></div><div data-reveal="card" data-reveal-delay="2" class="flex flex-col items-start w-[262px]"><img alt="The lobby, with the leader&#x27;s Start the Game button" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep6.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">6</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Only the creator of the playground, aka ‘Leader’ can start the game, untill then other players will have to wait.</p></div><div data-reveal="card" data-reveal-delay="3" class="flex flex-col items-start w-[262px]"><img alt="The mission list — ten challenges with points and photo uploads" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep7.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">7</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Once the leader starts the game, challeneges page with 10 challenegs are displayed. Player can click live photo to upload real time image</p></div></div><div class="flex justify-between w-full h-[989px] mt-[60px]"><div data-reveal="card" data-reveal-delay="1" class="flex flex-col items-start w-[262px]"><img alt="The Game Finished Successfully dialog" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep8.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">8</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Once all the tasks are finished, player will click done and success message will popup</p></div><div data-reveal="card" data-reveal-delay="2" class="flex flex-col items-start w-[262px]"><img alt="The gallery of everyone&#x27;s shots, with voting unlocked" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep9.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">9</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Players will be taken to gallery , where they can viote</p></div><div data-reveal="card" data-reveal-delay="3" class="flex flex-col items-start w-[262px]"><img alt="Voting on a single challenge, one photo at a time" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep10.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">10</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Each player will vote by agreeing if the image captured matches the challenge or not</p></div></div><div class="flex justify-between w-full mt-[60px]"><div data-reveal="card" data-reveal-delay="1" class="flex flex-col items-start w-[262px]"><img alt="The Submit All Votes screen" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep11.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">11</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Submit the final votes</p></div><div data-reveal="card" data-reveal-delay="2" class="flex flex-col items-start w-[262px]"><img alt="Waiting for other players, with the option to skip to results" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep12.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">12</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Either wait for other player to finish or skip to results</p></div><div data-reveal="card" data-reveal-delay="3" class="flex flex-col items-start w-[262px]"><img alt="The result screen — rank, score, time and the podium" class="block h-auto max-w-full w-[262px]" src="./assets/scavvyStep13.png"/><div class="mt-[34px]"><div class="flex items-center justify-center rounded-full shrink-0 size-[48px]" style="background:#c9b9fa"><span class="font-[&#x27;Roboto&#x27;] leading-none text-[20px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">13</span></div></div><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[10px] w-[220px]" style="font-variation-settings:&quot;wdth&quot; 100">Once all the players have voted, the final result who won will be displayed on the screen</p></div></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[65px] md:pt-[202px]"><div data-reveal="scale"><h2 class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[40px]">Stage 2</h2><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] mt-[31px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">UX scenarios considered</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[28px] text-[#302f2f] w-full md:w-[640px]" style="font-variation-settings:&quot;wdth&quot; 100">After building the first draft of the app, I ran few user testing by myself and by others. This allowed me to identify bugs and opportity areas to improve overall experience of the app and fixed them</p></div></div><div class="bg-[#080820] mt-[110px] pb-[37px] pt-[76px] w-full" data-reveal="scale"><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0"><div><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#e5d7d0] text-[24px] tracking-[4px]" style="font-variation-settings:&quot;wdth&quot; 100">Future scope</p><p class="font-[&#x27;Roboto&#x27;] leading-[33px] mt-[30px] text-[#e5d7d0] text-[21px] w-full md:w-[1050px]" style="font-variation-settings:&quot;wdth&quot; 100">The collaboration feature can evolve into a centralized decision-management system that streamlines approvals, discussions, and actions while improving transparency, accountability, and decision-making efficiency across workflows</p></div><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] mt-[64px] pl-[8px] text-[#e5d7d0] text-[17px] leading-[27px]" style="font-variation-settings:&quot;wdth&quot; 100"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Introduction of mgame mode such as Race, Team Battle.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Run LLM to generate challenges based on user preferrences</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Choose between voting or let Ai verify and validate the Proof of challenge.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Time based challenges</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Occasion packs such as Birthdays, Team outing, Family day out.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Contextual challenges based on location - Park, Beach, Mall, Office.</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Build custom challenges ( created by users)</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Share memory after the game if over in form of video, collage</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Public access where anyone can join the current active group</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Introduce difficulty levels</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Allow multiple media formats</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Integrate social platforms</span></li></ul></div></div><!-- other-projects:start --><style>
 .op-section{width:100%;max-width:1352px;margin:80px auto 0;padding:0 16px 96px;box-sizing:border-box}
 @media (min-width:768px){.op-section{margin-top:180px;padding:0 80px 120px}}
