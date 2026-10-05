@@ -1,0 +1,81 @@
+/* Reference artboard: 1672 x 941. A shared unit keeps every desktop
+   distance and component proportional, including on short laptop screens. */
+@media (min-width: 1024px) {
+  :root { --hero-u: min(0.0598086124vw, 0.106269926vh); }
+  #hero { height: 100vh; min-height: 0; max-height: none; padding: 0; }
+  #heroComposition { position: absolute; width: calc(1672 * var(--hero-u)); height: calc(941 * var(--hero-u)); max-width: none; left: 50%; top: 50%; transform: translate(-50%, -50%); padding: 0; margin: 0; }
+  #heroMain { position: absolute; inset: 0; display: block; margin: 0; }
+  #heroIntro { position: absolute; left: calc(288 * var(--hero-u)); top: calc(255 * var(--hero-u)); width: calc(420 * var(--hero-u)); height: calc(430 * var(--hero-u)); padding: 0; display: block; }
+  #heroIntro h1 { font-family: 'Times New Roman', Times, serif; font-size: calc(132 * var(--hero-u)); font-weight: 400; letter-spacing: calc(-7 * var(--hero-u)); line-height: .74; color: #080808; }
+  .dark #heroIntro h1 { color: #fff; }
+  #heroIntro h1 > span:first-child { gap: calc(16 * var(--hero-u)); }
+  #heroIntro h1 > span:last-child { margin-top: calc(1 * var(--hero-u)); }
+  #heroIntro h1 [title] { width: calc(53 * var(--hero-u)); height: calc(53 * var(--hero-u)); transform: translateY(calc(20 * var(--hero-u))); letter-spacing: 0; }
+  #heroIntro > p { position: absolute; left: 0; top: calc(229 * var(--hero-u)); width: calc(385 * var(--hero-u)); margin: 0; font-size: calc(25 * var(--hero-u)); line-height: 1.36; font-weight: 300; letter-spacing: calc(-.5 * var(--hero-u)); }
+  #heroIntro > p > span { font-weight: inherit; color: inherit; }
+  #heroIntro > p svg { width: calc(340 * var(--hero-u)); height: calc(12 * var(--hero-u)); bottom: calc(-16 * var(--hero-u)); }
+  #heroIntro > div:last-child { position: absolute; top: calc(388 * var(--hero-u)); left: 0; margin: 0; gap: calc(18 * var(--hero-u)); flex-wrap: nowrap; }
+  #heroIntro > div:last-child a { height: calc(43 * var(--hero-u)); padding: 0; justify-content: center; display: flex; align-items: center; font-size: calc(16 * var(--hero-u)); white-space: nowrap; }
+  #btnPrimaryCta { width: calc(215 * var(--hero-u)); }
+  #btnSecondaryCta { width: calc(184 * var(--hero-u)); background: transparent; }
+  #heroAnnotation { position: absolute; left: calc(-177 * var(--hero-u)); top: calc(-94 * var(--hero-u)); margin: 0; transform: rotate(-10deg); }
+  #heroAnnotation p { font-size: calc(26 * var(--hero-u)); line-height: 1; font-weight: 500; }
+  #heroAnnotation svg { position: absolute; width: calc(56 * var(--hero-u)); height: calc(72 * var(--hero-u)); left: calc(78 * var(--hero-u)); top: calc(109 * var(--hero-u)); transform: rotate(-12deg); }
+  #heroIntro > div[title="Levitating Blossom"] { left: calc(-157 * var(--hero-u)); top: calc(230 * var(--hero-u)); transform: none; }
+  #heroIntro > div[title="Levitating Blossom"] img { width: calc(79 * var(--hero-u)); }
+  #interactiveDesktopArea { position: absolute; left: calc(748 * var(--hero-u)); top: calc(195 * var(--hero-u)); width: calc(820 * var(--hero-u)); height: calc(500 * var(--hero-u)); min-height: 0; }
+  #hero .polaroid-frame { width: calc(278 * var(--hero-u)); padding: calc(15 * var(--hero-u)); padding-bottom: calc(23 * var(--hero-u)); border-radius: 2px; box-shadow: 0 calc(10 * var(--hero-u)) calc(28 * var(--hero-u)) #29252412, 0 1px 3px #29252414; }
+  #hero .polaroid-frame > div:not(.washi-tape) { aspect-ratio: 1; margin-bottom: calc(15 * var(--hero-u)); border: 0; }
+  #hero .polaroid-frame p { font-size: calc(24 * var(--hero-u)); line-height: 1.1; font-weight: 500; letter-spacing: 0; white-space: nowrap; gap: calc(8 * var(--hero-u)); }
+  #hero .polaroid-frame p > span:last-child { font-size: calc(24 * var(--hero-u)); }
+  #hero .polaroid-frame .washi-tape { width: calc(103 * var(--hero-u)) !important; height: calc(35 * var(--hero-u)) !important; top: calc(-23 * var(--hero-u)); }
+  #hero .note-sticky { width: calc(196 * var(--hero-u)); height: calc(183 * var(--hero-u)); padding: calc(24 * var(--hero-u)); border: 0; background: #fff0b8; }
+  .dark #hero .note-sticky { background: #3a2c0a; }
+  #hero .note-sticky p { font-size: calc(23 * var(--hero-u)); line-height: 1.22; margin-top: 0; font-weight: 400; white-space: nowrap; }
+  #hero .note-sticky p:nth-child(4) { font-size: calc(21 * var(--hero-u)); }
+  #hero .note-sticky > div { margin: calc(12 * var(--hero-u)) 0 0 calc(28 * var(--hero-u)); width: calc(44 * var(--hero-u)); height: 1px; }
+  #hero [title="Levitating Daisy"] { left: 51.5% !important; top: 77% !important; }
+  #hero [title="Levitating Daisy"] img { width: calc(79 * var(--hero-u)); }
+  #hero [title="Pressed Dry Flower"] { left: 88% !important; top: 59% !important; }
+  #hero [title="Pressed Dry Flower"] img { width: calc(133 * var(--hero-u)); height: calc(212 * var(--hero-u)); object-fit: contain; }
+  #hero .hero-blooms { display: none; }
+  #hero .bfly-stage { position: absolute; }
+  #hero .bfly-anchor { left: 87.2%; top: 30%; transform: none; }
+  #hero .bloom-butterfly { width: calc(100 * var(--hero-u)); }
+  #hero .flit-path, #hero .flit-drift, #hero .flit-lift { transform: none !important; animation: none; }
+  #heroCategories { position: absolute; left: calc(118 * var(--hero-u)); top: calc(774 * var(--hero-u)); width: calc(1432 * var(--hero-u)); height: calc(90 * var(--hero-u)); padding: 0; border: 0; }
+  #heroCategories > div { width: calc(1044 * var(--hero-u)); height: 100%; justify-content: space-between; gap: 0; border-top: 1px solid #dedbd7; padding-top: calc(16 * var(--hero-u)); font-size: calc(14 * var(--hero-u)); font-weight: 400; }
+  #heroCategories > div > a { gap: calc(24 * var(--hero-u)); }
+  #heroCategories > div > a > span:last-child { max-width: calc(111 * var(--hero-u)); white-space: normal; }
+  #heroCategories > div > a:nth-of-type(3) > span:last-child,
+  #heroCategories > div > a:nth-of-type(4) > span:last-child { max-width: calc(70 * var(--hero-u)); }
+  #heroCategories > div > a > span:first-child, #heroCategories svg { width: calc(24 * var(--hero-u)); height: calc(24 * var(--hero-u)); flex-shrink: 0; }
+  #heroCategories > div > div { height: calc(34 * var(--hero-u)); }
+  #heroCategories > a { font-size: calc(14 * var(--hero-u)); gap: calc(17 * var(--hero-u)); margin-top: calc(16 * var(--hero-u)); font-weight: 400; }
+  #heroCategories > a > div { width: calc(26 * var(--hero-u)); height: calc(36 * var(--hero-u)); padding-top: calc(8 * var(--hero-u)); }
+  body > header { padding: calc(27 * var(--hero-u)) 0 0; }
+  body > header > div { max-width: none; width: calc(1436 * var(--hero-u)); }
+  body > header > div > div:first-child { height: calc(47 * var(--hero-u)); padding: 0 calc(20 * var(--hero-u)); gap: calc(17 * var(--hero-u)); }
+  body > header a > div { width: calc(34 * var(--hero-u)); height: calc(34 * var(--hero-u)); }
+  body > header a > span { font-size: calc(19 * var(--hero-u)); }
+  #brandBadgeSubtitle { font-size: calc(16 * var(--hero-u)); gap: calc(10 * var(--hero-u)); }
+  body > header > div > div:last-child { gap: calc(12 * var(--hero-u)); }
+  #desktopModeSwitcher { height: calc(47 * var(--hero-u)); font-size: calc(16 * var(--hero-u)); }
+  #desktopModeSwitcher button { padding: calc(8 * var(--hero-u)) calc(18 * var(--hero-u)); gap: calc(10 * var(--hero-u)); }
+  body > header > div > div:last-child > button { width: calc(46 * var(--hero-u)); height: calc(46 * var(--hero-u)); }
+}
+/* Keep the stacked mobile composition contained and comfortably readable. */
+@media (max-width: 639px) {
+  #heroComposition { padding: 24px 0 0; }
+  #heroIntro { padding: 0 12px; }
+  #heroIntro h1 { font-size: 76px; }
+  #heroAnnotation p { font-size: 21px; }
+  #interactiveDesktopArea { width: 100%; min-height: 455px; margin-top: 12px; }
+  #hero .polaroid-frame { width: 175px; padding: 9px 9px 16px; }
+  #hero .polaroid-frame > div:not(.washi-tape) { aspect-ratio: 1; }
+  #hero .polaroid-frame p { font-size: 18px; letter-spacing: 0; gap: 2px; }
+  #hero .note-sticky { width: 150px; padding: 16px; }
+  #hero #dragItem4 { margin-left: -65px; margin-top: 115px; }
+  #hero [title="Levitating Daisy"] { top: 82% !important; left: 25% !important; }
+  #heroCategories { margin-top: 12px; }
+}

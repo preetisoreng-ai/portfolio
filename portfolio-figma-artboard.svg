@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="1440" height="900">
+  <defs>
+    <!-- Background Grid Pattern -->
+    <pattern id="gridPattern" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#e5e5e5" stroke-width="0.8" />
+    </pattern>
+    <filter id="cardShadow" x="-10%" y="-10%" width="125%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.08" />
+    </filter>
+    <filter id="polaroidShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1440" height="900" fill="#f0eded" />
+  <rect width="1440" height="900" fill="url(#gridPattern)" opacity="0.6" />
+
+  <!-- ==================== HEADER BAR ==================== -->
+  <g id="Header" transform="translate(48, 24)">
+    <!-- Left Brand Badge -->
+    <g id="BrandBadge">
+      <rect width="260" height="42" rx="21" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#cardShadow)" />
+      <circle cx="24" cy="21" r="14" fill="#38bdf8" />
+      <text x="46" y="26" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="700" fill="#111827">Preeti Soreng</text>
+      <line x1="140" y1="14" x2="140" y2="28" stroke="#d1d5db" stroke-width="1" />
+      <circle cx="152" cy="21" r="3.5" fill="#10b981" />
+      <text x="162" y="25" font-family="monospace" font-size="11" fill="#6b7280">Available for hire</text>
+    </g>
+
+    <!-- Right Controls Island -->
+    <g id="RightControls" transform="translate(1080, 0)">
+      <!-- Chaos/Clean Pill -->
+      <rect width="140" height="42" rx="21" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#cardShadow)" />
+      <rect x="4" y="4" width="66" height="34" rx="17" fill="#111827" />
+      <text x="22" y="25" font-family="monospace" font-size="11" font-weight="600" fill="#ffffff">🌀 Chaos</text>
+      <text x="82" y="25" font-family="monospace" font-size="11" font-weight="500" fill="#6b7280">✨ Clean</text>
+
+      <!-- Sound Toggle -->
+      <rect x="150" y="0" width="42" height="42" rx="21" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="164" y="26" font-size="14">🔊</text>
+
+      <!-- Flight Mode Toggle -->
+      <rect x="200" y="0" width="42" height="42" rx="21" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="214" y="26" font-size="14">✈️</text>
+
+      <!-- Dark Mode Toggle -->
+      <rect x="250" y="0" width="42" height="42" rx="21" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="264" y="26" font-size="14">🌙</text>
+    </g>
+  </g>
+
+  <!-- ==================== TOP CENTER PERSONALITY TAG ==================== -->
+  <g id="PersonalityTag" transform="translate(480, 100)">
+    <rect width="480" height="34" rx="17" fill="#ffffff" fill-opacity="0.85" stroke="#d1d5db" stroke-width="1" />
+    <text x="240" y="22" text-anchor="middle" font-family="monospace" font-size="12" font-weight="600" fill="#374151">👋 Bangalore, India • 6+ Yrs Lead Product Designer</text>
+  </g>
+
+  <!-- ==================== 8 DRAGGABLE CANVAS CARDS ==================== -->
+  <g id="InteractiveCanvas" transform="translate(0, 160)">
+    
+    <!-- 1. Design System v3 (Left: 17%, Top: 40%) -->
+    <g id="Card1_DesignSystem" transform="translate(244, 180)">
+      <rect width="190" height="95" rx="8" fill="#ffffff" fill-opacity="0.9" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="4 4" filter="url(#cardShadow)" />
+      <text x="14" y="26" font-size="13">📐</text>
+      <text x="34" y="25" font-family="monospace" font-size="11" font-weight="700" fill="#111827" letter-spacing="0.5">DESIGN SYSTEM V3</text>
+      <text x="14" y="52" font-family="monospace" font-size="10" fill="#4b5563">Radius: 0px / Flat Borders</text>
+      <text x="14" y="68" font-family="monospace" font-size="10" fill="#4b5563">Bento Token System</text>
+    </g>
+
+    <!-- 2. Note to Self Sticky (Left: 30%, Top: 29%) -->
+    <g id="Card2_NoteToSelf" transform="translate(432, 110)">
+      <rect width="210" height="135" rx="2" fill="#fef3c7" stroke="#fcd34d" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="16" y="26" font-family="monospace" font-size="10" font-weight="700" fill="#92400e" letter-spacing="1">NOTE TO SELF 📌</text>
+      <text x="180" y="26" font-size="12">💛</text>
+      <text x="16" y="54" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="600" fill="#451a03">"If an AI platform is powerful</text>
+      <text x="16" y="74" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="600" fill="#451a03">but hard to navigate, its power</text>
+      <text x="16" y="94" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="600" fill="#451a03">is lost. Clarity wins."</text>
+      <text x="175" y="118" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="700" fill="#92400e">— PS</text>
+    </g>
+
+    <!-- 3. Recognition Award Card with -18deg Tilt (Left: 18%, Top: 61%) -->
+    <g id="Card3_RecognitionAward" transform="translate(260, 310) rotate(-18)">
+      <rect width="210" height="74" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5" filter="url(#cardShadow)" />
+      <circle cx="36" cy="37" r="18" fill="#10b981" />
+      <text x="27" y="44" font-size="16">🏆</text>
+      <text x="64" y="26" font-family="monospace" font-size="9" font-weight="700" fill="#047857" letter-spacing="0.5">RECOGNITION AWARD ✨</text>
+      <text x="64" y="42" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="700" fill="#064e3b">Elevated Experience Value</text>
+      <text x="64" y="56" font-family="monospace" font-size="9" fill="#6b7280">MathCo NucliOS 2024</text>
+    </g>
+
+    <!-- 4. Core Toolkit Sticky (Left: 34%, Top: 56%) -->
+    <g id="Card4_CoreToolkit" transform="translate(490, 280)">
+      <rect width="200" height="110" rx="2" fill="#ede9fe" stroke="#ddd6fe" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="14" y="24" font-size="12">⚡</text>
+      <text x="32" y="24" font-family="monospace" font-size="10" font-weight="700" fill="#6d28d9" letter-spacing="0.5">CORE TOOLKIT</text>
+      
+      <!-- Tags -->
+      <rect x="14" y="38" width="90" height="22" rx="2" fill="#ffffff" stroke="#ddd6fe" />
+      <text x="20" y="53" font-family="monospace" font-size="9" fill="#4c1d95">System Thinking</text>
+      
+      <rect x="110" y="38" width="76" height="22" rx="2" fill="#ffffff" stroke="#ddd6fe" />
+      <text x="116" y="53" font-family="monospace" font-size="9" fill="#4c1d95">Design System</text>
+
+      <rect x="14" y="66" width="120" height="22" rx="2" fill="#ffffff" stroke="#ddd6fe" />
+      <text x="20" y="81" font-family="monospace" font-size="9" fill="#4c1d95">Information Architecture</text>
+    </g>
+
+    <!-- 5. Polaroid 1: Storytelling with +7deg Tilt (Left: 47%, Top: 36%) -->
+    <g id="Card5_Polaroid1" transform="translate(676, 170) rotate(7)">
+      <rect width="170" height="190" rx="2" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#polaroidShadow)" />
+      <rect x="10" y="10" width="150" height="130" fill="#f3f4f6" />
+      <text x="85" y="80" text-anchor="middle" font-size="28">🎨</text>
+      <text x="85" y="165" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="700" fill="#374151">Design is storytelling ✨</text>
+    </g>
+
+    <!-- 6. Polaroid 2: Preeti with Washi Tape & -1deg Tilt (Left: 60%, Top: 29%) -->
+    <g id="Card6_Polaroid2" transform="translate(864, 120) rotate(-1)">
+      <!-- Washi Tape -->
+      <rect x="55" y="-8" width="70" height="16" rx="1" fill="#fef08a" fill-opacity="0.8" />
+      <!-- Polaroid Frame -->
+      <rect width="180" height="210" rx="2" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#polaroidShadow)" />
+      <rect x="12" y="12" width="156" height="146" fill="#e0f2fe" />
+      <text x="90" y="90" text-anchor="middle" font-size="34">👩‍💻</text>
+      <text x="90" y="178" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="14" font-weight="700" fill="#111827">Preeti Soreng 🌿</text>
+      <text x="90" y="196" text-anchor="middle" font-family="monospace" font-size="9" fill="#9ca3af" letter-spacing="1">PRODUCT DESIGNER</text>
+    </g>
+
+    <!-- 7. Interactive Soundpad (Left: 57%, Top: 60%) -->
+    <g id="Card7_Soundpad" transform="translate(820, 290)">
+      <rect width="180" height="96" rx="12" fill="#18181b" stroke="#3f3f46" stroke-width="1" filter="url(#cardShadow)" />
+      <text x="14" y="24" font-family="monospace" font-size="9" font-weight="700" fill="#a1a1aa" letter-spacing="0.5">SOUNDPAD</text>
+      <circle cx="160" cy="20" r="3" fill="#f43f5e" />
+      <!-- Keys -->
+      <rect x="14" y="36" width="46" height="34" rx="4" fill="#27272a" />
+      <text x="37" y="58" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#60a5fa">C</text>
+      
+      <rect x="67" y="36" width="46" height="34" rx="4" fill="#27272a" />
+      <text x="90" y="58" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#34d399">E</text>
+
+      <rect x="120" y="36" width="46" height="34" rx="4" fill="#27272a" />
+      <text x="143" y="58" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#fb7185">G</text>
+      <text x="90" y="84" text-anchor="middle" font-family="monospace" font-size="8" fill="#71717a">Click keys to trigger synth</text>
+    </g>
+
+    <!-- 8. Polaroid 3: Studio Vibes with -4deg Tilt (Left: 73%, Top: 54%) -->
+    <g id="Card8_Polaroid3" transform="translate(1050, 260) rotate(-4)">
+      <rect width="160" height="180" rx="2" fill="#ffffff" stroke="#e5e7eb" stroke-width="1" filter="url(#polaroidShadow)" />
+      <rect x="10" y="10" width="140" height="120" fill="#fef3c7" />
+      <text x="80" y="75" text-anchor="middle" font-size="28">☕</text>
+      <text x="80" y="155" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="700" fill="#374151">Studio vibes ☕</text>
+    </g>
+
+  </g>
+
+  <!-- ==================== BOTTOM BAR ==================== -->
+  <g id="BottomBar" transform="translate(48, 770)">
+    <line x1="0" y1="0" x2="1344" y2="0" stroke="#d1d5db" stroke-width="1" />
+    
+    <!-- Left Paragraph -->
+    <g transform="translate(0, 24)">
+      <text x="0" y="18" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="400" fill="#4b5563">
+        Specializing in <tspan font-weight="700" fill="#111827">Enterprise AI Platforms</tspan>, <tspan font-weight="700" fill="#111827">Complex Data Products</tspan>, and scalable
+      </text>
+      <text x="0" y="38" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="13" font-weight="400" fill="#4b5563">
+        <tspan font-weight="700" fill="#111827">Design Systems</tspan>. Translating intricate intelligence workflows into intuitive experiences.
+      </text>
+    </g>
+
+    <!-- Right CTAs -->
+    <g transform="translate(900, 24)">
+      <rect width="150" height="38" rx="19" fill="#111827" />
+      <text x="75" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="600" fill="#ffffff">Explore Case Studies ↓</text>
+
+      <rect x="160" y="0" width="140" height="38" rx="19" fill="#ffffff" stroke="#d1d5db" stroke-width="1" />
+      <text x="230" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="600" fill="#111827">🎨 Creative Lab &amp; Art</text>
+
+      <rect x="310" y="0" width="130" height="38" rx="19" fill="#fff1f2" stroke="#fecdd3" stroke-width="1" />
+      <text x="375" y="24" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="12" font-weight="600" fill="#be123c">Get in touch →</text>
+    </g>
+  </g>
+
+</svg>

@@ -444,13 +444,6 @@ body {
       letter-spacing: -0.02em;
       color: #1c1917 !important;
     }
-    #csHeader > a > span:first-child::after {
-      content: "";
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background: #b9a8f2;
-    }
     /* The tabs: one row under the name, the current study underlined. */
     #csTabs {
       justify-content: flex-start;
@@ -634,9 +627,36 @@ body {
   })();
 </script>
 <!-- mobile-hero:end -->
+<!-- hero-height:start -->
+<style>
+  /* Phones: every case study's cover is the same height, Decision Flow's:
+     its text and spacing come to 318px, and its card is 1.4 times as wide as
+     it is tall. The card takes whatever room the title leaves, so a two-line
+     title gives it a little less. */
+  @media (max-width: 767px) {
+    #root #csHeader + div {
+      height: calc(318px + (100vw - 79px) / 1.4) !important;
+      min-height: 0 !important;
+    }
+    #root #csHeader + div > div:nth-child(4) {
+      flex: 1 1 0;
+      min-height: 0;
+      height: auto !important;
+      aspect-ratio: auto;
+    }
+    #root #csHeader + div > div:nth-child(4) > img {
+      display: block;
+      width: 100%;
+      height: 100% !important;
+      object-fit: cover;
+      object-position: left top;
+    }
+  }
+</style>
+<!-- hero-height:end -->
 </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
-    <div id="root"><link rel="preload" as="image" href="./assets/studHero.png"/><link rel="preload" as="image" href="./assets/studFig1.png"/><link rel="preload" as="image" href="./assets/studFig2.png"/><link rel="preload" as="image" href="./assets/studFig3.png"/><link rel="preload" as="image" href="./assets/studFig4.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Studios"><div id="csHeader" class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div id="csTabs" class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1852" href="./decision-flow.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1860" href="./user-management.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p></a><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1863"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-reveal="top">Studios</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Centralized workspace to organize, access, and manage decision artifacts seamlessly</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><a tabindex="-1" aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" href="./decision-flow.html" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</a><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[389px] w-[88%] md:w-[1101px]" data-reveal="bottom" data-reveal-delay="2"><img alt="The Studios home page, with application tiles beside a recent-activity rail" class="block h-auto max-w-full w-full md:w-[1101px]" src="./assets/studHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[42px] md:pt-[132px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[29px]" style="font-variation-settings:&quot;wdth&quot; 100">STUDIOS is the unified entrypoint for the decision flow ecosystem, designed to organize and manage the growing collection of artifacts created throughout the decision-making lifecycle. It provides a structured workspace where executives, managers and analysts can seamlessly access projects, dashboards, models, workflows and other assets from a single interface. With role-based access control, intuitive navigation, and centralised organization, Studios eliminates information fragmentation, improves discoverability and enables secure, efficient collaboration, ensuring every stakeholder has the right to information and tools to make informed decisions.</p></div><div class="mt-[40px] w-full md:ml-[148px] md:mt-[10px] md:w-[309px]" data-reveal="right" data-reveal-delay="1"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[14px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">March 2025 - July 2026</p></div></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[61px] md:pt-[192px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The personalised Studios home page with its application tiles" class="block h-auto max-w-full shrink-0" src="./assets/studFig1.png" style="width:680px"/><div class="flex-1" style="padding-top:4px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Home Page</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The personalised view of the Studios home page, allows user to access artifacts from single entry point</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>By clicking the Custom cta user can reorganise the tiles on the screen as per their preferences</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Section on the right of the screens allow users to have visiblily about the recent activities and updates</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the features have individual landing page with list of artifacts</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Filter will allow user to narrow their search based on industry, function or artifact type</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[60px] md:pt-[189px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The applications landing page, listing every artifact as a card" class="block h-auto max-w-full shrink-0" src="./assets/studFig2.png" style="width:680px"/><div class="flex-1" style="padding-top:0"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a] leading-[31px]" style="font-variation-settings:&quot;wdth&quot; 100">Executive view (Artifact list) consumption layer</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[16px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the features have individual landing page with list of artifacts</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[67px] md:pt-[209px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The manage workspace table, and the share dialog opened from a row" class="block h-auto max-w-full shrink-0" src="./assets/studFig3.png" style="width:680px"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Manage Workspace</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>On clicking workspaces at Studios home page, user will be taken to the Manage workspace page</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The page consist of list of all the artifacts and collaborators who has access to</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The page consist of list of all the artifacts and collaborators who has access to</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>User can share, edit, clone, move, promote, bookmark, export or delete an artifact based on their role access</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[55px] md:pt-[171px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The admin console, with the user-role table and the platform utils tiles" class="block h-auto max-w-full shrink-0" src="./assets/studFig4.png" style="width:680px"/><div class="flex-1" style="padding-top:3px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Admin</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Admin page is for the Super admin who has access to all the user role access control and workspace settings. As well access to configure platform level customisation under platform utils</span></li></ul></div></div></div><!-- other-projects:start --><style>
+    <div id="root"><link rel="preload" as="image" href="./assets/studHero.png"/><link rel="preload" as="image" href="./assets/studFig1.png"/><link rel="preload" as="image" href="./assets/studFig2.png"/><link rel="preload" as="image" href="./assets/studFig3.png"/><link rel="preload" as="image" href="./assets/studFig4.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft.svg"/><link rel="preload" as="image" href="./assets/csImage103.png"/><link rel="preload" as="image" href="./assets/csImage98.png"/><link rel="preload" as="image" href="./assets/csArrowDownLeft1.svg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Studios"><div id="csHeader" class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a id="csBack" href="./index.html" aria-label="Back to the portfolio"><img src="./assets/iconCaretLeft.svg" width="24" height="24" alt=""/></a><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div id="csTabs" class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1" data-node-id="40000674:1853"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1852" href="./decision-flow.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1856" href="./collaborator.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Collaborator</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1865" href="./notification.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Notification</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" data-node-id="40000674:1860" href="./user-management.html"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">User Management</p></a><div class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-100" data-node-id="40000674:1863"><p class="font-['IBM_Plex_Mono',monospace] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-semibold leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-variation-settings:&quot;wdth&quot; 100">Studios</p><span aria-hidden="true" class="absolute bottom-0 left-0 right-0 h-px bg-[#535398]"></span></div></div></div><div class="bg-[#c5e1f1] flex flex-col items-center gap-[8px] px-[16px] py-[36px] md:block md:gap-0 md:px-0 md:py-0 h-auto md:h-[921px] overflow-clip relative w-full"><p class="[word-break:break-word] md:absolute font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[normal] md:left-1/2 md:-translate-x-1/2 not-italic text-[32px] sm:text-[48px] md:text-[72px] text-black md:top-[114px] whitespace-nowrap" data-reveal="top">Studios</p><p class="[word-break:break-word] md:absolute font-[&#x27;Roboto&#x27;] font-normal leading-[normal] md:left-1/2 md:-translate-x-1/2 text-[13px] md:text-[16px] text-black md:top-[199px] whitespace-normal md:whitespace-nowrap w-[88%] md:w-auto text-center" data-reveal="top" data-reveal-delay="1" style="font-variation-settings:&quot;wdth&quot; 100">Centralized workspace to organize, access, and manage decision artifacts seamlessly</p><div class="md:absolute flex gap-[16px] md:gap-[46px] items-center md:left-1/2 md:-translate-x-1/2 md:top-[242px]" data-reveal="top" data-reveal-delay="2"><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span><a tabindex="-1" aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-medium text-[#292967] text-[11px] md:text-[18px] tracking-[1.4px] md:tracking-[2.4px]" href="./decision-flow.html" style="font-variation-settings:&quot;wdth&quot; 100">Decision Flow</a><span aria-hidden="true" class="font-[&#x27;Roboto&#x27;] font-bold text-[11px] md:text-[18px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">I</span></div><div class="md:-translate-x-1/2 md:absolute md:left-1/2 md:top-[389px] w-[88%] md:w-[1101px]" data-reveal="bottom" data-reveal-delay="2"><img alt="The Studios home page, with application tiles beside a recent-activity rail" class="block h-auto max-w-full w-full md:w-[1101px]" src="./assets/studHero.png"/></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[42px] md:pt-[132px]"><div class="flex flex-col md:flex-row"><div class="w-full md:w-[655px]" data-reveal="left"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Overview</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[29px]" style="font-variation-settings:&quot;wdth&quot; 100">STUDIOS is the unified entrypoint for the decision flow ecosystem, designed to organize and manage the growing collection of artifacts created throughout the decision-making lifecycle. It provides a structured workspace where executives, managers and analysts can seamlessly access projects, dashboards, models, workflows and other assets from a single interface. With role-based access control, intuitive navigation, and centralised organization, Studios eliminates information fragmentation, improves discoverability and enables secure, efficient collaboration, ensuring every stakeholder has the right to information and tools to make informed decisions.</p></div><div class="mt-[40px] w-full md:ml-[148px] md:mt-[10px] md:w-[309px]" data-reveal="right" data-reveal-delay="1"><p class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Role</p><p class="font-[&#x27;Roboto&#x27;] font-medium mt-[30px] text-[20px] leading-[1.4] text-[#090a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Lead Product Designer | NucliOS</p><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black mt-[14px]" style="font-variation-settings:&quot;wdth&quot; 100">User Research, Interaction, Visual Design, UX Design, Prototyping, Testing</p><div class="mt-[30px]"><p class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-black" style="font-variation-settings:&quot;wdth&quot; 100">March 2025 - July 2026</p></div></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[61px] md:pt-[192px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The personalised Studios home page with its application tiles" class="block h-auto max-w-full shrink-0" src="./assets/studFig1.png" style="width:680px"/><div class="flex-1" style="padding-top:4px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Home Page</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The personalised view of the Studios home page, allows user to access artifacts from single entry point</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>By clicking the Custom cta user can reorganise the tiles on the screen as per their preferences</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Section on the right of the screens allow users to have visiblily about the recent activities and updates</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the features have individual landing page with list of artifacts</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Filter will allow user to narrow their search based on industry, function or artifact type</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[60px] md:pt-[189px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The applications landing page, listing every artifact as a card" class="block h-auto max-w-full shrink-0" src="./assets/studFig2.png" style="width:680px"/><div class="flex-1" style="padding-top:0"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a] leading-[31px]" style="font-variation-settings:&quot;wdth&quot; 100">Executive <span class="cs-cap">view</span> (Artifact <span class="cs-cap">list</span>) <span class="cs-cap">consumption layer</span></h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[16px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>All the features have individual landing page with list of artifacts</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[67px] md:pt-[209px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The manage workspace table, and the share dialog opened from a row" class="block h-auto max-w-full shrink-0" src="./assets/studFig3.png" style="width:680px"/><div class="flex-1" style="padding-top:2px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Manage Workspace</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>On clicking workspaces at Studios home page, user will be taken to the Manage workspace page</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The page consist of list of all the artifacts and collaborators who has access to</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>The page consist of list of all the artifacts and collaborators who has access to</span></li><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>User can share, edit, clone, move, promote, bookmark, export or delete an artifact based on their role access</span></li></ul></div></div></div><div class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[55px] md:pt-[171px] reveal"><div class="flex items-start" style="gap:56px"><img alt="The admin console, with the user-role table and the platform utils tiles" class="block h-auto max-w-full shrink-0" src="./assets/studFig4.png" style="width:680px"/><div class="flex-1" style="padding-top:3px"><h3 class="font-[&#x27;Roboto&#x27;] font-medium text-[20px] leading-[1.15] text-[#0a0a0a]" style="font-variation-settings:&quot;wdth&quot; 100">Admin</h3><ul class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] pl-[8px] text-black mt-[20px] space-y-[16px]" style="font-variation-settings:&quot;wdth&quot; 100;font-size:15px"><li class="flex gap-[10px]"><span aria-hidden="true" class="shrink-0">·</span><span>Admin page is for the Super admin who has access to all the user role access control and workspace settings. As well access to configure platform level customisation under platform utils</span></li></ul></div></div></div><!-- other-projects:start --><style>
 .op-section{width:100%;max-width:1352px;margin:80px auto 0;padding:0 16px 96px;box-sizing:border-box}
 @media (min-width:768px){.op-section{margin-top:180px;padding:0 80px 120px}}
 .op-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:44px;line-height:1.05;letter-spacing:-0.025em;color:#111214;margin:0 0 36px}
@@ -668,7 +688,7 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
 .op-shot.tilt{left:24px;right:-18px;bottom:-26px;border-radius:14px;transform:rotate(-4deg);transform-origin:left bottom}
 .op-ph{position:absolute;left:0;right:0;bottom:0;height:270px}
 .op-ph svg{display:block;width:100%;height:100%}
-</style><section class="op-section" aria-labelledby="op-title"><h2 class="op-title" id="op-title">Other Projects<i>.</i></h2><div class="op-grid" data-reveal="card"><a class="op-card pink" data-op="scavvy" href="./scavvy.html"><div class="op-body"><h3 class="op-name">Gaming app</h3><p class="op-desc">A gaming app to be played in park and social groups</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop"><img alt="" loading="lazy" src="./assets/csImage103.png"/></div></a><a class="op-card peach" data-op="full-stack" href="./building-with-ai.html"><div class="op-body"><h3 class="op-name">Full Stack Product</h3><p class="op-desc">4 tech stacks explored to build an end-to-end pet boarding web application using AI</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop tilt"><img alt="" loading="lazy" src="./assets/csImage98.png"/></div></a><div class="op-card blue" data-op="project-4"><div class="op-body"><h3 class="op-name">Project 4</h3><p class="op-desc">upcoming project</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-ph" aria-hidden="true"><svg viewBox="0 0 440 270" preserveAspectRatio="xMaxYMax slice">
+</style><section class="op-section" aria-labelledby="op-title"><h2 class="op-title" id="op-title">Other Projects</h2><div class="op-grid" data-reveal="card"><a class="op-card pink" data-op="scavvy" href="./scavvy.html"><div class="op-body"><h3 class="op-name">Gaming app</h3><p class="op-desc">A gaming app to be played in park and social groups</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop"><img alt="" loading="lazy" src="./assets/csImage103.png"/></div></a><a class="op-card peach" data-op="full-stack" href="./building-with-ai.html"><div class="op-body"><h3 class="op-name">Full Stack Product</h3><p class="op-desc">4 tech stacks explored to build an end-to-end pet boarding web application using AI</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot crop tilt"><img alt="" loading="lazy" src="./assets/csImage98.png"/></div></a><div class="op-card blue" data-op="project-4"><div class="op-body"><h3 class="op-name">Project 4</h3><p class="op-desc">upcoming project</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-ph" aria-hidden="true"><svg viewBox="0 0 440 270" preserveAspectRatio="xMaxYMax slice">
 <rect x="96" y="30" width="330" height="240" rx="18" fill="#e3ebfa"/>
 <rect x="76" y="56" width="380" height="240" rx="18" fill="#f3f7fe" stroke="#dbe5f7"/>
 <circle cx="104" cy="84" r="6" fill="#d3def3"/><circle cx="124" cy="84" r="6" fill="#d3def3"/><circle cx="144" cy="84" r="6" fill="#d3def3"/>
@@ -1092,5 +1112,273 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
 })();
 </script>
 <!-- page-transition:end -->
+<!-- hero-swipe:start -->
+<style>
+  @media (max-width: 767px) {
+    /* The cover follows a sideways drag; the page still scrolls up and down. */
+    #csHeader + div > div:nth-child(4) {
+      touch-action: pan-y;
+    }
+  }
+</style>
+<script>
+  /* Phones: swipe the cover picture left for the next case study and right
+     for the one before, in the order of the tabs. The picture follows the
+     finger a little and springs back if the swipe is too short. */
+  (function () {
+    var phone = window.matchMedia("(max-width: 767px)");
+    var card = document.querySelector("#csHeader + div > div:nth-child(4)");
+    var tabs = document.getElementById("csTabs");
+    if (!card || !tabs) return;
+    var items = Array.prototype.slice.call(tabs.children);
+    var here = items.findIndex(function (el) {
+      return el.tagName !== "A";
+    });
+    if (here < 0) return;
+    var x0, y0, dx, sideways;
+
+    function settle() {
+      card.style.transition = "transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)";
+      card.style.transform = "";
+    }
+
+    card.addEventListener("touchstart", function (e) {
+      if (!phone.matches || e.touches.length !== 1) return;
+      x0 = e.touches[0].clientX;
+      y0 = e.touches[0].clientY;
+      dx = 0;
+      sideways = null;
+      card.style.transition = "none";
+    }, { passive: true });
+
+    card.addEventListener("touchmove", function (e) {
+      if (x0 == null) return;
+      dx = e.touches[0].clientX - x0;
+      var dy = e.touches[0].clientY - y0;
+      if (sideways === null && (Math.abs(dx) > 8 || Math.abs(dy) > 8)) {
+        sideways = Math.abs(dx) > Math.abs(dy);
+      }
+      if (!sideways) return;
+      /* Less give at either end, where there is nowhere to go. */
+      var edge = (dx < 0 && here === items.length - 1) || (dx > 0 && here === 0);
+      card.style.transform = "translateX(" + dx * (edge ? 0.15 : 0.4) + "px)";
+    }, { passive: true });
+
+    function end() {
+      if (x0 == null) return;
+      x0 = null;
+      var to = !sideways || Math.abs(dx) < 60 ? -1 : dx < 0 ? here + 1 : here - 1;
+      var link = items[to];
+      if (link && link.tagName === "A") {
+        link.click();
+      } else {
+        settle();
+      }
+    }
+    card.addEventListener("touchend", end);
+    card.addEventListener("touchcancel", function () {
+      x0 = null;
+      settle();
+    });
+    /* Coming back to this page from the browser's cache: put the card back. */
+    window.addEventListener("pageshow", settle);
+  })();
+</script>
+<!-- hero-swipe:end -->
+<!-- cs-figma-mobile:start -->
+<style>
+  /* Phones: type, spacing and sizes from this page's "— Mobile (390)" frame
+     in the Portfolio Figma file (landing page ideation > mobile screen), which
+     follows the Collaborator frame. Sections are tagged with data-cs by the
+     script below, so these rules touch nothing else; tablet and desktop are
+     unchanged. */
+  #csBack {
+    display: none;
+  }
+  @media (max-width: 767px) {
+    /* ---- Header: a back arrow at the left of the name ---- */
+    #root #csHeader > #csBack {
+      display: block;
+      position: absolute;
+      left: 14px;
+      top: 18px;
+      width: 24px;
+      height: 24px !important;
+    }
+    #csBack img {
+      display: block;
+      width: 24px;
+      height: 24px;
+    }
+
+    /* ---- Cover: 641px tall; the card keeps its size ---- */
+    #root #csHeader + div {
+      height: calc(418.86px + (100vw - 79px) / 1.4) !important;
+      justify-content: flex-start !important;
+    }
+    #root #csHeader + div > div:nth-child(4) {
+      flex: 0 0 auto;
+      height: calc((100vw - 79px) / 1.4) !important;
+    }
+
+    /* ---- Shared: labels, headings, lists, images ---- */
+    [data-cs] p[class*="tracking-[2.6px]"] {
+      text-transform: uppercase;
+    }
+    [data-cs] h3 {
+      font-size: 18px !important;
+      line-height: 23px !important;
+      margin-top: 0 !important;
+    }
+    [data-cs] .cs-cap {
+      text-transform: capitalize;
+    }
+    [data-cs] ul {
+      margin-top: 12px !important;
+      margin-right: -1px;
+      padding-left: 8px !important;
+      font-size: 15px !important;
+      line-height: 24px !important;
+    }
+    [data-cs] li {
+      display: block !important;
+      position: relative;
+      padding-left: 22.5px;
+    }
+    [data-cs] li {
+      margin-bottom: 0 !important;
+    }
+    [data-cs] li + li {
+      margin-top: 12px !important;
+    }
+    [data-cs] li[data-cs-dup] {
+      display: none !important;
+    }
+    /* A round bullet in the indent, in place of the middle dot. */
+    [data-cs] li > span[aria-hidden="true"] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 22.5px;
+      text-align: center;
+      font-size: 0;
+    }
+    [data-cs] li > span[aria-hidden="true"]::before {
+      content: "\2022";
+      font-size: 15px;
+    }
+    [data-cs] img:not([class*="size-[36px]"]) {
+      width: 100% !important;
+      padding: 0 !important;
+      height: auto !important;
+    }
+
+    /* ---- Overview and Role ---- */
+    [data-cs="overview"] > div > div:first-child > p + p {
+      margin-top: 12px !important;
+      font-size: 15px !important;
+      line-height: 24px !important;
+    }
+    [data-cs="overview"] > div > div:nth-child(2) {
+      margin-top: 33px !important;
+    }
+    [data-cs="overview"] > div > div:nth-child(2) > p:nth-child(2) {
+      margin-top: 8px !important;
+      font-size: 20px !important;
+      line-height: 28px !important;
+      font-weight: 300 !important;
+    }
+    [data-cs="overview"] > div > div:nth-child(2) > p:nth-child(3),
+    [data-cs="overview"] > div > div:nth-child(2) > div > p {
+      margin-top: 0 !important;
+      font-size: 13px !important;
+      line-height: 22px !important;
+      color: #302f2f !important;
+    }
+    [data-cs="overview"] > div > div:nth-child(2) > div {
+      margin-top: 38px !important;
+    }
+
+    /* ---- Body sections: image, then heading and list ---- */
+    [data-cs="body"],
+    [data-cs="scenario"] {
+      padding-top: 48px !important;
+    }
+    [data-cs][data-cs-first] {
+      padding-top: 45px !important;
+    }
+    [data-cs="body"] div[style*="gap"] {
+      flex-direction: column;
+      gap: 20px !important;
+    }
+    [data-cs="body"] div.flex-1 {
+      padding-top: 0 !important;
+    }
+    /* Avatar rows: a 36px icon, the view name in 11px beside it. */
+    [data-cs] > div:first-child[class*="h-[36px]"] > p {
+      display: none;
+    }
+    [data-cs] > div:first-child[class*="h-[36px]"] > div > p {
+      font-size: 11px !important;
+      line-height: 24px !important;
+    }
+    [data-cs] > div:first-child[class*="h-[36px]"] + div {
+      margin-top: 20px !important;
+    }
+
+    /* ---- Scenario card and the tree under it ---- */
+    [data-cs="scenario"] > div {
+      margin-top: 20px !important;
+      padding: 32px 20px !important;
+      border-radius: 24px !important;
+    }
+    [data-cs="scenario"] > div > p {
+      font-size: 15px !important;
+      margin-bottom: 0 !important;
+      line-height: 24px !important;
+    }
+    [data-cs="scenario"] > div > p + p {
+      margin-top: 20px !important;
+    }
+    [data-cs="tree"] {
+      padding-top: 20px !important;
+    }
+  }
+</style>
+<script>
+  (function () {
+    var root = document.querySelector("#root [data-name]");
+    if (!root) return;
+    var secs = Array.prototype.filter.call(root.children, function (el) {
+      return el.matches("div.mx-auto");
+    });
+    var first = true;
+    secs.forEach(function (sec) {
+      var label = sec.querySelector("p");
+      var text = label ? label.textContent.trim() : "";
+      var key = "body";
+      if (text === "Overview") key = "overview";
+      else if (text === "Scenario") key = "scenario";
+      else if (
+        sec.children.length === 1 &&
+        sec.firstElementChild.tagName === "IMG"
+      )
+        key = "tree";
+      sec.setAttribute("data-cs", key);
+      if (key !== "overview" && key !== "tree" && first) {
+        sec.setAttribute("data-cs-first", "");
+        first = false;
+      }
+    });
+    // A list item that repeats the one before it shows once on phones.
+    root.querySelectorAll("[data-cs] li + li").forEach(function (li) {
+      if (
+        li.textContent.trim() === li.previousElementSibling.textContent.trim()
+      )
+        li.setAttribute("data-cs-dup", "");
+    });
+  })();
+</script>
+<!-- cs-figma-mobile:end -->
 </body>
 </html>
