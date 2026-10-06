@@ -6020,7 +6020,68 @@
         }
       }
     </style>
-  </head>
+      <!-- bu-try-style:start -->
+    <style>
+      /* "Try it live": an underlined text button under work 01. On a desktop
+         it takes a column of its own on the right, on the title's line and
+         sharing its baseline, well clear of the title and line, which wrap
+         in the space left of it. On a phone it sits under the line. */
+      .bu-try {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        color: #1c1917;
+        font:
+          500 15px/1 "Roboto",
+          Arial,
+          sans-serif;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 5px;
+        white-space: nowrap;
+        transition: color 0.2s ease;
+      }
+      .bu-try svg {
+        width: 16px;
+        height: 16px;
+      }
+      .bu-try:hover {
+        color: #535398;
+      }
+      .bu-try:focus-visible {
+        outline: 2px solid #535398;
+        outline-offset: 3px;
+      }
+      .bu-sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+      @media (min-width: 768px) {
+        .bu-cap.has-cta {
+          grid-template-columns: auto minmax(0, 1fr) auto;
+        }
+        .bu-cap.has-cta .bu-try {
+          grid-column: 3;
+          grid-row: 1;
+          align-self: baseline;
+          margin-left: 48px;
+        }
+      }
+      @media (max-width: 767px) {
+        .bu-cap.has-cta .bu-try {
+          grid-column: 2;
+          justify-self: start;
+          margin-top: 16px;
+        }
+      }
+    </style>
+    <!-- bu-try-style:end -->
+</head>
   <body>
     <header class="bu-nav">
       <a href="./index.html">Preeti Soreng</a>
@@ -6046,10 +6107,26 @@
             preload="metadata"
             aria-label="Loading: A flower that grows while the page loads"
           ></video>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">01</span>
             <h2>Loading</h2>
             <p>A flower that grows while the page loads</p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Loading--Grow-while-you-wait/grow-while-you-wait/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6098,13 +6175,29 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">02</span>
             <h2>Piano OTP</h2>
             <p>
               Numbers are piano keys. Entering your PIN creates a tiny melody. Correct sequence
               resolves into a satisfying final chord.
             </p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Piano-OTP/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6153,7 +6246,7 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">03</span>
             <h2>Crack the Safe</h2>
             <p>
@@ -6161,6 +6254,22 @@
               safe shaky and open; a strong password lands with a satisfying heavy clunk and locks
               it.
             </p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Crack-the-safe/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6209,13 +6318,29 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">04</span>
             <h2>Trash Basket</h2>
             <p>
               Drag the item toward a trash bin—but the bin becomes a basketball hoop. You actually
               have to shoot it in. Miss? The file bounces back.
             </p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Trash-Basket/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6264,13 +6389,29 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">05</span>
             <h2>Paper Plane Send</h2>
             <p>
               The Send icon folds the typed message into a paper plane. Flick it upward and it flies
               across the screen, then unfolds as the message bubble in the conversation.
             </p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Paper-plane-send/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6319,10 +6460,26 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">06</span>
             <h2>Download Drop</h2>
             <p>A downloaded package falls from the sky while its progress percentage updates.</p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Download-Drop/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6371,10 +6528,26 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">07</span>
             <h2>Shoo It Away</h2>
             <p>The window behaves like a fly. Hover over ✕ and it dodges your cursor. Catch it and flick it off-screen to close.</p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Shoo-it-away/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
         <article class="bu-work bu-wide" data-reveal="card">
@@ -6423,26 +6596,26 @@
               </svg>
             </button>
           </div>
-          <div class="bu-cap">
+          <div class="bu-cap has-cta">
             <span class="bu-num">08</span>
             <h2>Sweep It Away</h2>
             <p>Clear all, by hand. Grab a tiny broom and physically sweep notifications off the screen. Faster sweeping sends them flying farther.</p>
-          </div>
-        </article>
-        <article class="bu-work bu-wide is-soon" data-reveal="card">
-          <div class="bu-media bu-empty" aria-hidden="true"><span>09</span></div>
-          <div class="bu-cap">
-            <span class="bu-num">09</span>
-            <h2>Work 09</h2>
-            <p>Coming soon</p>
-          </div>
-        </article>
-        <article class="bu-work bu-wide is-soon" data-reveal="card">
-          <div class="bu-media bu-empty" aria-hidden="true"><span>10</span></div>
-          <div class="bu-cap">
-            <span class="bu-num">10</span>
-            <h2>Work 10</h2>
-            <p>Coming soon</p>
+            <a
+              class="bu-try"
+              href="https://preetisoreng-ai.github.io/Clear-all--Sweep-it-away/sweep-it-away/"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Try it live<span class="bu-sr"> (opens in a new tab)</span
+              ><svg viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M7 17 17 7M9 7h8v8"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                /></svg
+            ></a>
           </div>
         </article>
       </section>
@@ -6679,44 +6852,7 @@
           <div class="op-shot fit">
             <img alt="" loading="lazy" src="./assets/aiCardDecisionFlow.png" /></div
         ></a>
-        <div class="op-card blue" data-op="project-4">
-          <div class="op-body">
-            <h3 class="op-name">Project 4</h3>
-            <p class="op-desc">upcoming project</p>
-            <span class="op-more"
-              >Read More
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M4 12h16M14 6l6 6-6 6" /></svg
-            ></span>
-          </div>
-          <div class="op-ph" aria-hidden="true">
-            <svg viewBox="0 0 440 270" preserveAspectRatio="xMaxYMax slice">
-              <rect x="96" y="30" width="330" height="240" rx="18" fill="#e3ebfa" />
-              <rect
-                x="76"
-                y="56"
-                width="380"
-                height="240"
-                rx="18"
-                fill="#f3f7fe"
-                stroke="#dbe5f7"
-              />
-              <circle cx="104" cy="84" r="6" fill="#d3def3" />
-              <circle cx="124" cy="84" r="6" fill="#d3def3" />
-              <circle cx="144" cy="84" r="6" fill="#d3def3" />
-              <circle cx="330" cy="140" r="30" fill="#e3ebfa" />
-              <path d="M150 270 L250 170 L330 250 L370 215 L456 290 L150 290 Z" fill="#e3ebfa" />
-            </svg>
-          </div>
-        </div>
+        <a class="op-card blue" data-op="aura" href="./aura.html"><div class="op-body"><h3 class="op-name">Aura</h3><p class="op-desc">A conversational, occasion-first fashion app for custom tailoring</p><span class="op-more">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12h16M14 6l6 6-6 6"/></svg></span></div><div class="op-shot"><img alt="" loading="lazy" src="./assets/auraOtherProject.png"/></div></a>
       </div>
     </section>
     <!-- other-projects:end -->
