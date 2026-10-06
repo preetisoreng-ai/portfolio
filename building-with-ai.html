@@ -6563,7 +6563,29 @@
       }
     </style>
     <!-- mobile-hero:end -->
-  </head>
+      <!-- ai-sticky-bar:start -->
+    <style>
+      /* Phones: the top bar stays put while the page scrolls under it, as on
+         Aura: frosted, a 20px blur behind a white fill at 20%. Sideways
+         overflow is clipped rather than hidden, because hidden makes the
+         body its own scroll box and the bar would stop sticking. */
+      @media (max-width: 767px) {
+        html,
+        body {
+          overflow-x: clip !important;
+        }
+        [data-name="Building with AI"] > div:first-child {
+          position: sticky !important;
+          top: 0;
+          z-index: 50;
+          background: rgba(255, 255, 255, 0.2) !important;
+          -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+        }
+      }
+    </style>
+    <!-- ai-sticky-bar:end -->
+</head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif">
     <section class="building-reference-cover" aria-label="Building with AI case study cover">
       <img
