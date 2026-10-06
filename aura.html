@@ -1130,6 +1130,42 @@ body {
       }
     </style>
     <!-- aura-sticky-bar:end -->
+    <!-- aura-figma-mobile-2:start -->
+    <style>
+      /* Phones, from the "Aura — Mobile (390)" frame: grey 15px tabs at full
+         strength (found as the bar's last child, since the back caret goes in
+         front of them), section labels in capitals, the cover phones cropped
+         from the middle, the screens' phones centred with only the first
+         screen keeping its tag, and the roadmap phases without their months. */
+      @media (max-width: 767px) {
+        [data-name="Aura"] > div:first-child > div:last-child a {
+          opacity: 1 !important;
+        }
+        [data-name="Aura"] > div:first-child > div:last-child p {
+          font-family: "Roboto", Arial, sans-serif !important;
+          font-size: 15px !important;
+          font-weight: 400 !important;
+          line-height: 1.45 !important;
+          letter-spacing: 0 !important;
+          color: #777b91 !important;
+          font-variation-settings: normal !important;
+        }
+        #au-overview .au-eyebrow {
+          text-transform: uppercase;
+        }
+        .au-hero .au-phone img {
+          object-position: center;
+        }
+        .au-screen .au-phone {
+          align-self: center;
+        }
+        #au-screens .au-screen ~ .au-screen .au-screen-label > .au-eyebrow,
+        .au-phase-months {
+          display: none;
+        }
+      }
+    </style>
+    <!-- aura-figma-mobile-2:end -->
 </head>
   <body class="font-[\'Roboto\']" style="font-family: \'Roboto\', sans-serif;">
     <div id="root"><link rel="preload" as="image" href="./assets/auraScreenHome.jpg"/><link rel="preload" as="image" href="./assets/auraScreenDiscover.jpg"/><link rel="preload" as="image" href="./assets/auraScreenOrders.jpg"/><div class="bg-white overflow-clip relative shrink-0 w-full md:w-[1512px]" data-name="Aura"><div class="bg-white min-h-[60px] md:h-[80px] sticky top-0 w-full z-50 flex flex-col md:flex-row items-center justify-between px-[16px] md:px-[28px] py-[8px] md:py-0 border-b border-gray-100 shadow-xs"><a class="cursor-pointer flex items-center h-[36px] md:h-[48px] whitespace-nowrap shrink-0 group" data-node-id="40000695:1832" href="./index.html"><span style="font-family: 'Fraunces', Georgia, serif; font-weight: 700;" class="font-['Fraunces',serif] font-bold text-[15px] md:text-[16px] tracking-tight text-stone-900 dark:text-white text-[#2b261f]">Preeti Soreng</span><span style="font-family: 'Caveat', cursive; font-weight: 600;" class="font-['Caveat',cursive] text-[15px] md:text-[17px] text-[#535398] font-semibold ml-2 hidden sm:inline">case study ✍️</span></a><div class="flex gap-[4px] md:gap-[8px] h-[40px] md:h-[47px] items-center max-w-full overflow-x-auto no-scrollbar scrollbar-none py-1"><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-overview"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Overview</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-people"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">People</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-structure"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Structure</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-screens"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Screens</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-system"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">System</p></a><a class="content-stretch flex items-center justify-center px-[8px] md:px-[12px] py-[6px] md:py-[10px] relative shrink-0 transition-opacity duration-200 opacity-75 hover:opacity-100" href="#au-roadmap"><p class="font-['Roboto',sans-serif] text-[12px] sm:text-[13px] md:text-[14px] tracking-wider font-light leading-[1.5] relative shrink-0 text-[#535398] text-[13px] sm:text-[15px] md:text-[18px] text-left tracking-[-0.418px] whitespace-nowrap" style="font-family: 'Roboto', sans-serif; font-variation-settings:&quot;wdth&quot; 100">Roadmap</p></a></div></div>
@@ -2172,7 +2208,7 @@ body {
   <h2 class="au-h2" style="margin-top: 110px">Roadmap</h2>
   <div class="au-waves">
     <div class="au-wave" style="background: #f3eee4">
-      <p class="au-eyebrow">Phase 1 · Months 0–6</p>
+      <p class="au-eyebrow">Phase 1<span class="au-phase-months"> · Months 0–6</span></p>
       <p class="au-block">Prove the promise</p>
       <ul class="au-notes">
         <li>AI Personal Designer</li>
@@ -2183,7 +2219,7 @@ body {
       </ul>
     </div>
     <div class="au-wave" style="background: #dce8e8">
-      <p class="au-eyebrow">Phase 2 · Months 6–12</p>
+      <p class="au-eyebrow">Phase 2<span class="au-phase-months"> · Months 6–12</span></p>
       <p class="au-block">Family, inspiration, wardrobe</p>
       <ul class="au-notes">
         <li>Family basket, palette lock, split payment</li>
@@ -2194,7 +2230,7 @@ body {
       </ul>
     </div>
     <div class="au-wave" style="background: #ece6f3">
-      <p class="au-eyebrow">Phase 3 · Months 12–24</p>
+      <p class="au-eyebrow">Phase 3<span class="au-phase-months"> · Months 12–24</span></p>
       <p class="au-block">The Fashion Graph compounds</p>
       <ul class="au-notes">
         <li>Graph-powered curation everywhere</li>
