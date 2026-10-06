@@ -6466,6 +6466,10 @@
          Section spacing below follows the Building with AI mobile frame in
          Figma. */
       @media (max-width: 767px) {
+        /* The top bar is solid white, as on the other tabs. */
+        #root > [data-name="Building with AI"] > div:first-child {
+          background: #fff !important;
+        }
         #root [data-name="Building with AI"] > div:nth-child(2) {
           display: block !important;
           position: relative;
