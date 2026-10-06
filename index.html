@@ -5207,6 +5207,62 @@
       }
     </style>
     <!-- contact-figma-desktop:end -->
+    <!-- lab-coverflow-style:start -->
+    <style>
+      /* Phones: the Creative Lab cards become a coverflow. Swipe left and
+         right and each card snaps to the middle; the centred one sits full
+         size and the ones either side shrink, turn away and fade. The
+         script below sets each card's turn from its distance to the
+         middle. Tapping a card still flips it. */
+      .lab-dots {
+        display: none;
+      }
+      @media (max-width: 639px) {
+        #labFlow.lab-flow {
+          display: flex;
+          gap: 0;
+          margin: 0 -16px;
+          padding: 12px 12vw 8px;
+          overflow-x: auto;
+          overscroll-behavior-x: contain;
+          scroll-snap-type: x mandatory;
+          scroll-padding: 0 12vw;
+          scrollbar-width: none;
+          -webkit-overflow-scrolling: touch;
+        }
+        #labFlow.lab-flow::-webkit-scrollbar {
+          display: none;
+        }
+        #labFlow.lab-flow > .flip-card {
+          flex: 0 0 76vw;
+          scroll-snap-align: center;
+          scroll-snap-stop: always;
+          transform-origin: 50% 50%;
+          will-change: transform, opacity;
+        }
+        .lab-dots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+          margin-top: 20px;
+        }
+        .lab-dots button {
+          width: 8px;
+          height: 8px;
+          padding: 0;
+          border: 0;
+          border-radius: 999px;
+          background: #d6d3d1;
+          cursor: pointer;
+          transition: width 0.25s ease, background 0.25s ease;
+        }
+        .lab-dots button[aria-current="true"] {
+          width: 22px;
+          background: #44403c;
+        }
+      }
+    </style>
+    <!-- lab-coverflow-style:end -->
 </head>
 
   <body
@@ -6529,8 +6585,8 @@
             </p>
           </div>
 
-          <!-- 3D Flip Cards Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 3D Flip Cards Grid (a coverflow carousel on phones) -->
+          <div id="labFlow" class="lab-flow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Card 1: Miniature Paintings -->
             <div
               id="miniatureCard"
@@ -12564,5 +12620,76 @@
         if (window.ResizeObserver) new ResizeObserver(place).observe(cover);
       });
     </script>
-  </body>
+      <!-- lab-coverflow:start -->
+    <script>
+      (function () {
+        var flow = document.getElementById("labFlow");
+        if (!flow) return;
+        var phone = window.matchMedia("(max-width: 639px)");
+        var still = window.matchMedia("(prefers-reduced-motion: reduce)");
+        var cards = Array.prototype.slice.call(flow.children);
+        var dots = document.createElement("div");
+        dots.className = "lab-dots";
+        dots.setAttribute("aria-label", "Creative Lab cards");
+        cards.forEach(function (card, i) {
+          var b = document.createElement("button");
+          b.type = "button";
+          b.setAttribute("aria-label", "Show card " + (i + 1));
+          b.addEventListener("click", function () {
+            card.scrollIntoView({ behavior: still.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
+          });
+          dots.appendChild(b);
+        });
+        flow.parentNode.insertBefore(dots, flow.nextSibling);
+
+        var frame = 0;
+        function paint() {
+          frame = 0;
+          if (!phone.matches) {
+            cards.forEach(function (c) {
+              c.style.transform = "";
+              c.style.opacity = "";
+              c.style.zIndex = "";
+            });
+            return;
+          }
+          var box = flow.getBoundingClientRect();
+          var mid = box.left + box.width / 2;
+          var nearest = 0;
+          var best = Infinity;
+          cards.forEach(function (c, i) {
+            var r = c.getBoundingClientRect();
+            var d = (r.left + r.width / 2 - mid) / r.width;
+            var a = Math.min(Math.abs(d), 1.4);
+            if (Math.abs(d) < best) {
+              best = Math.abs(d);
+              nearest = i;
+            }
+            if (still.matches) {
+              c.style.transform = "";
+              c.style.opacity = a > 0.5 ? "0.6" : "";
+              return;
+            }
+            var turn = Math.max(-1, Math.min(1, d)) * -24;
+            c.style.transform =
+              "perspective(1100px) translateX(" + (-d * 10) + "%) rotateY(" + turn + "deg) scale(" + (1 - a * 0.14) + ")";
+            c.style.opacity = String(1 - a * 0.4);
+            c.style.zIndex = String(10 - Math.round(a * 5));
+          });
+          Array.prototype.forEach.call(dots.children, function (b, i) {
+            b.setAttribute("aria-current", i === nearest ? "true" : "false");
+          });
+        }
+        function queue() {
+          if (!frame) frame = requestAnimationFrame(paint);
+        }
+        flow.addEventListener("scroll", queue, { passive: true });
+        window.addEventListener("resize", queue);
+        if (phone.addEventListener) phone.addEventListener("change", queue);
+        window.addEventListener("load", queue);
+        queue();
+      })();
+    </script>
+    <!-- lab-coverflow:end -->
+</body>
 </html>
