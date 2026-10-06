@@ -5209,36 +5209,39 @@
     <!-- contact-figma-desktop:end -->
     <!-- lab-coverflow-style:start -->
     <style>
-      /* Phones: the Creative Lab cards become a coverflow. Swipe left and
-         right and each card snaps to the middle; the centred one sits full
-         size and the ones either side shrink, turn away and fade. The
-         script below sets each card's turn from its distance to the
-         middle. Tapping a card still flips it. */
+      /* Phones: the Creative Lab cards turn on a loop. One card sits in the
+         middle with one either side; swipe left and the cards move round, so
+         the one leaving on the left comes back in on the right, and the same
+         the other way. The script places each card from its seat around the
+         loop. Tapping a card still flips it. */
       .lab-dots {
         display: none;
       }
       @media (max-width: 639px) {
         #labFlow.lab-flow {
-          display: flex;
-          gap: 0;
+          display: block;
+          position: relative;
+          height: 404px;
           margin: 0 -16px;
-          padding: 12px 12vw 8px;
-          overflow-x: auto;
-          overscroll-behavior-x: contain;
-          scroll-snap-type: x mandatory;
-          scroll-padding: 0 12vw;
-          scrollbar-width: none;
-          -webkit-overflow-scrolling: touch;
-        }
-        #labFlow.lab-flow::-webkit-scrollbar {
-          display: none;
+          touch-action: pan-y;
+          user-select: none;
+          -webkit-user-select: none;
         }
         #labFlow.lab-flow > .flip-card {
-          flex: 0 0 76vw;
-          scroll-snap-align: center;
-          scroll-snap-stop: always;
+          position: absolute;
+          top: 12px;
+          left: 50%;
+          width: 76vw;
+          margin-left: -38vw;
           transform-origin: 50% 50%;
           will-change: transform, opacity;
+          transition:
+            transform 0.5s cubic-bezier(0.22, 0.8, 0.24, 1),
+            opacity 0.5s ease;
+        }
+        #labFlow.lab-flow.is-dragging > .flip-card,
+        #labFlow.lab-flow > .flip-card.is-wrapping {
+          transition: none;
         }
         .lab-dots {
           display: flex;
@@ -5263,7 +5266,266 @@
       }
     </style>
     <!-- lab-coverflow-style:end -->
-</head>
+    <!-- firefly-dark:start -->
+    <style>
+      /* Dark mode: the butterfly becomes a firefly. Its plates swap in on
+         the same hinges, so it flies and beats exactly as the butterfly
+         does; the light in its tail glows and slowly pulses, the way a
+         firefly signals. The glow is placed off the width alone (a margin
+         in percent is a share of the width), so it stays on the tail at
+         any size. */
+      .bfly-ff,
+      .ff-glow {
+        display: none;
+      }
+      .dark .bfly-stage .bfly-body:not(.bfly-ff),
+      .dark .bfly-stage .bfly-wing:not(.bfly-ff) {
+        display: none;
+      }
+      .dark .bfly-stage .bfly-ff {
+        display: block;
+      }
+      .dark .bfly-stage .ff-glow {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 51.7%;
+        width: 90%;
+        aspect-ratio: 1;
+        margin-top: 60.6%;
+        border-radius: 50%;
+        pointer-events: none;
+        background: radial-gradient(
+          circle,
+          rgba(246, 255, 170, 0.95) 0,
+          rgba(220, 255, 100, 0.6) 12%,
+          rgba(196, 245, 70, 0.26) 32%,
+          rgba(170, 230, 40, 0) 66%
+        );
+        mix-blend-mode: screen;
+        transform: translate(-50%, -50%) translateZ(10px);
+        opacity: 0.9;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .dark .bfly-stage .ff-glow {
+          animation: ff-pulse 3.4s ease-in-out infinite;
+        }
+      }
+      @keyframes ff-pulse {
+        0%,
+        100% {
+          opacity: 0.45;
+          scale: 0.82;
+        }
+        14% {
+          opacity: 1;
+          scale: 1.06;
+        }
+        34% {
+          opacity: 0.92;
+          scale: 1;
+        }
+        58% {
+          opacity: 0.45;
+          scale: 0.82;
+        }
+      }
+    </style>
+    <!-- firefly-dark:end -->
+    <!-- cs-cards-redesign:start -->
+    <style>
+      /* Case study cards, after the "All Case Studies" reference: number and
+         tag along the top, title and line anchored bottom left, the picture
+         centred in the right half, and a white arrow disc in the corner. Each
+         picture gets the same box so the six cards weigh the same. The card
+         keeps its tint as background-color, which the page transition reads. */
+      #featured-works .cs-grid {
+        gap: 16px;
+      }
+      #featured-works .cs-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        column-gap: 16px;
+        min-height: 228px;
+        padding: 24px 24px 26px 26px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        background-color: var(--cs-tint);
+        background-image: radial-gradient(
+          120% 95% at 88% 12%,
+          rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0) 62%
+        );
+        box-shadow:
+          0 1px 2px rgba(40, 30, 60, 0.04),
+          0 14px 30px -22px rgba(40, 30, 60, 0.22);
+        overflow: hidden;
+      }
+      #featured-works .cs-card:hover {
+        box-shadow:
+          0 1px 2px rgba(40, 30, 60, 0.05),
+          0 24px 40px -24px rgba(40, 30, 60, 0.32);
+      }
+      .dark #featured-works .cs-card {
+        border-color: rgba(255, 255, 255, 0.06);
+        background-image: none;
+      }
+
+      /* 01 | Tag */
+      #featured-works .cs-meta {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        gap: 12px;
+        font-size: 13.5px;
+        line-height: 20px;
+      }
+      #featured-works .cs-meta span {
+        font-variant-numeric: tabular-nums;
+      }
+      #featured-works .cs-meta i {
+        height: 20px;
+        opacity: 0.18;
+      }
+
+      /* Title and line, bottom left, clear of the picture. */
+      #featured-works .cs-copy {
+        grid-column: 1;
+        grid-row: 3;
+        align-self: end;
+        margin: 0;
+        padding: 0;
+      }
+      #featured-works .cs-copy h3 {
+        font-size: 22px;
+        line-height: 1.15;
+      }
+      #featured-works .cs-copy p {
+        margin-top: 8px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      /* The picture: centred in the right half, under the arrow's corner. */
+      #featured-works .cs-visual {
+        position: relative;
+        top: auto;
+        right: auto;
+        grid-column: 2;
+        grid-row: 2 / 4;
+        align-self: center;
+        justify-self: center;
+        width: 100%;
+        height: 150px;
+        margin-top: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #featured-works .cs-visual-shot .cs-shot {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow:
+          0 16px 26px -16px rgba(30, 25, 50, 0.42),
+          0 0 0 1px rgba(0, 0, 0, 0.04);
+      }
+      #featured-works .cs-visual-phone {
+        gap: 0;
+      }
+      #featured-works .cs-phone {
+        width: 70px;
+        flex: 0 0 auto;
+        border-width: 3px;
+        border-radius: 14px;
+      }
+      #featured-works .cs-callout {
+        width: 96px;
+        margin-left: -14px;
+        position: relative;
+        z-index: 1;
+        font-size: 11px;
+      }
+      #featured-works .cs-visual-stack {
+        color: inherit;
+      }
+      #featured-works .cs-layers {
+        width: 100%;
+        height: 140px;
+        top: 50%;
+        margin-top: -62px;
+      }
+
+      /* One small flower per card, at the picture's top-left corner; the
+         sprigs and the handwritten note go so nothing competes with it. */
+      #featured-works .cs-visual .cs-sprig,
+      #featured-works .cs-stack-note,
+      #featured-works .cs-stack-arrow {
+        display: none;
+      }
+      #featured-works .cs-visual .cs-bloom {
+        z-index: 2;
+        width: 30px;
+        left: -6px;
+        top: 4px;
+        right: auto;
+        bottom: auto;
+        transform: rotate(-12deg);
+      }
+      #featured-works .cs-visual-phone .cs-bloom {
+        left: calc(50% - 52px);
+        top: 0;
+      }
+
+      #featured-works .cs-go {
+        right: 20px;
+        bottom: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 17px;
+        box-shadow: 0 8px 18px -8px rgba(30, 25, 50, 0.3);
+      }
+
+      @media (max-width: 639px) {
+        #featured-works .cs-grid {
+          gap: 14px;
+        }
+        #featured-works .cs-card {
+          min-height: 204px;
+          padding: 20px 18px 22px 20px;
+          column-gap: 12px;
+          border-radius: 18px;
+        }
+        #featured-works .cs-copy h3 {
+          font-size: 20px;
+        }
+        #featured-works .cs-copy p {
+          font-size: 13.5px;
+        }
+        #featured-works .cs-visual {
+          height: 128px;
+        }
+        #featured-works .cs-phone {
+          width: 60px;
+        }
+        #featured-works .cs-callout {
+          width: 84px;
+          padding: 0.55rem 0.5rem;
+        }
+        #featured-works .cs-layers {
+          height: 120px;
+          margin-top: -54px;
+          transform: scale(0.85);
+        }
+        #featured-works .cs-go {
+          right: 16px;
+          bottom: 16px;
+          width: 38px;
+          height: 38px;
+        }
+      }
+    </style>
+    <!-- cs-cards-redesign:end -->
+  </head>
 
   <body
     class="bg-canvas text-stone-800 dark:bg-canvas-dark dark:text-stone-100 font-mono antialiased selection:bg-stone-900 selection:text-white transition-colors duration-200 overflow-x-hidden min-h-screen flex flex-col"
@@ -5520,6 +5782,15 @@
                           src="./assets/legoButterflyHindR.png"
                           alt=""
                         />
+                        <!-- In dark mode the butterfly is a firefly: the same
+                             flight and wingbeat, its own plates, and a light
+                             in its tail. -->
+                        <img class="bfly-wing bfly-hind-l bfly-ff" src="./assets/fireflyHindL.svg" alt="" />
+                        <img class="bfly-wing bfly-fore-l bfly-ff" src="./assets/fireflyForeL.svg" alt="" />
+                        <img class="bfly-body bfly-ff" src="./assets/fireflyBody.svg" alt="" />
+                        <img class="bfly-wing bfly-fore-r bfly-ff" src="./assets/fireflyForeR.svg" alt="" />
+                        <img class="bfly-wing bfly-hind-r bfly-ff" src="./assets/fireflyHindR.svg" alt="" />
+                        <span class="ff-glow"></span>
                       </span>
                     </span>
                   </span>
@@ -12628,6 +12899,14 @@
         var phone = window.matchMedia("(max-width: 639px)");
         var still = window.matchMedia("(prefers-reduced-motion: reduce)");
         var cards = Array.prototype.slice.call(flow.children);
+        var n = cards.length;
+        if (n < 2) return;
+        var active = Math.floor(n / 2); /* the middle card leads */
+        var drag = 0; /* how far the loop is being pulled, in cards */
+        var last = cards.map(function () {
+          return null;
+        });
+
         var dots = document.createElement("div");
         dots.className = "lab-dots";
         dots.setAttribute("aria-label", "Creative Lab cards");
@@ -12636,58 +12915,134 @@
           b.type = "button";
           b.setAttribute("aria-label", "Show card " + (i + 1));
           b.addEventListener("click", function () {
-            card.scrollIntoView({ behavior: still.matches ? "auto" : "smooth", block: "nearest", inline: "center" });
+            go(i - active > n / 2 ? i - n : i - active < -n / 2 ? i + n : i);
           });
           dots.appendChild(b);
         });
         flow.parentNode.insertBefore(dots, flow.nextSibling);
 
-        var frame = 0;
+        /* A card's seat on the loop: 0 is the middle, -1 left, 1 right,
+           kept within half a turn either side so it wraps round. */
+        function seat(i) {
+          var x = (((i - active - drag) % n) + n) % n;
+          if (x > n / 2) x -= n;
+          return x;
+        }
+
         function paint() {
-          frame = 0;
           if (!phone.matches) {
             cards.forEach(function (c) {
               c.style.transform = "";
               c.style.opacity = "";
               c.style.zIndex = "";
+              c.classList.remove("is-wrapping");
             });
             return;
           }
-          var box = flow.getBoundingClientRect();
-          var mid = box.left + box.width / 2;
-          var nearest = 0;
-          var best = Infinity;
+          var step = flow.clientWidth * 0.66;
           cards.forEach(function (c, i) {
-            var r = c.getBoundingClientRect();
-            var d = (r.left + r.width / 2 - mid) / r.width;
-            var a = Math.min(Math.abs(d), 1.4);
-            if (Math.abs(d) < best) {
-              best = Math.abs(d);
-              nearest = i;
+            var x = seat(i);
+            var a = Math.abs(x);
+            /* Coming round the back of the loop: jump without animating. */
+            if (last[i] !== null && Math.abs(x - last[i]) > 1.5) {
+              c.classList.add("is-wrapping");
+              requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                  c.classList.remove("is-wrapping");
+                });
+              });
             }
-            if (still.matches) {
-              c.style.transform = "";
-              c.style.opacity = a > 0.5 ? "0.6" : "";
-              return;
+            last[i] = x;
+            var move = "translateX(" + (x * step).toFixed(1) + "px)";
+            if (!still.matches) {
+              move +=
+                " perspective(1100px) rotateY(" + (Math.max(-1, Math.min(1, x)) * -24).toFixed(2) +
+                "deg) scale(" + (1 - Math.min(a, 1.5) * 0.14).toFixed(3) + ")";
             }
-            var turn = Math.max(-1, Math.min(1, d)) * -24;
-            c.style.transform =
-              "perspective(1100px) translateX(" + (-d * 10) + "%) rotateY(" + turn + "deg) scale(" + (1 - a * 0.14) + ")";
-            c.style.opacity = String(1 - a * 0.4);
-            c.style.zIndex = String(10 - Math.round(a * 5));
+            c.style.transform = move;
+            c.style.opacity = String(Math.max(0, Math.min(1, a <= 1 ? 1 - a * 0.4 : 0.6 - (a - 1) * 1.2)));
+            c.style.zIndex = String(10 - Math.round(a * 4));
           });
+          var lead = (((Math.round(active + drag)) % n) + n) % n;
           Array.prototype.forEach.call(dots.children, function (b, i) {
-            b.setAttribute("aria-current", i === nearest ? "true" : "false");
+            b.setAttribute("aria-current", i === lead ? "true" : "false");
           });
         }
-        function queue() {
-          if (!frame) frame = requestAnimationFrame(paint);
+
+        function go(to) {
+          active = to;
+          drag = 0;
+          paint();
         }
-        flow.addEventListener("scroll", queue, { passive: true });
-        window.addEventListener("resize", queue);
-        if (phone.addEventListener) phone.addEventListener("change", queue);
-        window.addEventListener("load", queue);
-        queue();
+
+        /* Dragging. A tap stays a tap, so the card still flips. */
+        var startX = 0;
+        var startY = 0;
+        var startT = 0;
+        var pulling = false;
+        var moved = false;
+        var pointer = null;
+        flow.addEventListener("pointerdown", function (e) {
+          if (!phone.matches || (e.pointerType === "mouse" && e.button !== 0)) return;
+          pointer = e.pointerId;
+          startX = e.clientX;
+          startY = e.clientY;
+          startT = Date.now();
+          pulling = false;
+          moved = false;
+        });
+        flow.addEventListener("pointermove", function (e) {
+          if (e.pointerId !== pointer) return;
+          var dx = e.clientX - startX;
+          var dy = e.clientY - startY;
+          if (!pulling) {
+            if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+            pulling = true;
+            moved = true;
+            flow.classList.add("is-dragging");
+            try {
+              flow.setPointerCapture(pointer);
+            } catch (err) {}
+          }
+          drag = -dx / (flow.clientWidth * 0.66);
+          paint();
+        });
+        function release(e) {
+          if (e.pointerId !== pointer) return;
+          pointer = null;
+          if (!pulling) return;
+          pulling = false;
+          flow.classList.remove("is-dragging");
+          var dx = e.clientX - startX;
+          var fast = Math.abs(dx) / Math.max(1, Date.now() - startT) > 0.4;
+          var by = Math.round(drag);
+          if (by === 0 && (fast || Math.abs(drag) > 0.18)) by = drag > 0 ? 1 : -1;
+          go(active + by);
+        }
+        flow.addEventListener("pointerup", release);
+        flow.addEventListener("pointercancel", release);
+        /* Swallow the click that ends a drag, so the card doesn't flip. */
+        flow.addEventListener(
+          "click",
+          function (e) {
+            if (moved) {
+              e.stopPropagation();
+              e.preventDefault();
+              moved = false;
+            }
+          },
+          true
+        );
+        flow.setAttribute("tabindex", "0");
+        flow.addEventListener("keydown", function (e) {
+          if (!phone.matches) return;
+          if (e.key === "ArrowRight") go(active + 1);
+          else if (e.key === "ArrowLeft") go(active - 1);
+        });
+
+        window.addEventListener("resize", paint);
+        if (phone.addEventListener) phone.addEventListener("change", paint);
+        paint();
       })();
     </script>
     <!-- lab-coverflow:end -->
