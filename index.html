@@ -5120,7 +5120,7 @@
         }
       }
     </style>
-      <!-- contact-figma-desktop:start -->
+    <!-- contact-figma-desktop:start -->
     <style>
       /* Desktop: the contact footer from the "Footer desktop" frame in the
          Portfolio Figma file (landing page ideation > Footer), drawn at 1440.
@@ -5257,7 +5257,9 @@
           border-radius: 999px;
           background: #d6d3d1;
           cursor: pointer;
-          transition: width 0.25s ease, background 0.25s ease;
+          transition:
+            width 0.25s ease,
+            background 0.25s ease;
         }
         .lab-dots button[aria-current="true"] {
           width: 22px;
@@ -5268,12 +5270,30 @@
     <!-- lab-coverflow-style:end -->
     <!-- firefly-dark:start -->
     <style>
-      /* Dark mode: the butterfly becomes a firefly. Its plates swap in on
-         the same hinges, so it flies and beats exactly as the butterfly
-         does; the light in its tail glows and slowly pulses, the way a
-         firefly signals. The glow is placed off the width alone (a margin
-         in percent is a share of the width), so it stays on the tail at
-         any size. */
+      /* Dark mode: the butterfly becomes a Lego firefly. Its plates sit in
+         the same frame and run the same flight and wingbeat; only the
+         hinges move, because a firefly seen side-on carries its wings from
+         the thorax and behind the head rather than down a centre seam. The
+         light in its tail glows and slowly pulses, the way a firefly
+         signals. The glow is placed off the width alone (a margin in
+         percent is a share of the width), so it stays on the tail at any
+         size. */
+      .dark .bfly-stage .bfly-fore-l.bfly-ff {
+        transform-origin: 50.7% 42.5%;
+      }
+      .dark .bfly-stage .bfly-hind-l.bfly-ff {
+        transform-origin: 48.5% 48.1%;
+      }
+      .dark .bfly-stage .bfly-fore-r.bfly-ff {
+        transform-origin: 75.8% 40.5%;
+      }
+      .dark .bfly-stage .bfly-hind-r.bfly-ff {
+        transform-origin: 72.2% 60.4%;
+      }
+      /* The other bricks are dimmed after dark; this one is the light. */
+      .dark .bfly-stage .bloom-butterfly {
+        filter: drop-shadow(0 0 10px rgba(255, 196, 60, 0.35));
+      }
       .bfly-ff,
       .ff-glow {
         display: none;
@@ -5289,10 +5309,10 @@
         display: block;
         position: absolute;
         top: 0;
-        left: 51.7%;
-        width: 90%;
+        left: 27%;
+        width: 72%;
         aspect-ratio: 1;
-        margin-top: 60.6%;
+        margin-top: 51.9%;
         border-radius: 50%;
         pointer-events: none;
         background: radial-gradient(
@@ -5309,6 +5329,56 @@
       @media (prefers-reduced-motion: no-preference) {
         .dark .bfly-stage .ff-glow {
           animation: ff-pulse 3.4s ease-in-out infinite;
+        }
+      }
+      /* Every angle. Whenever it is not simply flying side-on, the plates
+         give way to a photograph of the model from the angle it is at:
+         eight round the compass as it turns and looks about, the climbing
+         pose going up, the underside going up steeply, and the top view
+         once it has landed. Script picks the view and holds it square to
+         the screen (it undoes the yaw), so a turn reads as a solid thing
+         coming round rather than a card going edge-on. Visibility, not
+         display, so the body plate still sets the size. */
+      .ff-view {
+        display: none;
+      }
+      .dark .bfly-stage .ff-view {
+        display: block;
+        position: absolute;
+        inset: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+      .ff-view img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: auto;
+        opacity: 0;
+      }
+      .ff-view img.is-on {
+        opacity: 1;
+      }
+      .dark .bfly-stage.ff-posing .ff-view {
+        visibility: visible;
+      }
+      .dark .bfly-stage.ff-posing .bfly-ff,
+      .dark .bfly-stage.ff-posing .ff-glow {
+        visibility: hidden;
+      }
+      /* The photographs cannot beat their wings, so they hum instead: a
+         shiver at wingbeat speed, enough to read as airborne. */
+      @media (prefers-reduced-motion: no-preference) {
+        .ff-view img.is-on {
+          animation: ff-hum 0.14s ease-in-out infinite alternate;
+        }
+        .bfly-stage.is-perched .ff-view img.is-on {
+          animation: none;
+        }
+      }
+      @keyframes ff-hum {
+        to {
+          transform: translateY(-0.6px) scale(1.012, 0.988);
         }
       }
       @keyframes ff-pulse {
@@ -5785,12 +5855,81 @@
                         <!-- In dark mode the butterfly is a firefly: the same
                              flight and wingbeat, its own plates, and a light
                              in its tail. -->
-                        <img class="bfly-wing bfly-hind-l bfly-ff" src="./assets/fireflyHindL.svg" alt="" />
-                        <img class="bfly-wing bfly-fore-l bfly-ff" src="./assets/fireflyForeL.svg" alt="" />
-                        <img class="bfly-body bfly-ff" src="./assets/fireflyBody.svg" alt="" />
-                        <img class="bfly-wing bfly-fore-r bfly-ff" src="./assets/fireflyForeR.svg" alt="" />
-                        <img class="bfly-wing bfly-hind-r bfly-ff" src="./assets/fireflyHindR.svg" alt="" />
+                        <img
+                          class="bfly-wing bfly-hind-l bfly-ff"
+                          src="./assets/legoFireflyHindL.png"
+                          alt=""
+                        />
+                        <img
+                          class="bfly-wing bfly-fore-l bfly-ff"
+                          src="./assets/legoFireflyForeL.png"
+                          alt=""
+                        />
+                        <img class="bfly-body bfly-ff" src="./assets/legoFireflyBody.png" alt="" />
+                        <img
+                          class="bfly-wing bfly-fore-r bfly-ff"
+                          src="./assets/legoFireflyForeR.png"
+                          alt=""
+                        />
+                        <img
+                          class="bfly-wing bfly-hind-r bfly-ff"
+                          src="./assets/legoFireflyHindR.png"
+                          alt=""
+                        />
                         <span class="ff-glow"></span>
+                        <!-- Every angle of the model, photographed: shown in
+                             place of the plates as it turns, looks round,
+                             climbs and lands. -->
+                        <span class="ff-view">
+                          <img
+                            data-ff-view="side"
+                            src="./assets/legoFireflySide.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="turn"
+                            src="./assets/legoFireflyTurn.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="front"
+                            src="./assets/legoFireflyFront.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="turnback"
+                            src="./assets/legoFireflyTurnBack.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="back"
+                            src="./assets/legoFireflyBack.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="top"
+                            src="./assets/legoFireflyTop.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="bottom"
+                            src="./assets/legoFireflyBottom.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                          <img
+                            data-ff-view="climb"
+                            src="./assets/legoFireflyClimb.webp"
+                            loading="lazy"
+                            alt=""
+                          />
+                        </span>
                       </span>
                     </span>
                   </span>
@@ -12885,7 +13024,7 @@
         if (window.ResizeObserver) new ResizeObserver(place).observe(cover);
       });
     </script>
-      <!-- lab-coverflow:start -->
+    <!-- lab-coverflow:start -->
     <script>
       (function () {
         var flow = document.getElementById("labFlow");
@@ -12950,14 +13089,19 @@
             var move = "translateX(" + (x * step).toFixed(1) + "px)";
             if (!still.matches) {
               move +=
-                " perspective(1100px) rotateY(" + (Math.max(-1, Math.min(1, x)) * -24).toFixed(2) +
-                "deg) scale(" + (1 - Math.min(a, 1.5) * 0.14).toFixed(3) + ")";
+                " perspective(1100px) rotateY(" +
+                (Math.max(-1, Math.min(1, x)) * -24).toFixed(2) +
+                "deg) scale(" +
+                (1 - Math.min(a, 1.5) * 0.14).toFixed(3) +
+                ")";
             }
             c.style.transform = move;
-            c.style.opacity = String(Math.max(0, Math.min(1, a <= 1 ? 1 - a * 0.4 : 0.6 - (a - 1) * 1.2)));
+            c.style.opacity = String(
+              Math.max(0, Math.min(1, a <= 1 ? 1 - a * 0.4 : 0.6 - (a - 1) * 1.2))
+            );
             c.style.zIndex = String(10 - Math.round(a * 4));
           });
-          var lead = (((Math.round(active + drag)) % n) + n) % n;
+          var lead = ((Math.round(active + drag) % n) + n) % n;
           Array.prototype.forEach.call(dots.children, function (b, i) {
             b.setAttribute("aria-current", i === lead ? "true" : "false");
           });
@@ -13040,5 +13184,205 @@
       })();
     </script>
     <!-- lab-coverflow:end -->
-</body>
+    <!-- firefly-turn:start -->
+    <script>
+      /* The firefly in three dimensions.
+
+         Its facing lives on .flit-face as a rotateY between 0 (head right)
+         and 180 (head left), set by the cover's 46s about-face or by the
+         flight script. Each frame this reads that angle back and works out a
+         heading round the full compass (0 side-on facing right, 90 face on,
+         180 side-on facing left, 270 tail on), then shows the photograph of
+         the model nearest that heading, turned back square to the screen and
+         mirrored where the head is on the left.
+
+         The heading moves in three ways:
+         - Turning. When the flight swings it round, the heading sweeps the
+           half circle more slowly than the swing itself, so every view along
+           the way gets a look in: towards you going right to left, away from
+           you coming back.
+         - Looking round. Every few seconds in the air it spins a full circle
+           on the spot, one way or the other, and ends where it started.
+         - Climbing and landing. Going up it shows its climbing pose, going up
+           hard its underside; settled on a card, its back from above.
+
+         Side-on and flying straight, the beating plates are shown as they
+         are. Dark mode only; light mode keeps the butterfly exactly as it
+         was. */
+      (function () {
+        var stage = document.querySelector(".bfly-stage");
+        if (!stage) return;
+        var face = stage.querySelector(".flit-face");
+        var view = stage.querySelector(".ff-view");
+        var body = stage.querySelector(".bloom-butterfly");
+        if (!face || !view || !body || !window.DOMMatrixReadOnly) return;
+        var imgs = {};
+        view.querySelectorAll("img").forEach(function (img) {
+          imgs[img.getAttribute("data-ff-view")] = img;
+        });
+        var root = document.documentElement;
+        var still =
+          window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        /* Round the compass in 45 degree steps from side-on facing right,
+             and whether each needs mirroring to put the head where it is. */
+        var COMPASS = [
+          ["side", false],
+          ["turn", false],
+          ["front", false],
+          ["turn", true],
+          ["side", true],
+          ["turnback", true],
+          ["back", false],
+          ["turnback", false],
+        ];
+        var SWEEP_MS = 1300;
+        var SPIN_MS = 3600;
+        var CLIMB = -260; /* px/s up the screen to count as climbing */
+        var STEEP = -640; /* and as climbing hard */
+        var HOLD_MS = 320; /* a pose, once struck, is held at least this long */
+
+        var raf = 0;
+        var shown = null;
+        var settled = 0; /* the end of the swing it last came to rest at */
+        var sweep = null; /* { from, t0 } */
+        var spin = null; /* { from, dir, t0 } */
+        var nextSpin = 0;
+        var perchedAt = 0;
+        var lastY = null;
+        var lastT = 0;
+        var vy = 0;
+        var pose = null;
+        var poseUntil = 0;
+
+        function ease(p) {
+          return p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+        }
+
+        function yawNow() {
+          var t = getComputedStyle(face).transform;
+          if (!t || t === "none") return 0;
+          var m = new DOMMatrixReadOnly(t);
+          return Math.abs((Math.atan2(m.m31, m.m33) * 180) / Math.PI);
+        }
+
+        function show(name) {
+          if (name === shown) return;
+          if (shown) imgs[shown].classList.remove("is-on");
+          if (name) imgs[name].classList.add("is-on");
+          shown = name;
+          stage.classList.toggle("ff-posing", !!name);
+        }
+
+        function frame(now) {
+          raf = requestAnimationFrame(frame);
+          var yaw = yawNow();
+
+          /* How fast it is going up or down the screen, smoothed. */
+          var y = body.getBoundingClientRect().top;
+          if (lastY !== null && now > lastT) {
+            var v = ((y - lastY) * 1000) / (now - lastT);
+            vy += (v - vy) * 0.18;
+          }
+          lastY = y;
+          lastT = now;
+
+          var perched = stage.classList.contains("is-perched");
+          if (!perched) perchedAt = 0;
+          else if (!perchedAt) perchedAt = now;
+          if (!nextSpin) nextSpin = now + 2500 + Math.random() * 3000;
+
+          /* A swing has started: sweep the half circle it is making. */
+          var away = settled === 0 ? yaw > 6 : yaw < 174;
+          if (away && !sweep) {
+            sweep = { from: settled, t0: now };
+            spin = null;
+          }
+
+          var heading = null;
+          if (sweep) {
+            var p = Math.min((now - sweep.t0) / SWEEP_MS, 1);
+            heading = sweep.from + 180 * ease(p);
+            var arrived = sweep.from === 0 ? yaw > 174 : yaw < 6;
+            if (p >= 1 && arrived) {
+              settled = sweep.from === 0 ? 180 : 0;
+              sweep = null;
+              heading = null;
+              nextSpin = now + 2500 + Math.random() * 3000;
+            }
+          } else if (spin) {
+            var q = Math.min((now - spin.t0) / SPIN_MS, 1);
+            /* Mostly an even pace, so each view is held about as long as
+               the next, with just enough ease to start and stop gently. */
+            heading = spin.from + spin.dir * 360 * (0.3 * ease(q) + 0.7 * q);
+            if (q >= 1) {
+              spin = null;
+              heading = null;
+              nextSpin = now + 4000 + Math.random() * 4500;
+            }
+          } else if (!still && !perched && now > nextSpin) {
+            spin = { from: settled, dir: Math.random() < 0.5 ? 1 : -1, t0: now };
+            heading = settled;
+          }
+
+          var name = null;
+          var mirror = false;
+          if (heading !== null) {
+            var slot = ((Math.round(heading / 45) % 8) + 8) % 8;
+            name = COMPASS[slot][0];
+            mirror = COMPASS[slot][1];
+            /* Side-on the way the plates already point: let them fly. */
+            if ((slot === 0 && yaw < 15) || (slot === 4 && yaw > 165)) name = null;
+            pose = null;
+          } else if (perched && now - perchedAt > 450) {
+            name = "top";
+            pose = null;
+          } else {
+            var want = vy < STEEP ? "bottom" : vy < CLIMB ? "climb" : null;
+            if (want !== pose && (want || now > poseUntil)) {
+              pose = want;
+              poseUntil = now + HOLD_MS;
+            }
+            name = pose;
+            mirror = pose === "climb" && yaw > 90;
+          }
+
+          show(name);
+          if (name) {
+            /* Undo the flight's yaw so the photograph faces the screen. */
+            view.style.transform =
+              "rotateY(" + -yaw + "deg)" + (mirror ? " scaleX(-1)" : "") + " translateZ(12px)";
+          }
+        }
+
+        function start() {
+          Object.keys(imgs).forEach(function (k) {
+            imgs[k].loading = "eager";
+          });
+          settled = yawNow() > 90 ? 180 : 0;
+          sweep = spin = null;
+          nextSpin = 0;
+          lastY = null;
+          vy = 0;
+          raf = requestAnimationFrame(frame);
+        }
+
+        function sync() {
+          var dark = root.classList.contains("dark");
+          if (dark && !raf) start();
+          else if (!dark && raf) {
+            cancelAnimationFrame(raf);
+            raf = 0;
+            show(null);
+          }
+        }
+        new MutationObserver(sync).observe(root, {
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+        sync();
+      })();
+    </script>
+    <!-- firefly-turn:end -->
+  </body>
 </html>
