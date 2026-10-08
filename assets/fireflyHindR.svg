@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="214" viewBox="0 0 300 214"><g transform="translate(310.8 0) scale(-1 1)">
-  <!-- flight wing: thin and see-through -->
-  <path d="M152 130 C126 120 76 118 50 140 C34 154 44 172 70 172 C102 172 134 152 152 142 Z" fill="#d8e6ff" fill-opacity="0.38" stroke="#e6f0ff" stroke-opacity="0.75" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M150 134 C120 132 86 136 58 152 M148 138 C120 146 96 158 76 168 M140 132 C116 124 92 124 72 130" fill="none" stroke="#eef4ff" stroke-opacity="0.55" stroke-width="1.6" stroke-linecap="round"/>
-</g></svg>
