@@ -6513,6 +6513,29 @@
             clip: rect(0 0 0 0);
             white-space: nowrap;
           }
+          .mm-grid3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 40px;
+          }
+          .mm-num {
+            font-family: "Roboto", sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: #090a0a;
+          }
+          .mm-flow {
+            box-shadow: none;
+          }
+          .mm-feature .mm-list {
+            margin-top: 16px;
+          }
+          @media (min-width: 768px) {
+            .mm-grid3 {
+              grid-template-columns: repeat(3, 1fr);
+            }
+          }
           .mm-grid2 {
             display: grid;
             grid-template-columns: 1fr;
@@ -6722,20 +6745,52 @@
               class="font-[&#x27;Roboto&#x27;] font-bold leading-[1] text-[13px] tracking-[2.6px] text-[#090a0a]"
               style="font-variation-settings: &quot;wdth&quot; 100"
             >
-              Goals
+              Business Case
             </p>
             <div
               class="flex flex-wrap font-[&#x27;Roboto&#x27;] gap-x-[47px] gap-y-[16px] mt-[29px] text-[16px] leading-[24px] text-[#302f2f]"
               style="font-variation-settings: &quot;wdth&quot; 100"
             >
-              <p class="whitespace-nowrap">1. See the whole conversation at a glance</p>
-              <p class="whitespace-nowrap">2. Benchmark the brand against competitors</p>
-              <p class="whitespace-nowrap">3. Find the right creators, not just the biggest</p>
-              <p class="whitespace-nowrap">4. Plan campaigns from evidence</p>
-              <p class="whitespace-nowrap">5. Reply to customers and leads faster</p>
+              <p class="whitespace-nowrap">1. Drive and influence sales, and create new product lines</p>
+              <p class="whitespace-nowrap">2. Generate brand awareness</p>
+              <p class="whitespace-nowrap">3. Plan and decide the social media marketing budget</p>
             </div>
           </div>
         </div>
+<div
+  class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[44px] md:pt-[139px]"
+>
+  <div data-reveal="true">
+    <h2
+      class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]"
+    >
+      User Goals
+    </h2>
+    <div class="bg-[#cfcfcf] h-px mt-[28px] w-full"></div>
+  </div>
+  <div class="mm-grid3" data-reveal="card">
+    <div class="mm-card">
+      <p class="mm-num">01</p>
+      <p class="mm-body">
+        Identify topics and themes related to a particular keyword and know the
+        trends on social media platforms
+      </p>
+    </div>
+    <div class="mm-card">
+      <p class="mm-num">02</p>
+      <p class="mm-body">
+        Identify top influencers and top posts on social media for promotional
+        activities
+      </p>
+    </div>
+    <div class="mm-card">
+      <p class="mm-num">03</p>
+      <p class="mm-body">
+        Identify and compare the most suitable influencers for the brand
+      </p>
+    </div>
+  </div>
+</div>
         <div
           class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[44px] md:pt-[139px]"
         >
@@ -6787,6 +6842,140 @@
             </div>
           </div>
         </div>
+<div
+  class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"
+>
+  <div data-reveal="true">
+    <h2
+      class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]"
+    >
+      User Scenarios &amp; Flows
+    </h2>
+    <div class="bg-[#cfcfcf] h-px mt-[28px] w-full"></div>
+  </div>
+  <p
+    class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] max-w-full md:w-[812px] mt-[51px] reveal"
+    style="font-variation-settings: &quot;wdth&quot; 100"
+  >
+    Each flow begins on the home page with a choice between keyword-based and
+    influencer-based trends, then narrows the conversation with keyword, source
+    and timeframe before the insight the user came for.
+  </p>
+
+  <div class="mm-feature" data-reveal="true">
+    <p class="mm-label">User Scenario 01</p>
+    <h3 class="mm-h3">Find top influencers for a vegan brand launch</h3>
+    <p class="mm-body">
+      Maybelline is launching a new vegan brand for teenage girls. The marketing
+      team wants to create buzz on social media, and the social media marketing
+      manager would like to identify top influencers for the brand promotion.
+    </p>
+    <p class="mm-body">
+      <strong>Flow:</strong> Home page → keyword-based trends → set keyword
+      &quot;vegan skincare&quot; → trend insights → set timeframe 3 months and
+      source Instagram → trend description → identify the top 2 influencers.
+    </p>
+  </div>
+  <figure class="mm-fig" data-reveal="card">
+    <img
+      class="mm-shot mm-flow"
+      loading="lazy"
+      src="./assets/murmurFlowScenario1.png"
+      alt="User flow for scenario 1: from the home page through keyword-based trends, keyword vegan skincare, a 3 month Instagram timeframe and trend description, to identifying the top 2 influencers"
+    />
+    <figcaption>Fig. User flow for Scenario 01</figcaption>
+  </figure>
+
+  <div class="mm-feature" data-reveal="true">
+    <p class="mm-label">User Scenario 02</p>
+    <h3 class="mm-h3">Compare influencers to pick the best fit</h3>
+    <p class="mm-body">
+      Maybelline has identified a list of top influencers. Now they want to
+      compare them to identify the most suitable influencer for their brand.
+    </p>
+    <p class="mm-body">
+      <strong>Flow:</strong> Home page → influencer-based trends → select trends
+      of an influencer → set influencer, timeframe, source and type of data →
+      compare to identify the most suitable influencer.
+    </p>
+  </div>
+  <figure class="mm-fig" data-reveal="card">
+    <img
+      class="mm-shot mm-flow"
+      loading="lazy"
+      src="./assets/murmurFlowScenario2.png"
+      alt="User flow for scenario 2: from the home page through influencer-based trends and an influencer's trends, setting influencer, timeframe, source and type of data, to comparing influencers"
+    />
+    <figcaption>Fig. User flow for Scenario 02</figcaption>
+  </figure>
+
+  <div class="mm-feature" data-reveal="true">
+    <p class="mm-label">User Scenarios 03 – 06</p>
+    <h3 class="mm-h3">
+      Jo, from the marketing team, exploring skincare on Instagram
+    </h3>
+    <ul class="mm-list">
+      <li>
+        <strong>Trends over time:</strong> see what trends are being spoken
+        about in skincare on Instagram and how they are changing over time.
+      </li>
+      <li>
+        <strong>Top trends, posts and influencers:</strong> see the description
+        of top trends, plus the top posts and top influencers on these trends.
+      </li>
+      <li>
+        <strong>Top skincare brands:</strong> see which skincare brands are
+        mentioned most on Instagram and how their engagement compares.
+      </li>
+      <li>
+        <strong>Top skincare ingredients:</strong> see which skincare
+        ingredients are mentioned most on Instagram and how their engagement
+        compares.
+      </li>
+    </ul>
+  </div>
+  <figure class="mm-fig" data-reveal="card">
+    <img
+      class="mm-shot mm-flow"
+      loading="lazy"
+      src="./assets/murmurFlowScenarios.png"
+      alt="Four user flows for Jo: skincare trends over time, top trends with posts and influencers, top skincare brands, and top skincare ingredients on Instagram"
+    />
+    <figcaption>Fig. User flows for Scenarios 03 – 06</figcaption>
+  </figure>
+
+  <div class="mm-feature" data-reveal="true">
+    <p class="mm-label">Task Flow &amp; User Flow</p>
+    <h3 class="mm-h3">A market researcher views the topics for a keyword</h3>
+    <p class="mm-body">
+      The task flow maps the shortest path: log in, open keyword-based trends,
+      enter a keyword and credentials, view and edit topic names for different
+      topics, then open the topics deep dive. The user flow adds the decision
+      point: a user who enters a keyword, source and timeframe goes on to view
+      or edit the names of the first five topics; a user who skips it lands on a
+      topics overview for the default keyword, Skincare. Both paths end in the
+      topics deep dive.
+    </p>
+  </div>
+  <figure class="mm-fig" data-reveal="card">
+    <img
+      class="mm-shot mm-flow"
+      loading="lazy"
+      src="./assets/murmurTaskFlow.png"
+      alt="Task flow: login, keyword based trends, enter keyword, enter credentials, view and edit topic names, topics deep dive"
+    />
+    <figcaption>Fig. Task flow for viewing topics for a keyword</figcaption>
+  </figure>
+  <figure class="mm-fig" data-reveal="card">
+    <img
+      class="mm-shot mm-flow"
+      loading="lazy"
+      src="./assets/murmurUserFlow.png"
+      alt="User flow with a decision on entering keyword, source and timeframe: yes leads to entering credentials and editing topic names, no leads to the topics overview for Skincare; both end in the topics deep dive"
+    />
+    <figcaption>Fig. User flow for viewing topics for a keyword</figcaption>
+  </figure>
+</div>
         <div
           class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"
         >
@@ -6993,6 +7182,73 @@
             <figcaption>Fig. Inbox — customer care and leads, sorted by priority</figcaption>
           </figure>
         </div>
+<div
+  class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"
+>
+  <div data-reveal="true">
+    <h2
+      class="font-[&#x27;Abhaya_Libre&#x27;] font-semibold leading-[1.05] text-[#090a0a] text-[48px]"
+    >
+      Scenarios in the Product
+    </h2>
+    <div class="bg-[#cfcfcf] h-px mt-[28px] w-full"></div>
+  </div>
+  <p
+    class="font-[&#x27;Roboto&#x27;] font-normal text-[16px] leading-[24px] text-[#302f2f] max-w-full md:w-[812px] mt-[51px] reveal"
+    style="font-variation-settings: &quot;wdth&quot; 100"
+  >
+    How each scenario plays out in the dashboard. The filter bar (keyword, time
+    and source) replaces the separate keyword and influencer entry points of the
+    early flows, so every scenario starts from the same place.
+  </p>
+  <div class="mm-table" data-reveal="card">
+    <div class="mm-th">Scenario</div>
+    <div class="mm-th">Where it happens in Murmur</div>
+    <div class="mm-th">What the user gets</div>
+    <div class="mm-td mm-strong">01 · Top influencers for a vegan launch</div>
+    <div class="mm-td">
+      Keyword &quot;vegan&quot;, last 12 weeks, source Instagram → Creators,
+      ranked by on-topic share
+    </div>
+    <div class="mm-td">
+      The most relevant creators, with hidden gems flagged
+    </div>
+    <div class="mm-td mm-strong">02 · Compare influencers</div>
+    <div class="mm-td">Creators → tick up to three to compare side by side</div>
+    <div class="mm-td">
+      Followers, engagement, on-topic share and tone in one view; the best fit
+      is briefed from Campaigns
+    </div>
+    <div class="mm-td mm-strong">03 · Skincare trends over time</div>
+    <div class="mm-td">Overview → mentions over time and trending topics</div>
+    <div class="mm-td">
+      Weekly volume split by sentiment, and which topics are rising
+    </div>
+    <div class="mm-td mm-strong">04 · Top trends, posts and influencers</div>
+    <div class="mm-td">Topics → select a topic; Overview → top posts</div>
+    <div class="mm-td">
+      The topic&#x27;s trend, example posts and the creators on that topic
+    </div>
+    <div class="mm-td mm-strong">05 · Top skincare brands</div>
+    <div class="mm-td">
+      Brands → share of voice by platform and brand scorecard
+    </div>
+    <div class="mm-td">
+      Mentions, share, change and sentiment for each brand
+    </div>
+    <div class="mm-td mm-strong">06 · Top skincare ingredients</div>
+    <div class="mm-td">
+      Keyword picker → retinol, niacinamide or vitamin C serum; Topics for each
+    </div>
+    <div class="mm-td">Volume, sentiment and themes for each ingredient</div>
+    <div class="mm-td mm-strong">Task flow · Topics for a keyword</div>
+    <div class="mm-td">Keyword in the filter bar → Topics</div>
+    <div class="mm-td">
+      Themes sorted by most talked about, fastest growing or most negative, with
+      a deep dive on each
+    </div>
+  </div>
+</div>
         <div
           class="mx-auto w-full md:w-[1112px] max-w-full px-[16px] md:px-0 pt-[45px] md:pt-[142px]"
         >
