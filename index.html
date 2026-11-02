@@ -4308,8 +4308,6 @@
       .cs-section {
         --cs-ink: #1c1917;
         --cs-soft: #57534e;
-        --cs-pill: #ffffff;
-        --cs-pill-line: #e2ded6;
         --cs-go: #ffffff;
         padding: 5rem 1rem 3.5rem;
         background-color: #fbf9f7;
@@ -4319,8 +4317,6 @@
       .dark .cs-section {
         --cs-ink: #f5f5f4;
         --cs-soft: #a8a29e;
-        --cs-pill: #1c1e22;
-        --cs-pill-line: #2f3238;
         --cs-go: #26282d;
         background-color: #141517;
         border-top-color: #292524;
@@ -4373,47 +4369,6 @@
         line-height: 1.6;
         color: var(--cs-soft);
       }
-      .cs-filters {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-      /* On a phone the six cards are a short scroll, so they all show and
-         the filter row goes. */
-      @media (max-width: 639px) {
-        .cs-filters {
-          display: none;
-        }
-      }
-      .cs-pill {
-        padding: 0.55rem 1.05rem;
-        border-radius: 999px;
-        border: 1px solid var(--cs-pill-line);
-        background: var(--cs-pill);
-        color: var(--cs-ink);
-        font-size: 0.8rem;
-        line-height: 1;
-        white-space: nowrap;
-        transition:
-          background-color 0.2s,
-          color 0.2s,
-          border-color 0.2s,
-          transform 0.2s;
-      }
-      .cs-pill:hover {
-        transform: translateY(-1px);
-        border-color: var(--cs-ink);
-      }
-      .cs-pill.is-active {
-        background: #151515;
-        border-color: #151515;
-        color: #fff;
-      }
-      .dark .cs-pill.is-active {
-        background: #f5f5f4;
-        border-color: #f5f5f4;
-        color: #151515;
-      }
       .cs-sticky,
       .cs-corner-daisy {
         display: none;
@@ -4455,15 +4410,6 @@
         .cs-sticky {
           grid-row: 1;
         }
-        .cs-filters {
-          grid-row: 1;
-          grid-column: 3 / 5;
-          align-self: end;
-          flex-wrap: nowrap;
-          margin-bottom: 1.35rem;
-          position: relative;
-          z-index: 2;
-        }
         .cs-sticky {
           display: block;
           position: relative;
@@ -4475,7 +4421,7 @@
           box-shadow:
             0 14px 26px -12px rgba(120, 50, 70, 0.35),
             0 2px 4px rgba(0, 0, 0, 0.05);
-          transform: rotate(-9deg) translateY(-2.75rem);
+          transform: rotate(-9deg) translateY(1.5rem);
         }
         .cs-sticky p {
           font-size: 1.35rem;
@@ -4495,9 +4441,9 @@
         .cs-corner-daisy {
           display: block;
           position: absolute;
-          right: -3.25rem;
-          top: -2.75rem;
-          width: 7.5rem;
+          right: -2rem;
+          top: 2.75rem;
+          width: 5rem;
           transform: rotate(-12deg);
           filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.14));
           pointer-events: none;
@@ -4545,7 +4491,8 @@
         outline: 2px solid var(--cs-ink);
         outline-offset: 3px;
       }
-      .cs-card[hidden] {
+      .cs-card[hidden],
+      #featured-works .cs-card[hidden] {
         display: none;
       }
       .cs-lilac {
@@ -4932,14 +4879,6 @@
         }
       }
 
-      .cs-empty {
-        padding: 2rem 0;
-        text-align: center;
-        font-family: "Caveat", cursive;
-        font-size: 1.4rem;
-        color: var(--cs-soft);
-      }
-
       /* ---------- Sign-off ---------- */
       .cs-foot {
         position: relative;
@@ -4988,7 +4927,13 @@
         transition: transform 0.2s;
       }
       .cs-cta:hover span {
-        transform: translateX(3px);
+        transform: translateY(2px);
+      }
+      .cs-cta em {
+        font-style: normal;
+      }
+      .cs-cta[aria-expanded="true"] span {
+        rotate: 180deg;
       }
       .cs-cta.is-disabled,
       .cs-cta.is-disabled:hover {
@@ -5123,7 +5068,6 @@
         .cs-card,
         .cs-visual,
         .cs-go,
-        .cs-pill,
         .cs-cta {
           transition: none;
         }
@@ -6646,37 +6590,6 @@
               </p>
             </div>
 
-            <div class="cs-filters" role="group" aria-label="Filter case studies">
-              <button
-                type="button"
-                class="cs-pill is-active"
-                data-cs-filter="all"
-                aria-pressed="true"
-              >
-                All Projects (6)
-              </button>
-              <button
-                type="button"
-                class="cs-pill"
-                data-cs-filter="enterprise"
-                aria-pressed="false"
-              >
-                Enterprise
-              </button>
-              <button type="button" class="cs-pill" data-cs-filter="consumer" aria-pressed="false">
-                Consumer
-              </button>
-              <button type="button" class="cs-pill" data-cs-filter="ai" aria-pressed="false">
-                AI / Data
-              </button>
-              <button type="button" class="cs-pill" data-cs-filter="mobile" aria-pressed="false">
-                Mobile
-              </button>
-              <button type="button" class="cs-pill" data-cs-filter="systems" aria-pressed="false">
-                Design Systems
-              </button>
-            </div>
-
             <div class="cs-sticky" aria-hidden="true">
               <p>Ideas<br />People<br />Products<br />Beautifully connected.</p>
               <svg class="cs-sticky-heart" viewBox="0 0 24 28" fill="none">
@@ -6903,8 +6816,217 @@
                   alt=""
               /></span>
             </a>
+
+            <!-- More case studies: shown by the button under the grid. -->
+            <a href="./collaborator.html" class="cs-card cs-lilac" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>07</span><i></i><em class="cs-tag-purple">Decision Flow</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/colHero.png"
+                  alt="Collaborator: comment threads beside a decision workflow"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Collaborator</h3>
+                <p>Discussions and decisions in one shared workspace</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./notification.html" class="cs-card cs-sand" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>08</span><i></i><em class="cs-tag-purple">Decision Flow</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/notifHero.png"
+                  alt="Notification settings and alerts for Decision Flow"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Notification</h3>
+                <p>Timely updates that keep stakeholders aligned</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./user-management.html" class="cs-card cs-sky" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>09</span><i></i><em class="cs-tag-purple">Decision Flow</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/umHero.png"
+                  alt="User Management: roles and permissions in Decision Flow"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>User Management</h3>
+                <p>Roles and permissions for secure collaboration</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./studios.html" class="cs-card cs-mint" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>10</span><i></i><em class="cs-tag-purple">Decision Flow</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/studHero.png"
+                  alt="Studios: a workspace for decision artifacts"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Studios</h3>
+                <p>Organise and manage decision artifacts in one place</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./claude-cli.html" class="cs-card cs-blush" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>11</span><i></i><em class="cs-tag-amber">Built with AI</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/cliHero-v2.jpg"
+                  alt="Pawhaven, a pet boarding site built with Claude CLI"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Claude CLI</h3>
+                <p>Pawhaven, a pet boarding app built from the terminal</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./bolt.html" class="cs-card cs-stone" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>12</span><i></i><em class="cs-tag-amber">Built with AI</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/boltHero-v2.jpg"
+                  alt="Paws &amp; Friends, a pet boarding site built with Bolt"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Bolt</h3>
+                <p>Paws &amp; Friends, a pet boarding app built with Bolt</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./lovable.html" class="cs-card cs-lilac" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>13</span><i></i><em class="cs-tag-amber">Built with AI</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/lovableHero-v2.jpg"
+                  alt="Pawsy Inn, a pet boarding site built with Lovable"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Lovable</h3>
+                <p>Pawsy Inn, a pet boarding app built with Lovable</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
+            <a href="./claude-desktop.html" class="cs-card cs-sand" data-cs-more hidden>
+              <div class="cs-meta">
+                <span>14</span><i></i><em class="cs-tag-amber">Built with AI</em>
+              </div>
+              <div class="cs-visual cs-visual-shot">
+                <img
+                  class="cs-shot"
+                  src="./assets/desktopHero-v2.jpg"
+                  alt="Paw Nest, a pet boarding site built with Claude Desktop"
+                  loading="lazy"
+                />
+              </div>
+              <div class="cs-copy">
+                <h3>Claude Desktop</h3>
+                <p>Paw Nest, a pet boarding app built with Claude Desktop</p>
+              </div>
+              <span class="cs-go" aria-hidden="true"
+                ><span class="cs-go-glyph">&#8599;&#xFE0E;</span
+                ><img
+                  class="fig-ic"
+                  src="./assets/iconArrowCircleUpRight.svg"
+                  width="24"
+                  height="24"
+                  alt=""
+              /></span>
+            </a>
           </div>
-          <p class="cs-empty" hidden>Nothing filed under that yet.</p>
 
           <!-- Sign-off strip -->
           <div class="cs-foot">
@@ -6915,9 +7037,9 @@
               Specializing in <strong>Enterprise AI Platforms</strong>,
               <strong>Complex Data Products</strong>, and scalable <strong>Design Systems</strong>.
             </p>
-            <a class="cs-cta is-disabled" aria-disabled="true" tabindex="-1"
-              >Explore All Case Studies <span aria-hidden="true">&rarr;</span></a
-            >
+            <button type="button" class="cs-cta" id="csMoreBtn" aria-expanded="false">
+              <em>Explore All Case Studies</em> <span aria-hidden="true">&darr;</span>
+            </button>
             <div class="cs-foot-aside" aria-hidden="true">
               <svg viewBox="0 0 50 24" fill="none">
                 <path
@@ -12255,7 +12377,6 @@
           [".cs-aside", 0.2, -70, -6],
           [".cs-title", 0.09, 0, 0],
           [".cs-standfirst", 0.05, 0, 0],
-          [".cs-filters", 0.03, 50, 0],
           [".cs-sticky", 0.24, 90, 9],
           [".cs-corner-daisy", 0.32, 70, 50],
         ];
@@ -12452,12 +12573,29 @@
         window.addEventListener("scroll", queue, { passive: true });
         window.addEventListener("resize", remeasure);
         window.addEventListener("load", remeasure);
-        /* The filters show and hide cards, which moves the rest. */
-        cs.addEventListener("click", function (e) {
-          if (e.target.closest && e.target.closest("[data-cs-filter]")) setTimeout(remeasure, 0);
-        });
         measure();
         frame();
+      })();
+    </script>
+    <script>
+      /* Explore All Case Studies: shows the eight cards past the first six,
+         and folds them away again. A resize tells the Case Studies float to
+         measure the cards it can now see. */
+      (function () {
+        var btn = document.getElementById("csMoreBtn");
+        if (!btn) return;
+        var more = document.querySelectorAll("#featured-works [data-cs-more]");
+        var label = btn.querySelector("em");
+        btn.addEventListener("click", function () {
+          var open = btn.getAttribute("aria-expanded") !== "true";
+          more.forEach(function (card) {
+            card.hidden = !open;
+          });
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          label.textContent = open ? "Show Fewer Case Studies" : "Explore All Case Studies";
+          window.dispatchEvent(new Event("resize"));
+          if (!open) btn.scrollIntoView({ block: "center" });
+        });
       })();
     </script>
     <script>
@@ -12495,34 +12633,6 @@
         window.addEventListener("scroll", queue, { passive: true });
         window.addEventListener("resize", queue);
         frame();
-      })();
-    </script>
-    <script>
-      /* Case study filters: show the cards tagged with the chosen pill. */
-      (function () {
-        var section = document.getElementById("featured-works");
-        if (!section) return;
-        var pills = section.querySelectorAll("[data-cs-filter]");
-        var cards = section.querySelectorAll("[data-cs-tags]");
-        var empty = section.querySelector(".cs-empty");
-        pills.forEach(function (pill) {
-          pill.addEventListener("click", function () {
-            var want = pill.getAttribute("data-cs-filter");
-            var shown = 0;
-            pills.forEach(function (p) {
-              var on = p === pill;
-              p.classList.toggle("is-active", on);
-              p.setAttribute("aria-pressed", on ? "true" : "false");
-            });
-            cards.forEach(function (card) {
-              var tags = card.getAttribute("data-cs-tags").split(" ");
-              var show = want === "all" || tags.indexOf(want) !== -1;
-              card.hidden = !show;
-              if (show) shown++;
-            });
-            if (empty) empty.hidden = shown > 0;
-          });
-        });
       })();
     </script>
     <!-- page-transition:start -->
@@ -12974,16 +13084,9 @@
             el.style.transform = "rotate(" + el.getAttribute("data-" + key + "-rot") + "deg)";
           });
         }
-        /* The case-study filters are hidden on a phone, so a filter picked
-           at a wider size is cleared rather than left with no way back. */
-        function showAllWork() {
-          var all = document.querySelector('.cs-filters [data-cs-filter="all"]');
-          if (all && !all.classList.contains("is-active")) all.click();
-        }
         if (phone.matches) place(true);
         var onChange = function (e) {
           place(e.matches);
-          if (e.matches) showAllWork();
         };
         if (phone.addEventListener) phone.addEventListener("change", onChange);
         else if (phone.addListener) phone.addListener(onChange);
