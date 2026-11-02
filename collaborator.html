@@ -6076,6 +6076,20 @@
           Arial,
           sans-serif;
       }
+      .case-gate__request {
+        display: inline-block;
+        margin-top: 6px;
+        color: #4f4dc5;
+        font:
+          500 14px/1.5 "Roboto",
+          Arial,
+          sans-serif;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .case-gate__request:hover {
+        color: #403eac;
+      }
       .case-gate__sr {
         position: absolute;
         width: 1px;
@@ -6123,7 +6137,7 @@
           g.className = "case-gate";
           g.setAttribute("aria-labelledby", "case-gate-title");
           g.innerHTML =
-            '<p class="case-gate__eyebrow">Protected case study</p><h2 class="case-gate__title" id="case-gate-title">Enter password to continue</h2><p class="case-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="case-gate__form"><label class="case-gate__sr" for="case-password">Password</label><input class="case-gate__input" id="case-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="case-gate__button" type="submit">View case study</button></form><p class="case-gate__error" role="alert" aria-live="polite"></p>';
+            '<p class="case-gate__eyebrow">Protected case study</p><h2 class="case-gate__title" id="case-gate-title">Enter password to continue</h2><p class="case-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="case-gate__form"><label class="case-gate__sr" for="case-password">Password</label><input class="case-gate__input" id="case-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="case-gate__button" type="submit">View case study</button></form><p class="case-gate__error" role="alert" aria-live="polite"></p><a class="case-gate__request" href="mailto:preeti.soreng@gmail.com?subject=Password%20request%20for%20case%20study">Click here to request password</a>';
           o.insertAdjacentElement("afterend", g);
           var a = [];
           for (var x = g.nextElementSibling; x; x = x.nextElementSibling) {

@@ -360,6 +360,8 @@ body {
       .studios-gate__button{height:48px;padding:0 22px;border:0;border-radius:10px;background:#4f4dc5;color:#fff;font:600 15px/1 'Roboto',Arial,sans-serif;cursor:pointer;transition:transform .2s ease,background .2s ease}
       .studios-gate__button:hover{background:#403eac;transform:translateY(-1px)}
       .studios-gate__error{min-height:22px;margin:12px 0 0;color:#b33b52;font:500 13px/1.5 'Roboto',Arial,sans-serif}
+      .studios-gate__request{display:inline-block;margin-top:6px;color:#4f4dc5;font:500 14px/1.5 'Roboto',Arial,sans-serif;text-decoration:underline;text-underline-offset:4px}
+      .studios-gate__request:hover{color:#403eac}
       .studios-gate__sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
       @media(max-width:600px){.studios-gate{margin-top:64px;padding:48px 20px}.studios-gate__form{flex-direction:column}.studios-gate__input{flex:none;height:52px}.studios-gate__button{width:100%}}
     </style>
@@ -378,7 +380,7 @@ body {
           var gate=document.createElement('section');
           gate.className='studios-gate';
           gate.setAttribute('aria-labelledby','studios-gate-title');
-          gate.innerHTML='<p class="studios-gate__eyebrow">Protected case study</p><h2 class="studios-gate__title" id="studios-gate-title">Enter password to continue</h2><p class="studios-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="studios-gate__form"><label class="studios-gate__sr" for="studios-password">Password</label><input class="studios-gate__input" id="studios-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="studios-gate__button" type="submit">View case study</button></form><p class="studios-gate__error" role="alert" aria-live="polite"></p>';
+          gate.innerHTML='<p class="studios-gate__eyebrow">Protected case study</p><h2 class="studios-gate__title" id="studios-gate-title">Enter password to continue</h2><p class="studios-gate__copy">This project contains confidential product work. Please enter the access password to view the complete case study.</p><form class="studios-gate__form"><label class="studios-gate__sr" for="studios-password">Password</label><input class="studios-gate__input" id="studios-password" type="password" autocomplete="current-password" placeholder="Password" required><button class="studios-gate__button" type="submit">View case study</button></form><p class="studios-gate__error" role="alert" aria-live="polite"></p><a class="studios-gate__request" href="mailto:preeti.soreng@gmail.com?subject=Password%20request%20for%20case%20study">Click here to request password</a>';
           overview.insertAdjacentElement('afterend',gate);
           var protectedNodes=[];
           for(var node=gate.nextElementSibling;node;node=node.nextElementSibling){protectedNodes.push(node);node.classList.add('studios-protected');}
