@@ -4935,6 +4935,9 @@
       .cs-cta[aria-expanded="true"] span {
         rotate: 180deg;
       }
+      .cs-cta-link:hover span {
+        transform: translateX(3px);
+      }
       .cs-cta.is-disabled,
       .cs-cta.is-disabled:hover {
         pointer-events: none;
@@ -7037,9 +7040,9 @@
               Specializing in <strong>Enterprise AI Platforms</strong>,
               <strong>Complex Data Products</strong>, and scalable <strong>Design Systems</strong>.
             </p>
-            <button type="button" class="cs-cta" id="csMoreBtn" aria-expanded="false">
-              <em>Explore All Case Studies</em> <span aria-hidden="true">&darr;</span>
-            </button>
+            <a href="./case-studies.html" class="cs-cta cs-cta-link" id="csMoreBtn">
+              <em>Explore All Case Studies</em> <span aria-hidden="true">&rarr;</span>
+            </a>
             <div class="cs-foot-aside" aria-hidden="true">
               <svg viewBox="0 0 50 24" fill="none">
                 <path
@@ -12575,27 +12578,6 @@
         window.addEventListener("load", remeasure);
         measure();
         frame();
-      })();
-    </script>
-    <script>
-      /* Explore All Case Studies: shows the eight cards past the first six,
-         and folds them away again. A resize tells the Case Studies float to
-         measure the cards it can now see. */
-      (function () {
-        var btn = document.getElementById("csMoreBtn");
-        if (!btn) return;
-        var more = document.querySelectorAll("#featured-works [data-cs-more]");
-        var label = btn.querySelector("em");
-        btn.addEventListener("click", function () {
-          var open = btn.getAttribute("aria-expanded") !== "true";
-          more.forEach(function (card) {
-            card.hidden = !open;
-          });
-          btn.setAttribute("aria-expanded", open ? "true" : "false");
-          label.textContent = open ? "Show Fewer Case Studies" : "Explore All Case Studies";
-          window.dispatchEvent(new Event("resize"));
-          if (!open) btn.scrollIntoView({ block: "center" });
-        });
       })();
     </script>
     <script>
