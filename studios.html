@@ -372,6 +372,14 @@ body {
         function initStudiosGate(){
           var page=document.querySelector('[data-name="Studios"]');
           if(!page)return;
+          var liveLink=page.querySelector('.mm-live-link');
+          if(liveLink){
+            liveLink.parentElement.classList.add('live-link-access');
+            var accessNote=document.createElement('p');
+            accessNote.className='live-link-access__note';
+            accessNote.innerHTML='<a href="mailto:preeti.soreng@gmail.com?subject=Password%20request%20for%20case%20study">Request access</a> to open the live link.';
+            liveLink.insertAdjacentElement('afterend',accessNote);
+          }
           var overviewLabel=Array.prototype.find.call(page.querySelectorAll('p'),function(p){return p.textContent.trim()==='Overview';});
           if(!overviewLabel)return;
           var overview=overviewLabel;
@@ -384,7 +392,7 @@ body {
           overview.insertAdjacentElement('afterend',gate);
           var protectedNodes=[];
           for(var node=gate.nextElementSibling;node;node=node.nextElementSibling){protectedNodes.push(node);node.classList.add('studios-protected');}
-          function unlock(){protectedNodes.forEach(function(el){el.classList.remove('studios-protected');});gate.remove();try{sessionStorage.setItem(ACCESS_KEY,'1');}catch(e){}}
+          function unlock(){protectedNodes.forEach(function(el){el.classList.remove('studios-protected');});page.classList.add('live-link-unlocked');gate.remove();try{sessionStorage.setItem(ACCESS_KEY,'1');}catch(e){}}
           try{if(sessionStorage.getItem(ACCESS_KEY)==='1'){unlock();return;}}catch(e){}
           var form=gate.querySelector('form'),input=gate.querySelector('input'),error=gate.querySelector('.studios-gate__error');
           form.addEventListener('submit',function(event){event.preventDefault();if(input.value===PASSWORD){unlock();return;}error.textContent='Incorrect password. Please try again.';input.value='';input.focus();});
@@ -1184,7 +1192,7 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
 <!-- cs-figma-mobile:start -->
 <style>
   .mm-live-link {
-    display: inline-block;
+    display: none;
     margin-top: 18px;
     font-family: "Roboto", sans-serif;
     font-size: 16px;
@@ -1198,6 +1206,23 @@ a.op-card:hover .op-more svg{transform:translateX(4px)}
   .mm-live-link:hover,
   .mm-live-link:focus-visible {
     color: #2f1fe0;
+  }
+  .live-link-unlocked .mm-live-link {
+    display: inline-block;
+  }
+  .live-link-access__note {
+    margin: 14px 0 0;
+    color: #66697a;
+    font: 400 14px/1.55 "Roboto", Arial, sans-serif;
+  }
+  .live-link-access__note a {
+    color: #4f4dc5;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .live-link-unlocked .live-link-access__note {
+    display: none;
   }
   .mm-sr {
     position: absolute;
