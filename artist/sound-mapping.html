@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sound Mapping — Preeti Soreng</title>
+    <meta
+      name="description"
+      content="Sound Mapping — listening walks, drawn soundscapes and notes by Preeti Soreng."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f6f2ea; /* warm paper */
+        --ink: #161412;
+        --muted: #7a7266;
+        --yellow: #ffe600;
+        --line: #e4dccd;
+        --font: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+        --serif: "Newsreader", Georgia, "Times New Roman", serif;
+        --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg) var(--grain);
+        color: var(--ink);
+        font-family: var(--font);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 22px;
+      }
+      @media (min-width: 640px) {
+        .wrap {
+          padding: 0 28px;
+        }
+      }
+      .hl {
+        background-image: linear-gradient(var(--yellow), var(--yellow));
+        background-repeat: no-repeat;
+        background-position: 0 92%;
+        background-size: 100% 42%;
+        padding: 0 1px;
+        transition: background-size 0.2s ease;
+      }
+      .hl:hover {
+        background-size: 100% 100%;
+      }
+
+      /* header */
+      .head-inner {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 22px 0 18px;
+      }
+      .name {
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .role {
+        font-style: italic;
+        font-size: 13px;
+        line-height: 1.1;
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .back {
+        font-weight: 700;
+        font-size: 19px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-top: 2px;
+      }
+      .back svg {
+        width: 22px;
+        height: 22px;
+      }
+      @media (min-width: 640px) {
+        .name {
+          font-size: 28px;
+        }
+        .role {
+          font-size: 14px;
+        }
+      }
+
+      /* intro */
+      .intro {
+        padding: 72px 0 56px;
+        display: grid;
+        gap: 28px;
+      }
+      .intro h1 {
+        font-weight: 500;
+        font-size: clamp(44px, 9vw, 112px);
+        line-height: 1;
+        letter-spacing: -0.02em;
+      }
+      .intro-text {
+        display: grid;
+        gap: 18px;
+      }
+      .intro p {
+        font-family: var(--serif);
+        font-size: clamp(17px, 1.5vw, 20px);
+        line-height: 1.55;
+      }
+      @media (min-width: 900px) {
+        .intro {
+          grid-template-columns: 1fr 1.2fr;
+          align-items: start;
+          padding: 120px 0 80px;
+        }
+      }
+
+      /* waveform band */
+      .wave {
+        display: block;
+        width: 100%;
+        height: 120px;
+        color: var(--ink);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      /* sound maps */
+      .maps {
+        padding: 72px 0 96px;
+        display: grid;
+        gap: 32px;
+      }
+      .map + .map {
+        border-top: 1px solid var(--line);
+        padding-top: 72px;
+        margin-top: 40px;
+      }
+      .map {
+        display: grid;
+        gap: 32px;
+      }
+      .map-fig img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+      }
+      .map-text {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+      }
+      .map-head {
+        display: grid;
+        gap: 18px;
+      }
+      .map-meta {
+        display: flex;
+        gap: 14px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .map-num {
+        font-weight: 700;
+        color: var(--ink);
+      }
+      .map h2 {
+        font-weight: 500;
+        font-size: clamp(32px, 5vw, 56px);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+      }
+      .map p {
+        font-family: var(--serif);
+        font-size: clamp(17px, 1.5vw, 20px);
+        line-height: 1.55;
+        max-width: 58ch;
+      }
+      .legend {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 22px 18px;
+        padding: 14px 0 24px;
+        border-bottom: 1px solid var(--line);
+      }
+      .legend li {
+        display: grid;
+        justify-items: center;
+        gap: 8px;
+        text-align: center;
+      }
+      .legend img {
+        display: block;
+        height: 96px;
+        width: 100%;
+        object-fit: contain;
+      }
+      /* small marks in the notebook stay small here */
+      .legend img.sm {
+        padding: 30px 0;
+      }
+      .legend span {
+        font-size: 13px;
+        line-height: 1.25;
+      }
+      @media (min-width: 900px) {
+        .map {
+          grid-template-columns: 1fr 1.1fr;
+          gap: 40px 56px;
+          /* drawing and description start on the same line */
+          align-items: start;
+        }
+        .map-head {
+          grid-column: 1 / -1;
+        }
+        /* all symbols on one row */
+        .legend {
+          grid-template-columns: repeat(7, 1fr);
+        }
+      }
+      /* method */
+      .method {
+        border-top: 1px solid var(--line);
+        padding: 64px 0 80px;
+        display: grid;
+        gap: 32px;
+      }
+      .method h3 {
+        font-weight: 500;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.1;
+      }
+      .method ol {
+        list-style: none;
+        display: grid;
+        gap: 28px;
+        counter-reset: step;
+      }
+      .method li {
+        counter-increment: step;
+        font-family: var(--serif);
+        font-size: 18px;
+        max-width: 46ch;
+      }
+      .method li::before {
+        content: "0" counter(step);
+        display: block;
+        font-family: var(--font);
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 4px;
+      }
+      @media (min-width: 900px) {
+        .method {
+          grid-template-columns: 1fr 1.4fr;
+        }
+        .method ol {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 28px 0 40px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="wrap">
+      <div class="head-inner">
+        <div>
+          <a href="index.html" class="name" style="display: block">Preeti Soreng</a>
+          <div class="role">Sound Mapping</div>
+        </div>
+        <a class="back" href="index.html" aria-label="Back to works">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+          <span>Works</span>
+        </a>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <h1>Sound<br />Mapping</h1>
+        <div class="intro-text">
+          <p>
+            In February 2026, I attended a sound-mapping workshop led by two talented live coders at
+            the Museum of Art &amp; Photography (MAP), Bengaluru. What began as an exploration of
+            sound soon evolved into a personal practice of attentive listening and auditory
+            observation.
+          </p>
+          <p>
+            Since then, I have been consciously observing the soundscapes of different environments,
+            attempting to translate fleeting auditory experiences into minimal, abstract data
+            visualisations. Each exercise is an exploration of how sound can take visual form
+            through lines, shapes, patterns, and spatial relationships.
+          </p>
+          <p>
+            I typically spend five to ten minutes listening and mapping sounds as they unfold,
+            allowing the visual composition to emerge in real time. I conclude each session by
+            documenting my reflections and creating a visual legend that gives meaning to the lines,
+            marks, and shapes.
+          </p>
+        </div>
+      </section>
+
+      <svg
+        class="wave"
+        id="wave"
+        viewBox="0 0 1200 120"
+        preserveAspectRatio="none"
+        aria-hidden="true"
+      ></svg>
+
+      <section class="maps" aria-label="Sound maps">
+        <article class="map">
+          <div class="map-head">
+            <div class="map-meta">
+              <span class="map-num">01</span>
+              <span>3 March 2026</span>
+            </div>
+            <h2>Paper &amp; Pie</h2>
+            <ul class="legend" aria-label="Legend">
+              <li>
+                <img src="img/legend/paper-and-pie-me.png" alt="" />
+                <span>Me</span>
+              </li>
+              <li>
+                <img src="img/legend/paper-and-pie-music.png" alt="" />
+                <span>Music</span>
+              </li>
+              <li>
+                <img src="img/legend/paper-and-pie-chatting.png" alt="" />
+                <span>People chatting</span>
+              </li>
+              <li>
+                <img class="sm" src="img/legend/paper-and-pie-talking.png" alt="" />
+                <span>People talking</span>
+              </li>
+              <li>
+                <img src="img/legend/paper-and-pie-clatter.png" alt="" />
+                <span>Clattering utensils</span>
+              </li>
+              <li>
+                <img src="img/legend/paper-and-pie-water.png" alt="" />
+                <span>Running water</span>
+              </li>
+              <li>
+                <img src="img/legend/paper-and-pie-cutlery.png" alt="" />
+                <span>Cutlery</span>
+              </li>
+            </ul>
+          </div>
+          <figure class="map-fig">
+            <img
+              src="img/sound-map-paper-and-pie.jpg"
+              width="1086"
+              height="1448"
+              alt="Ink sound map: two pendant lamps wrapped in swirling cloud-like strokes, a dense fan of curved dashes, dotted flowing lines and small clusters of dots, with a wavy line across the top. Signed Paper & Pie, 3 Mar '26."
+            />
+          </figure>
+          <div class="map-text">
+            <p>
+              In the distance, a cluster of beautifully suspended lamps catches my eye. A ceiling
+              spotlight illuminates my notebook and the little space I occupy. I imagine myself as
+              one of those lamps, suspended above, quietly observing the atmosphere.
+            </p>
+            <p>
+              As I begin listening, the space unfolds in layers of sound. Music drifts through the
+              room, initially blending into the background, then growing more distinct as my
+              attention settles upon it. The delicate clinking of cutlery punctuates the melody,
+              while occasional conversations rise and dissolve into the ambient hum.
+            </p>
+            <p>
+              Most visitors remain absorbed in their laptops, leaving the room unusually quiet. Yet,
+              beneath this stillness, another soundscape emerges from downstairs—overlapping
+              chatter, rhythmic clattering of utensils, and the continuous murmur of running water.
+            </p>
+            <p>
+              I translate these fleeting sounds into clouds, ripples, dots, and flowing lines,
+              mapping not merely what I hear, but how attention transforms the experience of
+              listening.
+            </p>
+          </div>
+        </article>
+
+        <article class="map">
+          <div class="map-head">
+            <div class="map-meta">
+              <span class="map-num">02</span>
+              <span>4 March 2026</span>
+            </div>
+            <h2>HAL</h2>
+            <ul class="legend" aria-label="Legend">
+              <li>
+                <img src="img/legend/hal-fan.png" alt="" />
+                <span>Fan</span>
+              </li>
+              <li>
+                <img src="img/legend/hal-breeze.png" alt="" />
+                <span>Breeze in the trees</span>
+              </li>
+              <li>
+                <img src="img/legend/hal-birds.png" alt="" />
+                <span>Birds chirping</span>
+              </li>
+              <li>
+                <img class="sm" src="img/legend/hal-horns.png" alt="" />
+                <span>Traffic horns</span>
+              </li>
+              <li>
+                <img src="img/legend/hal-vehicles.png" alt="" />
+                <span>Passing vehicles</span>
+              </li>
+              <li>
+                <img src="img/legend/hal-water.png" alt="" />
+                <span>Water in pipes</span>
+              </li>
+              <li>
+                <img src="img/legend/hal-utensils.png" alt="" />
+                <span>Utensils</span>
+              </li>
+            </ul>
+          </div>
+          <figure class="map-fig">
+            <img
+              src="img/sound-map-my-room.jpg"
+              width="1086"
+              height="1448"
+              alt="Ink sound map: a wavy, layered ring at the centre, long looping strokes and a sweeping line across the top, a dot cluster and small circles at the top right, fields of short wavy dashes at the bottom right, and curly squiggles, stacked curves and leaf shapes at the bottom left. Signed My Room (HAL), 4 March '26."
+            />
+          </figure>
+          <div class="map-text">
+            <p>
+              This afternoon, sitting on my bed, I began listening to the familiar
+              soundscape surrounding me. The steady hum of a fan anchors the composition,
+              its uninterrupted rhythm unfolding as continuous, free-flowing ripples
+              across the page.
+            </p>
+            <p>
+              To my right, a gentle breeze brushes through the trees, stirring leaves into
+              a delicate rustle. I trace its changing intensity through fluid, overlapping
+              strokes. Somewhere in the distance, birds exchange brief, rhythmic chirps,
+              captured as compact clusters of circles and curves.
+            </p>
+            <p>
+              Beyond these softer sounds, traffic horns punctuate the atmosphere with
+              sharp, irregular bursts, while the fading movement of vehicles stretches
+              into fragmented lines.
+            </p>
+            <p>
+              Closer to me, water rushes through pipes in the adjoining bathroom,
+              accompanied by the occasional metallic clatter of utensils.
+            </p>
+            <p>
+              What initially feels like an ordinary, quiet afternoon gradually reveals
+              itself as a layered acoustic landscape, where every sound occupies its own
+              rhythm, distance, texture, and visual form.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <section class="method">
+        <h3>How a map is made</h3>
+        <ol>
+          <li>Choose an environment and spend five to ten minutes in attentive listening.</li>
+          <li>
+            Map the sounds as they unfold, letting the composition emerge in real time through
+            lines, shapes, patterns and spatial relationships.
+          </li>
+          <li>Document my reflections at the end of the session.</li>
+          <li>Create a visual legend that gives meaning to the lines, marks and shapes.</li>
+        </ol>
+      </section>
+
+      <footer><span id="copy"></span></footer>
+    </main>
+
+    <script>
+      // deterministic pseudo-random so the waveform looks the same on every load
+      const rng = (s) => () => (s = (s * 9301 + 49297) % 233280) / 233280;
+
+      // decorative waveform band
+      const wr = rng(42);
+      let bars = "";
+      for (let x = 4; x < 1200; x += 8) {
+        const h = 8 + wr() * 44 * (0.5 + 0.5 * Math.sin(x / 90));
+        bars +=
+          '<rect x="' +
+          x +
+          '" y="' +
+          (60 - h) +
+          '" width="3" height="' +
+          h * 2 +
+          '" fill="currentColor"/>';
+      }
+      document.getElementById("wave").innerHTML = bars;
+
+      document.getElementById("copy").textContent =
+        "© " + new Date().getFullYear() + " Preeti Soreng";
+    </script>
+  </body>
+</html>

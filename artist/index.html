@@ -1,0 +1,1721 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preeti Soreng — Works</title>
+    <meta
+      name="description"
+      content="Preeti Soreng — a selection of artworks, sketches and studies."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f6f2ea; /* warm paper */
+        --ink: #161412;
+        --muted: #7a7266;
+        --yellow: #ffe600;
+        --line: #e4dccd;
+        --font: "Roboto", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
+        --serif: "Newsreader", Georgia, "Times New Roman", serif;
+        --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .27 0 0 0 0 .18 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        --header-h: 96px;
+        --notch: 180px;
+        --bar-h: 52px;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg) var(--grain);
+        color: var(--ink);
+        font-family: var(--font);
+        font-weight: 400;
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        padding-bottom: var(--bar-h);
+      }
+      button {
+        font-family: inherit;
+        cursor: pointer;
+        border: none;
+        background: none;
+        color: inherit;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .wrap {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 22px;
+      }
+      @media (min-width: 640px) {
+        .wrap {
+          padding: 0 28px;
+        }
+      }
+
+      .hl {
+        background-image: linear-gradient(var(--yellow), var(--yellow));
+        background-repeat: no-repeat;
+        background-position: 0 92%;
+        background-size: 100% 42%;
+        padding: 0 1px;
+        transition: background-size 0.2s ease;
+      }
+      .hl:hover {
+        background-size: 100% 100%;
+      }
+
+      /* header — fixed & transparent so images scroll behind it, no divider */
+      header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 60;
+        background: transparent;
+      }
+      .head-inner {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 22px 0 18px;
+      }
+      .name {
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .role {
+        font-style: italic;
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 1.1;
+        margin-top: 3px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      @media (min-width: 640px) {
+        .name {
+          font-size: 28px;
+        }
+        .role {
+          font-size: 14px;
+        }
+      }
+      .menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+      }
+      .menu-btn svg {
+        width: 24px;
+        height: 24px;
+        overflow: visible;
+      }
+      .menu-btn line {
+        transform-box: fill-box;
+        transform-origin: center;
+        transition: transform 0.25s ease, opacity 0.2s ease;
+      }
+      header.menu-active .menu-btn line:nth-child(1) {
+        transform: translateY(5px) rotate(45deg);
+      }
+      header.menu-active .menu-btn line:nth-child(2) {
+        opacity: 0;
+      }
+      header.menu-active .menu-btn line:nth-child(3) {
+        transform: translateY(-5px) rotate(-45deg);
+      }
+      /* the label stays for screen readers only; the icon is what shows */
+      .menu-btn .lbl {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      /* content */
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 40px;
+        grid-template-areas: "desc" "images";
+        padding: 92px 0 72px;
+      }
+      @media (min-width: 900px) {
+        .layout {
+          grid-template-columns: 1.35fr 1fr;
+          grid-template-areas: "images desc";
+          gap: 44px;
+          align-items: start;
+        }
+      }
+      .desc {
+        grid-area: desc;
+      }
+      .images {
+        grid-area: images;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+      @media (min-width: 900px) {
+        .desc {
+          position: sticky;
+          top: 84px;
+          align-self: start;
+        }
+      }
+
+      .proj-title {
+        font-weight: 700;
+        font-size: 19px;
+        margin-bottom: 12px;
+      }
+      p.body {
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 12px;
+        max-width: none;
+      }
+      blockquote,
+      .qextra {
+        font-style: italic;
+        font-size: 16px;
+        margin-bottom: 18px;
+        max-width: 46ch;
+      }
+      .follow {
+        margin-bottom: 0;
+      }
+
+      /* order section — sits below the overview body */
+      .order {
+        margin-top: 26px;
+      }
+      .order-note {
+        font-style: italic;
+        font-size: 14px;
+        color: var(--ink);
+        margin-bottom: 12px;
+      }
+      .order-cta {
+        display: flex;
+        gap: 10px;
+      }
+
+      figure {
+        margin: 0;
+      }
+      .frame {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 4/3;
+        border: 1px solid var(--line);
+        background: #f4f4f4;
+        overflow: hidden;
+        display: block;
+      }
+      .frame .art {
+        position: absolute;
+        inset: 0;
+        transition: transform 0.6s ease;
+      }
+      .frame:hover .art {
+        transform: scale(1.03);
+      }
+      /* real artwork frames: square, image fills edge-to-edge (no side gaps) */
+      .frame-img {
+        aspect-ratio: 1 / 1;
+        background: #fff;
+        max-width: 616px; /* 440px + 40% */
+      }
+      .frame-img .art {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* Miniature Paintings section: zoom out by 15% (scale 0.85) and remove border */
+      .proj-miniature-paintings .frame {
+        border: none;
+      }
+      .proj-miniature-paintings .frame-img .art {
+        transform: scale(0.85);
+      }
+      .proj-miniature-paintings .frame-img:hover .art {
+        transform: scale(0.87);
+      }
+      /* Excelsior section: portrait works — frame follows the image's own shape, no cropping */
+      .proj-excelsior .frame-img {
+        aspect-ratio: auto;
+      }
+      .proj-excelsior .frame-img .art {
+        position: static;
+        display: block;
+        height: auto;
+      }
+      .art-label {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #9a9a9a;
+        text-align: center;
+      }
+      .art-label svg {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 8px;
+      }
+      .art-label .n {
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      /* ---------- home: brief of every collection + quick access ---------- */
+      .home {
+        display: none;
+        padding: 92px 0 24px;
+        overflow-x: clip; /* pencil marks may run past the edge on small screens */
+      }
+      body.is-home {
+        padding-bottom: 0;
+      }
+      body.is-home .home {
+        display: block;
+      }
+      body.is-home .layout,
+      body.is-home .counter-bar {
+        display: none;
+      }
+      /* hero: text left, pinned-paper collage right */
+      .home-hero {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 44px;
+        padding: 36px 0 56px;
+        border-bottom: 1px solid var(--line);
+      }
+      @media (min-width: 900px) {
+        .home-hero {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+          gap: 32px;
+          align-items: center;
+          min-height: min(calc(100vh - 92px), 820px);
+          padding: 8px 0 40px;
+        }
+      }
+      .hero-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 26px;
+      }
+      .hero-eyebrow span {
+        margin: 0 0.7em;
+      }
+      .home-lede {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: clamp(40px, 4.3vw, 66px);
+        line-height: 1.06;
+        letter-spacing: -0.015em;
+        max-width: 15ch;
+      }
+      .home-quick {
+        margin-top: 36px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .home-quick .btn {
+        padding: 12px 24px;
+        font-size: 15px;
+      }
+      .home-quick .btn .n {
+        margin-left: 10px;
+        font-variant-numeric: tabular-nums;
+        opacity: 0.5;
+      }
+      /* mobile: smaller headline above the collage, no quick-access chips */
+      @media (max-width: 899px) {
+        .home-hero {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .home-lede {
+          font-size: 28px; /* 70% of the 40px mobile size */
+          max-width: none;
+        }
+        .home-quick {
+          display: none;
+        }
+      }
+      .scroll-cue {
+        margin-top: 56px;
+        display: flex;
+        align-items: flex-start;
+        gap: 22px;
+        font-size: 12px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: var(--muted);
+        width: max-content;
+      }
+      .scroll-cue svg {
+        width: 12px;
+        height: 60px;
+        margin-top: -2px;
+      }
+      .scroll-cue:hover {
+        color: var(--ink);
+      }
+      @media (max-width: 899px) {
+        .scroll-cue {
+          display: none;
+        }
+      }
+
+      .collage {
+        position: relative;
+        width: 100%;
+        max-width: 720px;
+        aspect-ratio: 1 / 0.95;
+        justify-self: end;
+      }
+      .collage .card {
+        position: absolute;
+        left: var(--x);
+        top: var(--y);
+        width: var(--w);
+        height: var(--h);
+        z-index: var(--z);
+        padding: 0;
+        background: #fbf8f2;
+        box-shadow:
+          0 1px 2px rgba(70, 50, 30, 0.08),
+          0 18px 36px -14px rgba(70, 50, 30, 0.35);
+        transform: rotate(var(--r));
+        transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+        animation: settle 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+        animation-delay: var(--d);
+      }
+      .collage .card {
+        overflow: visible;
+      }
+      .collage .card .crop {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+      .collage .card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transform: scale(var(--zoom, 1));
+      }
+      /* warm the phone photos so they sit with the paper */
+      .collage .card.photo img {
+        filter: saturate(0.82) sepia(0.12) contrast(1.02);
+      }
+      .collage .card.mat {
+        padding: 2.4%;
+      }
+      .collage .card.polaroid {
+        padding: 1.6% 1.6% 5%;
+      }
+      .collage button.card:hover {
+        transform: rotate(0deg) translateY(-8px);
+        z-index: 9;
+      }
+      .collage button.card:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 4px;
+      }
+      /* strip of masking tape */
+      .collage .card.taped::after {
+        content: "";
+        position: absolute;
+        top: -16px;
+        right: 6%;
+        width: 38%;
+        height: 28px;
+        background: rgba(221, 199, 150, 0.72);
+        transform: rotate(5deg);
+        clip-path: polygon(2% 8%, 98% 0, 100% 90%, 96% 100%, 0 94%, 3% 50%);
+        box-shadow: 0 1px 2px rgba(70, 50, 30, 0.1);
+      }
+      .collage .marks {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        pointer-events: none;
+      }
+      .collage .marks.back {
+        z-index: 0;
+      }
+      .collage .marks.front {
+        z-index: 8;
+      }
+      @keyframes settle {
+        from {
+          opacity: 0;
+          transform: translateY(18px) rotate(calc(var(--r) * 3));
+        }
+        to {
+          opacity: 1;
+          transform: rotate(var(--r));
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .collage .card {
+          animation: none;
+          transition: none;
+        }
+      }
+      .coll {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 26px;
+        padding: 48px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      @media (min-width: 900px) {
+        .coll {
+          grid-template-columns: 1.35fr 1fr;
+          gap: 44px;
+          align-items: center;
+          padding: 64px 0;
+        }
+      }
+      .coll:last-child {
+        border-bottom: none;
+      }
+      .coll-media {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 8px;
+        aspect-ratio: 4 / 3;
+      }
+      .coll-media button,
+      .coll-media a {
+        position: relative;
+        overflow: hidden;
+        background: #f4f4f4;
+        min-height: 0;
+        display: block;
+      }
+      .coll-media button:first-child,
+      .coll-media a:first-child {
+        grid-row: 1 / span 3;
+      }
+      /* sound mapping: legend marks sit whole on paper instead of being cropped */
+      .coll-media a.mark {
+        background: #fbf8f2;
+      }
+      .coll-media a.mark img {
+        object-fit: contain;
+        padding: 14%;
+      }
+      .coll-media img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+      }
+      .coll-media button:hover img,
+      .coll-media a:hover img {
+        transform: scale(1.04);
+      }
+      .coll-media button:focus-visible,
+      .coll-media a:focus-visible,
+      .coll-title a:focus-visible,
+      .coll-title button:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
+      }
+      .coll-meta {
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 10px;
+      }
+      .coll-title {
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: clamp(32px, 3.4vw, 46px);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        margin-bottom: 14px;
+      }
+      .coll-title button {
+        text-align: left;
+        font: inherit;
+      }
+      .coll-brief {
+        font-size: 15px;
+        line-height: 1.5;
+        max-width: 46ch;
+        margin-bottom: 22px;
+      }
+
+      /* ---------- fixed bottom counter bar ---------- */
+      .counter-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 40;
+        height: var(--bar-h);
+        background: var(--bg);
+        border-top: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        transition: opacity 0.25s;
+      }
+      .counter-bar.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .bar-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 14px;
+      }
+      @media (min-width: 640px) {
+        .bar-inner {
+          padding: 0 40px;
+        }
+      }
+      .bar-proj {
+        font-weight: 500;
+      }
+      .bar-overview {
+        font-weight: 400;
+        color: var(--muted);
+        transition: color 0.15s;
+      }
+      .bar-overview:hover {
+        color: var(--ink);
+      }
+      .bar-count {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.02em;
+      }
+      .bar-count b {
+        font-weight: 700;
+      }
+      .bar-count .lab {
+        color: var(--muted);
+        margin-left: 6px;
+      }
+      @media (max-width: 520px) {
+        .bar-overview {
+          display: none;
+        }
+      }
+
+      /* footer above the bar */
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 28px 0 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      @media (min-width: 640px) {
+        footer {
+          flex-direction: row;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+      }
+      .foot-right {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      @media (min-width: 640px) {
+        .foot-right {
+          align-items: flex-end;
+        }
+      }
+      .foot-note {
+        font-style: italic;
+        font-size: 14px;
+        color: var(--ink);
+      }
+      .foot-cta {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 9px 20px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 500;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: #fff;
+        transition:
+          background 0.2s,
+          color 0.2s,
+          border-color 0.2s;
+      }
+      .btn:hover {
+        background: var(--yellow);
+        color: var(--ink);
+        border-color: var(--yellow);
+      }
+      .btn.btn-line {
+        background: transparent;
+        color: var(--ink);
+      }
+      .btn.btn-line:hover {
+        background: var(--yellow);
+        border-color: var(--yellow);
+      }
+      .icons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .ic {
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ink);
+        transition: background 0.2s;
+      }
+      .ic:hover {
+        background: var(--yellow);
+      }
+      .ic svg {
+        width: 19px;
+        height: 19px;
+      }
+
+      /* ---------- full-screen yellow menu — rectangular slide ---------- */
+      .menu-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        pointer-events: none;
+      }
+      .menu-overlay.open {
+        pointer-events: auto;
+      }
+      .menu-panel {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: var(--yellow);
+        transform: translateX(100%);
+        transition: transform 0.5s cubic-bezier(0.76, 0, 0.24, 1);
+        will-change: transform;
+      }
+      @media (min-width: 900px) {
+        .menu-panel {
+          left: var(--notch);
+        }
+      }
+      .menu-overlay.open .menu-panel {
+        transform: translateX(0);
+      }
+
+      .menu-inner {
+        position: absolute;
+        inset: 0;
+        overflow: auto;
+        padding: 120px clamp(28px, 6vw, 80px) 48px;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 48px;
+        align-content: start;
+        opacity: 0;
+        transition: opacity 0.3s ease 0.18s;
+      }
+      @media (min-width: 900px) {
+        .menu-inner {
+          grid-template-columns: 1.5fr 1fr;
+          gap: 60px;
+          padding-left: clamp(40px, 6vw, 90px);
+        }
+      }
+      .menu-overlay.open .menu-inner {
+        opacity: 1;
+      }
+
+      .menu-projects {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .menu-projects button,
+      .menu-projects a {
+        text-align: left;
+        font-weight: 500;
+        color: var(--ink);
+        line-height: 1.12;
+        font-size: clamp(34px, 6vw, 64px);
+        letter-spacing: -0.01em;
+        transition: opacity 0.15s;
+      }
+      .menu-projects button:hover,
+      .menu-projects a:hover {
+        opacity: 0.55;
+      }
+      .menu-links {
+        display: flex;
+        flex-direction: column;
+        gap: 52px;
+      }
+      .menu-links .grp {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .menu-links a {
+        font-size: clamp(19px, 2vw, 25px);
+        font-weight: 400;
+        width: max-content;
+      }
+      .menu-links a:hover {
+        background-image: linear-gradient(var(--ink), var(--ink));
+        background-repeat: no-repeat;
+        background-position: 0 100%;
+        background-size: 100% 2px;
+      }
+      @media (max-width: 899px) {
+        .menu-inner {
+          padding-top: 100px;
+        }
+        .menu-links {
+          gap: 36px;
+        }
+      }
+      /* Contact: social icons pinned to the bottom of the yellow page */
+      .menu-inner {
+        grid-template-rows: auto auto 1fr;
+        align-content: stretch;
+      }
+      @media (min-width: 900px) {
+        .menu-inner {
+          grid-template-rows: auto 1fr;
+        }
+      }
+      .menu-contact {
+        grid-column: 1 / -1;
+        align-self: end;
+        padding-top: 28px;
+        border-top: 1px solid rgba(0, 0, 0, 0.18);
+      }
+      .menu-contact-title {
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+      .menu-contact .icons {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .menu-contact .ic {
+        width: 48px;
+        height: 48px;
+        border-color: var(--ink);
+      }
+      .menu-contact .ic svg {
+        width: 22px;
+        height: 22px;
+      }
+      .menu-contact .ic:hover {
+        background: var(--ink);
+        color: var(--yellow);
+      }
+      /* keep clear of the mobile Back button */
+      @media (max-width: 640px) {
+        .menu-inner {
+          padding-bottom: 104px;
+        }
+      }
+      /* bottom-left Back button — mobile only */
+      .menu-back {
+        display: none;
+        position: absolute;
+        left: clamp(28px, 6vw, 80px);
+        bottom: 40px;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        font-size: 18px;
+        color: var(--ink);
+      }
+      .menu-back svg {
+        width: 22px;
+        height: 22px;
+      }
+      @media (max-width: 640px) {
+        .menu-back {
+          display: flex;
+        }
+        /* hide the top toggle while the drawer is open (Back replaces it) */
+        header.menu-active .menu-btn {
+          display: none;
+        }
+      }
+      /* Instagram-style account switcher */
+      .profile-switch { position: relative; }
+      .profile-switch-btn {
+        display: inline-flex; align-items: center; gap: 4px; height: 28px;
+        font-weight: 700; font-size: 19px; line-height: 1;
+      }
+      .profile-switch-btn span {
+        background-image: linear-gradient(var(--yellow), var(--yellow));
+        background-repeat: no-repeat; background-position: 0 92%; background-size: 100% 42%;
+      }
+      .profile-switch-btn svg { width: 18px; height: 18px; transition: transform 0.2s ease; }
+      .profile-switch-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+      .profile-switch-menu {
+        position: absolute; right: -8px; top: calc(100% + 10px); z-index: 80;
+        width: 264px; padding: 8px; border-radius: 16px;
+        background: #fffdf8; border: 1px solid var(--line);
+        box-shadow: 0 14px 36px rgba(22, 20, 18, 0.14);
+        opacity: 0; visibility: hidden; transform: translateY(-6px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+      }
+      .profile-switch.is-open .profile-switch-menu {
+        opacity: 1; visibility: visible; transform: none;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+      }
+      .ps-title {
+        margin: 4px 10px 6px; font-size: 11px; font-weight: 500;
+        letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+      }
+      .ps-item {
+        display: flex; align-items: center; gap: 12px; min-height: 56px;
+        padding: 8px 10px; border-radius: 10px;
+      }
+      .ps-item:hover, .ps-item:focus-visible { background: #f3ecdf; outline: none; }
+      .ps-item img {
+        width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
+        border: 1px solid var(--line); flex: none;
+      }
+      .ps-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; line-height: 1.2; }
+      .ps-text b { font-size: 15px; }
+      .ps-text small { font-size: 12.5px; color: var(--muted); }
+      .ps-radio {
+        width: 22px; height: 22px; border-radius: 50%; flex: none;
+        border: 1.5px solid #b5ab9b; position: relative;
+      }
+      .ps-item.is-current .ps-radio { border-color: var(--ink); background: var(--ink); }
+      .ps-item.is-current .ps-radio::after {
+        content: ""; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px;
+        border: solid var(--yellow); border-width: 0 2px 2px 0; transform: rotate(45deg);
+      }
+      header.menu-active .profile-switch { display: none; }
+      @media (max-width: 640px) {
+        .profile-switch-btn { font-size: 17px; height: 44px; }
+        .menu-btn { width: 44px; height: 44px; margin-right: -10px; }
+        .head-inner { align-items: center; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .profile-switch-btn svg, .profile-switch-menu { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="header">
+      <div class="wrap">
+        <div class="head-inner">
+          <div>
+            <a href="#" class="name" style="display: block">Preeti Soreng</a>
+            <div class="role">Works</div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 18px">
+            <!-- Profile switcher: Artist (this page) / Designer (../). -->
+            <div class="profile-switch" id="profileSwitch">
+              <button
+                type="button"
+                class="profile-switch-btn"
+                id="profileSwitchBtn"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="profileSwitchMenu"
+              >
+                <span>Artist</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+              </button>
+              <div class="profile-switch-menu" id="profileSwitchMenu" role="menu" aria-label="Switch portfolio">
+                <p class="ps-title">Switch portfolio</p>
+                <a href="../index.html" role="menuitemradio" aria-checked="false" class="ps-item">
+                  <img src="../assets/imgRectangle56.png" alt="" />
+                  <span class="ps-text"><b>Designer</b><small>Product &amp; UX design</small></span>
+                  <span class="ps-radio" aria-hidden="true"></span>
+                </a>
+                <a href="./index.html" role="menuitemradio" aria-checked="true" class="ps-item is-current">
+                  <img src="img/hero/artist-seated.jpg" alt="" />
+                  <span class="ps-text"><b>Artist</b><small>Illustration &amp; painting</small></span>
+                  <span class="ps-radio" aria-hidden="true"></span>
+                </a>
+              </div>
+            </div>
+            <button class="menu-btn" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+              <span class="lbl">Menu</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              >
+                <line x1="3" y1="7" x2="21" y2="7" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="17" x2="21" y2="17" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="home" id="home" aria-label="Collections"></section>
+
+      <div class="layout">
+        <div class="images" id="images"></div>
+        <aside class="desc" id="desc"></aside>
+      </div>
+
+      <footer>
+        <span id="copy"></span>
+      </footer>
+    </main>
+
+    <!-- fixed live counter -->
+    <div class="counter-bar" id="bar">
+      <div class="bar-inner">
+        <span class="bar-proj" id="barProj"></span>
+        <button class="bar-overview" id="barOverview">Overview</button>
+        <span class="bar-count"
+          ><b id="curNum">01</b> / <span id="totNum">06</span
+          ><span class="lab">sketches</span></span
+        >
+      </div>
+    </div>
+
+    <!-- yellow drawer -->
+    <div class="menu-overlay" id="overlay">
+      <div class="menu-panel">
+        <div class="menu-inner">
+          <nav class="menu-projects" id="menuProjects"></nav>
+          <div class="menu-links">
+            <div class="grp" id="menuPages"></div>
+          </div>
+          <div class="menu-contact">
+            <h2 class="menu-contact-title">Contact</h2>
+            <nav class="icons" id="menuContact" aria-label="Social media"></nav>
+          </div>
+        </div>
+        <button class="menu-back" id="menuBack" aria-label="Back">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M14 6l-6 6 6 6" />
+          </svg>
+          <span>Back</span>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      const PROJECTS = [
+        {
+          id: "miniature-paintings",
+          title: "Miniature Paintings",
+          brief:
+            "When the world became uncertain, I made my world two inches wide. What began as an exercise in color mixing evolved into an exploration of texture, movement, and abstraction. Free from expectations, these miniature compositions became spaces for mistakes, instinct, and play—eventually revealing a visual language rooted in childhood color.",
+          cover: [1, 0, 3, 6], // image indexes shown on the home page
+          paras: [
+            {
+              html: "During COVID, when the world suddenly became smaller, I made my canvas smaller too. I reduced it to <strong>2 × 2 inches</strong>—a space small enough that failure could lose some of its weight.",
+            },
+            {
+              html: "I began with color chips, mixing one shade into another, learning how colors shift, resist, dissolve, and become something new. Slowly, the exercise stopped being about mastering color. I began noticing the traces left behind—the movement of a brush, the texture of paint, the accidental shapes emerging between one decision and the next.",
+            },
+            {
+              html: "Doodles entered these tiny spaces. There was no image to complete and no destination to reach. Each card became a small world governed only by balance, rhythm, harmony, and instinct. Forms could resemble something or nothing at all.",
+            },
+            {
+              html: "The first composition became the seed for an entire collection. Across these miniature worlds, bright colors from my childhood began resurfacing almost unconsciously.",
+            },
+            {
+              html: "What started as an exercise in color became an exercise in letting go—a reminder that sometimes we discover our visual language not by searching for it, but by creating enough space for it to appear.",
+            },
+          ],
+          images: [
+            "img/IMG_2910.png",
+            "img/IMG_2911.png",
+            "img/IMG_2912.png",
+            "img/IMG_2913.png",
+            "img/IMG_2964.png",
+            "img/IMG_2966.png",
+            "img/IMG_2967.png",
+            "img/IMG_2968.png",
+            "img/IMG_2969.png",
+          ],
+        },
+        {
+          id: "tools-of-perception",
+          title: "Tools of Perception",
+          brief:
+            "Circular ink fragments of the visual field, as if seen through a pinhole, periscope or lens — an invitation to sustained looking.",
+          cover: [3, 0, 10, 6], // image indexes shown on the home page
+          paras: [
+            {
+              html: "Growing up in a small city and later moving to a larger one, my experience of nature has been shaped more by observation than immersion. Documentaries, childhood play, and travel offered moments of connection, yet I have mostly encountered the natural world through the filters of man-made spaces and tools.",
+            },
+            {
+              html: "Inspired from the above narrative <em>“Tools of Perception”</em> is not, in fact, about the tools themselves. Rather, they serve as a metaphor for the viewer’s position as an observer in the abstract space, searching for connection. The circular forms represent fragments of the visual field, as though seen through a pinhole, periscope, telescope, microscope, or camera within the dimension of lights and shadows. They invite curiosity, suggesting that there is always more waiting to be discovered beyond what is immediately visible.",
+            },
+            {
+              html: "Allow yourself to pause and enter into a dialogue with the work. Through the act of sustained looking, the phenomenon of pareidolia begins to emerge. In that moment, the viewer becomes both the subject and the observer, discovering that meaning is shaped as much by perception as by what is seen.",
+            },
+          ],
+          images: [
+            "img/101.jpg",
+            "img/102.jpg",
+            "img/103.jpg",
+            "img/104.jpg",
+            "img/105.jpg",
+            "img/106.jpg",
+            "img/107.jpg",
+            "img/108.jpg",
+            "img/109.jpg",
+            "img/110.jpg",
+            "img/111.jpg",
+            "img/112.jpg",
+            "img/113.jpg",
+            "img/114.jpg",
+            "img/115.jpg",
+            "img/116.jpg",
+            "img/117.jpg",
+            "img/118.jpg",
+            "img/119.jpg",
+            "img/120.jpg",
+            "img/121.jpg",
+            "img/122.jpg",
+            "img/123.jpg",
+            "img/124.jpg",
+            "img/125.jpg",
+            "img/126.jpg",
+            "img/127.jpg",
+            "img/128.jpg",
+            "img/129.jpg",
+            "img/130.jpg",
+            "img/131.jpg",
+            "img/132.jpg",
+            "img/133.jpg",
+            "img/134.jpg",
+            "img/135.jpg",
+            "img/136.jpg",
+            "img/137.jpg",
+            "img/138.jpg",
+            "img/139.jpg",
+            "img/140.jpg",
+            "img/141.jpg",
+            "img/142.jpg",
+            "img/143.jpg",
+            "img/144.jpg",
+            "img/145.jpg",
+          ],
+        },
+        {
+          id: "excelsior",
+          title: "Excelsior",
+          brief:
+            "Excelsior is my offering to that fragile, electric moment between breaking and becoming. A love letter to the human spirit that dares to rebuild, again & again.",
+          cover: [1, 4, 7, 8], // image indexes shown on the home page
+          paras: [
+            {
+              html: "Excelsior, meaning “ever upward”, is both a prophecy and a confession. It envisions a world where the human spirit learns to rebuild itself through circuitry and code, yet it was born from a deeply personal moment of collapse. The artwork bridges two realities: the speculative realm of future cyborgs and the raw, private space of an artist wrestling with fear, faith and becoming.",
+            },
+            {
+              html: "What began as a sci-fi vision unfolded into meditation and vulnerability, a reminder that creation itself is an act of courage, and that rising is sometimes quieter than survival.",
+            },
+          ],
+          images: [
+            "img/excelsior/IMG_4218.jpg",
+            "img/excelsior/IMG_4219.jpg",
+            "img/excelsior/IMG_4224.jpg",
+            "img/excelsior/IMG_4225.jpg",
+            "img/excelsior/IMG_4226.jpg",
+            "img/excelsior/IMG_4227.jpg",
+            "img/excelsior/IMG_4228.jpg",
+            "img/excelsior/IMG_4229.jpg",
+            "img/excelsior/IMG_4230.jpg",
+            "img/excelsior/IMG_4231.jpg",
+            "img/excelsior/IMG_4232.jpg",
+            "img/excelsior/IMG_4233.jpg",
+            "img/excelsior/IMG_4234.jpg",
+            "img/excelsior/IMG_4235.jpg",
+            "img/excelsior/IMG_4236.jpg",
+            "img/excelsior/IMG_4237.jpg",
+            "img/excelsior/IMG_4238.jpg",
+            "img/excelsior/IMG_4239.jpg",
+            "img/excelsior/IMG_4240.jpg",
+            "img/excelsior/IMG_4241.jpg",
+            "img/excelsior/IMG_4242.jpg",
+            "img/excelsior/IMG_4243.jpg",
+            "img/excelsior/IMG_4244.jpg",
+          ],
+        },
+      ];
+
+      const PAGES = [
+        { t: "Home", href: "#" },
+        { t: "About", href: "#" },
+      ];
+      const SOCIAL = [
+        { t: "Instagram", href: "#" },
+        { t: "Behance", href: "#" },
+        { t: "Pinterest", href: "#" },
+      ];
+
+      const CONTACTS = [
+        { name: "instagram", href: "https://www.instagram.com/preeti.soreng/", label: "Instagram" },
+        { name: "behance", href: "https://www.behance.net/preetisoreng", label: "Behance" },
+        { name: "dribbble", href: "https://dribbble.com/PREETISORENG", label: "Dribbble" },
+        {
+          name: "linkedin",
+          href: "https://www.linkedin.com/in/preeti-soreng-229a4a10a/",
+          label: "LinkedIn",
+        },
+        { name: "mail", href: "mailto:preeti.soreng@gmail.com", label: "Email" },
+      ];
+      const ICONS = {
+        instagram:
+          '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/>',
+        mail: '<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/>',
+        behance:
+          '<path d="M3 7h5a2.5 2.5 0 0 1 0 5H3zM3 12h5.5a2.5 2.5 0 0 1 0 5H3zM3 7v10"/><path d="M15 8.5h5"/><path d="M14.5 14.2h6a3 3 0 0 0-6 0v.2a3 3 0 0 0 5.4 1.6"/>',
+        dribbble:
+          '<circle cx="12" cy="12" r="9"/><path d="M8.6 3.7c3.6 4.3 6 9.7 7.1 16"/><path d="M3.1 10.6c5.4.5 11.3-.8 15.3-4.6"/><path d="M5.9 18.6c3.2-4.4 9.4-6.3 15-4.4"/>',
+        linkedin:
+          '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10.5V16"/><circle cx="8" cy="7.8" r=".9" fill="currentColor" stroke="none"/><path d="M11.5 16v-5.5"/><path d="M11.5 13a2.3 2.3 0 0 1 4.5-.6V16"/>',
+        pinterest:
+          '<circle cx="12" cy="12" r="9"/><path d="M12 8.2c-1.9 0-3.1 1.2-3.1 2.7 0 .8.3 1.5 1 1.8.1 0 .2 0 .2-.1l.1-.6c0-.1 0-.1-.1-.2a1.5 1.5 0 0 1-.3-1c0-1.2.9-2.1 2.3-2.1 1.2 0 1.9.8 1.9 1.8 0 1.4-.6 2.5-1.5 2.5-.5 0-.9-.4-.7-.9.1-.6.4-1.2.4-1.6 0-.4-.2-.7-.7-.7-.5 0-1 .6-1 1.3 0 .4.2.8.2.8l-.6 2.6c-.2.8-.1 1.7 0 1.8l.1.1c.1 0 .8-1 1-1.8l.3-1.3c.2.4.8.7 1.4.7 1.8 0 3-1.6 3-3.8 0-1.6-1.4-3.2-3.6-3.2z" fill="currentColor" stroke="none"/>',
+      };
+      const iconSvg = (n, s) =>
+        '<svg viewBox="0 0 24 24" width="' +
+        s +
+        '" height="' +
+        s +
+        '" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">' +
+        ICONS[n] +
+        "</svg>";
+      const iconLinks = () =>
+        CONTACTS.map(
+          (c) =>
+            '<a class="ic" href="' +
+            c.href +
+            (c.href.startsWith("http") ? '" target="_blank" rel="noopener noreferrer' : "") +
+            '" title="' +
+            c.label +
+            '" aria-label="' +
+            c.label +
+            '">' +
+            iconSvg(c.name, 19) +
+            "</a>"
+        ).join("");
+
+      let active = 0,
+        io = null;
+      const $ = (s) => document.querySelector(s);
+
+      const introHTML = (p) =>
+        p.intro
+          .map((part) =>
+            typeof part === "string" ? part : '<a href="#" class="hl">' + part.hl + "</a>"
+          )
+          .join("");
+
+      function renderDesc() {
+        const p = PROJECTS[active];
+        let body;
+        if (p.paras) {
+          body = p.paras.map((par) => '<p class="body">' + par.html + "</p>").join("");
+        } else {
+          body =
+            '<p class="body">' +
+            introHTML(p) +
+            "</p>" +
+            "<blockquote>" +
+            p.quote +
+            "</blockquote>" +
+            '<p class="qextra">' +
+            p.quoteExtra +
+            "</p>" +
+            '<p class="body follow">' +
+            p.followText +
+            '<a href="#" class="hl">' +
+            p.followLink +
+            "</a></p>";
+        }
+        $("#desc").innerHTML = '<h2 class="proj-title">' + p.title + "</h2>" + body;
+      }
+
+      function renderImages() {
+        const p = PROJECTS[active];
+        $("#images").className = "images proj-" + p.id;
+        let html = "";
+        if (p.images) {
+          p.images.forEach((src, i) => {
+            const alt = p.title + " — Artwork " + String(i + 1).padStart(2, "0");
+            html +=
+              '<figure data-index="' +
+              i +
+              '"><div class="frame frame-img">' +
+              '<img class="art" src="' +
+              src +
+              '" alt="' +
+              alt +
+              '" loading="lazy" />' +
+              "</div></figure>";
+          });
+        } else {
+          for (let i = 0; i < p.count; i++) {
+            html +=
+              '<figure data-index="' +
+              i +
+              '"><div class="frame"><div class="art"></div>' +
+              '<div class="art-label">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9" r="1.5"/><path d="M4 17l5-5 4 4 3-3 4 4"/></svg>' +
+              '<span class="n">' +
+              p.title +
+              " — Artwork " +
+              String(i + 1).padStart(2, "0") +
+              "</span>" +
+              "</div></div></figure>";
+          }
+        }
+        $("#images").innerHTML = html;
+        setupCounter();
+      }
+
+      /* live counter — number changes as each sketch reaches viewport center */
+      function setupCounter() {
+        const p = PROJECTS[active];
+        const figs = Array.from(document.querySelectorAll("#images figure"));
+        $("#barProj").textContent = p.title;
+        $("#totNum").textContent = String(figs.length).padStart(2, "0");
+        $("#curNum").textContent = figs.length > 0 ? "01" : "00";
+        if (io) io.disconnect();
+        io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                const i = +e.target.dataset.index;
+                $("#curNum").textContent = String(i + 1).padStart(2, "0");
+              }
+            });
+          },
+          { rootMargin: "-50% 0px -50% 0px", threshold: 0 }
+        ); // active when a figure crosses the exact center line
+        figs.forEach((f) => io.observe(f));
+      }
+
+      function renderMenu() {
+        $("#menuProjects").innerHTML =
+          PROJECTS.map((p, i) => '<button data-proj="' + i + '">' + p.title + "</button>").join(
+            ""
+          ) + '<a href="sound-mapping.html">Sound Mapping</a>';
+        $("#menuProjects")
+          .querySelectorAll("[data-proj]")
+          .forEach((b) => {
+            b.onclick = () => {
+              closeMenu();
+              openProject(PROJECTS[+b.dataset.proj].id);
+            };
+          });
+        $("#menuPages").innerHTML = PAGES.map(
+          (x) => '<a href="' + x.href + '">' + x.t + "</a>"
+        ).join("");
+        $("#menuPages")
+          .querySelectorAll("a")
+          .forEach((a) => a.addEventListener("click", closeMenu));
+        $("#menuContact").innerHTML = iconLinks();
+      }
+
+      /* ---------- home ---------- */
+      const pad2 = (n) => String(n).padStart(2, "0");
+      const thumbOf = (src) =>
+        "img/thumbs/" +
+        src
+          .split("/")
+          .pop()
+          .replace(/\.\w+$/, "") +
+        ".jpg";
+      const workCount = (p) => (p.images ? p.images.length : p.count);
+
+      function renderHome() {
+        const quick =
+          PROJECTS.map(
+            (p) =>
+              '<button class="btn btn-line" data-go="' +
+              p.id +
+              '">' +
+              p.title +
+              '<span class="n">' +
+              pad2(workCount(p)) +
+              "</span></button>"
+          ).join("") +
+          '<a class="btn btn-line" href="sound-mapping.html">Sound Mapping<span class="n">02</span></a>';
+
+        const colls = PROJECTS.map((p, n) => {
+          const media = p.images
+            ? (p.cover || [0, 1, 2, 3])
+                .map(
+                  (i) =>
+                    '<button data-go="' +
+                    p.id +
+                    '" data-at="' +
+                    i +
+                    '" aria-label="Open ' +
+                    p.title +
+                    " at artwork " +
+                    pad2(i + 1) +
+                    '"><img src="' +
+                    thumbOf(p.images[i]) +
+                    '" alt="" loading="lazy" /></button>'
+                )
+                .join("")
+            : "";
+          return (
+            '<article class="coll">' +
+            '<div class="coll-media">' +
+            media +
+            "</div>" +
+            "<div>" +
+            '<p class="coll-meta">' +
+            pad2(n + 1) +
+            " &nbsp;·&nbsp; " +
+            workCount(p) +
+            " works</p>" +
+            '<h2 class="coll-title"><button data-go="' +
+            p.id +
+            '">' +
+            p.title +
+            "</button></h2>" +
+            '<p class="coll-brief">' +
+            (p.brief || "") +
+            "</p>" +
+            '<button class="btn" data-go="' +
+            p.id +
+            '">View collection</button>' +
+            "</div>" +
+            "</article>"
+          );
+        }).join("");
+
+        // Sound Mapping lives on its own page, so it links out instead of using the hash router
+        const SOUND = "sound-mapping.html";
+        const soundTile = (src, label, cls = "") =>
+          '<a href="' +
+          SOUND +
+          '"' +
+          (cls ? ' class="' + cls + '"' : "") +
+          ' aria-label="' +
+          label +
+          '"><img src="' +
+          src +
+          '" alt="" loading="lazy" /></a>';
+        const soundColl =
+          '<article class="coll">' +
+          '<div class="coll-media">' +
+          soundTile("img/sound-map-paper-and-pie.jpg", "Open Sound Mapping: Paper & Pie") +
+          soundTile("img/sound-map-my-room.jpg", "Open Sound Mapping: HAL") +
+          soundTile("img/legend/hal-birds.png", "Open Sound Mapping: birds chirping", "mark") +
+          soundTile("img/legend/paper-and-pie-music.png", "Open Sound Mapping: music", "mark") +
+          "</div>" +
+          "<div>" +
+          '<p class="coll-meta">' +
+          pad2(PROJECTS.length + 1) +
+          " &nbsp;·&nbsp; 2 maps</p>" +
+          '<h2 class="coll-title"><a href="' +
+          SOUND +
+          '">Sound Mapping</a></h2>' +
+          '<p class="coll-brief">Five to ten minutes of attentive listening, drawn as it unfolds. Fans, birdsong, chatter and clinking cutlery become lines, dots and ripples — each map with its own visual legend.</p>' +
+          '<a class="btn" href="' +
+          SOUND +
+          '" style="display: inline-block">View sound maps</a>' +
+          "</div>" +
+          "</article>";
+
+        // collage: artworks open their collection; photos of the artist are decorative
+        // pos = [left %, top %, width %, height %, rotate deg, z-index, entry delay s]
+        const place = ([x, y, w, h, r, z, d]) =>
+          ' style="--x:' +
+          x +
+          "%;--y:" +
+          y +
+          "%;--w:" +
+          w +
+          "%;--h:" +
+          h +
+          "%;--r:" +
+          r +
+          "deg;--z:" +
+          z +
+          ";--d:" +
+          d +
+          's"';
+        // zoom crops into works that sit on a wide paper margin
+        const art = (id, at, src, label, pos, zoom = 1) =>
+          '<button class="card mat" data-go="' +
+          id +
+          '" data-at="' +
+          at +
+          '" aria-label="' +
+          label +
+          '"' +
+          place(pos) +
+          '><div class="crop"><img src="' +
+          src +
+          '" alt="" style="--zoom:' +
+          zoom +
+          '" /></div></button>';
+        const photo = (src, cls, pos) =>
+          '<div class="card photo ' +
+          cls +
+          '"' +
+          place(pos) +
+          '><div class="crop"><img src="' +
+          src +
+          '" alt="Preeti Soreng" /></div></div>';
+        const collage =
+          '<div class="collage">' +
+          '<svg class="marks back" viewBox="0 0 100 95" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#3a3530" stroke-width="1.1" stroke-linecap="round" opacity=".55">' +
+          '<path vector-effect="non-scaling-stroke" d="M50 20 C57 9 74 -1 79 1 C84 3 72 17 61 27 M60 22 L58 29" />' +
+          '<path vector-effect="non-scaling-stroke" d="M8 40 C0 46 -9 55 -8 58 C-7 61 2 55 9 49" />' +
+          "</svg>" +
+          art(
+            "excelsior",
+            1,
+            "img/thumbs/IMG_4219.jpg",
+            "Open Excelsior",
+            [6, 4, 34, 60, -1.5, 1, 0.05]
+          ) +
+          photo("img/hero/artist-mirror.jpg", "taped", [60, 7, 34, 46, 2.5, 1, 0.15]) +
+          art(
+            "tools-of-perception",
+            3,
+            "img/thumbs/104.jpg",
+            "Open Tools of Perception",
+            [24, 64, 38, 30, -1, 1, 0.25],
+            1.3
+          ) +
+          photo("img/hero/artist-seated.jpg", "", [64, 51, 30, 43, -2.5, 2, 0.35]) +
+          photo("img/hero/artist-desk.jpg", "polaroid", [0, 60, 22, 31, -5, 3, 0.45]) +
+          art(
+            "miniature-paintings",
+            0,
+            "img/thumbs/IMG_2910.jpg",
+            "Open Miniature Paintings",
+            [31, 21, 34, 51, 1.2, 4, 0.55],
+            1.3
+          ) +
+          '<svg class="marks front" viewBox="0 0 100 95" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#e5602f" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" opacity=".9">' +
+          '<path vector-effect="non-scaling-stroke" d="M80 96 L91 93 L81 98.5 L92.5 95.5" />' +
+          "</svg>" +
+          "</div>";
+
+        $("#home").innerHTML =
+          '<div class="home-hero">' +
+          "<div>" +
+          '<p class="hero-eyebrow">Illustrations<span>/</span>Paintings<span>/</span>Visual notes</p>' +
+          '<h1 class="home-lede">Drawing, painting and listening — from jewel-bright miniatures and intricate black ink to maps of sound.</h1>' +
+          '<nav class="home-quick" aria-label="Quick access">' +
+          quick +
+          "</nav>" +
+          '<a class="scroll-cue" href="#collections" onclick="event.preventDefault();document.getElementById(\'collections\').scrollIntoView({behavior:\'smooth\'})">' +
+          '<svg viewBox="0 0 12 60" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"><path d="M6 0 V58 M1.5 53.5 L6 58 L10.5 53.5"/></svg>' +
+          "Scroll to explore</a>" +
+          "</div>" +
+          collage +
+          "</div>" +
+          '<div id="collections">' +
+          colls +
+          soundColl +
+          "</div>";
+
+        $("#home")
+          .querySelectorAll("[data-go]")
+          .forEach((b) => {
+            b.onclick = () =>
+              openProject(b.dataset.go, b.dataset.at != null ? +b.dataset.at : null);
+          });
+      }
+
+      /* ---------- routing: "#" = home, "#<project-id>" = collection ---------- */
+      let pendingAt = null;
+
+      function openProject(id, at = null) {
+        pendingAt = at;
+        if (location.hash === "#" + id) route();
+        else location.hash = id;
+      }
+
+      function scrollToArtwork(i) {
+        const fig = document.querySelector('#images figure[data-index="' + i + '"]');
+        if (!fig) return;
+        // make sure everything above the target has loaded, so the layout doesn't shift
+        const imgs = Array.from(document.querySelectorAll("#images img")).slice(0, i + 1);
+        imgs.forEach((im) => (im.loading = "eager"));
+        Promise.all(
+          imgs.map((im) =>
+            im.complete
+              ? 0
+              : new Promise((r) => {
+                  im.addEventListener("load", r);
+                  im.addEventListener("error", r);
+                })
+          )
+        ).then(() => fig.scrollIntoView({ block: "center", behavior: "instant" }));
+      }
+
+      function route() {
+        const i = PROJECTS.findIndex((p) => "#" + p.id === location.hash);
+        window.scrollTo({ top: 0, behavior: "instant" });
+        if (i < 0) {
+          document.body.classList.add("is-home");
+          document.title = "Preeti Soreng — Works";
+          return;
+        }
+        document.body.classList.remove("is-home");
+        active = i;
+        document.title = PROJECTS[i].title + " — Preeti Soreng";
+        renderDesc();
+        renderImages();
+        if (pendingAt != null) scrollToArtwork(pendingAt);
+        pendingAt = null;
+      }
+      window.addEventListener("hashchange", route);
+
+      $("#barOverview").onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+      function openMenu() {
+        $("#overlay").classList.add("open");
+        $("#header").classList.add("menu-active");
+        $("#bar").classList.add("hide");
+        $("#menuToggle").querySelector(".lbl").textContent = "Close";
+        $("#menuToggle").setAttribute("aria-label", "Close menu");
+        $("#menuToggle").setAttribute("aria-expanded", "true");
+      }
+      function closeMenu() {
+        $("#overlay").classList.remove("open");
+        $("#header").classList.remove("menu-active");
+        $("#bar").classList.remove("hide");
+        $("#menuToggle").querySelector(".lbl").textContent = "Menu";
+        $("#menuToggle").setAttribute("aria-label", "Open menu");
+        $("#menuToggle").setAttribute("aria-expanded", "false");
+      }
+      $("#menuToggle").onclick = () =>
+        $("#overlay").classList.contains("open") ? closeMenu() : openMenu();
+      $("#menuBack").onclick = closeMenu;
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMenu();
+      });
+
+      $("#copy").textContent = "© " + new Date().getFullYear() + " Preeti Soreng";
+
+      renderHome();
+      renderMenu();
+      route();
+    </script>
+    <script>
+      (function () {
+        var wrap = document.getElementById("profileSwitch");
+        var btn = document.getElementById("profileSwitchBtn");
+        if (!wrap || !btn) return;
+        var items = wrap.querySelectorAll(".ps-item");
+        function setOpen(open, focus) {
+          wrap.classList.toggle("is-open", open);
+          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          if (open && focus) items[0].focus();
+        }
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          setOpen(!wrap.classList.contains("is-open"), e.detail === 0);
+        });
+        document.addEventListener("click", function (e) {
+          if (!wrap.contains(e.target)) setOpen(false);
+        });
+        wrap.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && wrap.classList.contains("is-open")) {
+            setOpen(false); btn.focus();
+          } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && wrap.classList.contains("is-open")) {
+            e.preventDefault();
+            var i = Array.prototype.indexOf.call(items, document.activeElement);
+            i = e.key === "ArrowDown" ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
+            items[i].focus();
+          }
+        });
+        items[1].addEventListener("click", function (e) { e.preventDefault(); setOpen(false); });
+      })();
+    </script>
+  </body>
+</html>
