@@ -4,10 +4,10 @@
    the page and the stars stretch into hyperspace streaks; the artist page
    loads mid-jump, and the streaks slow and fade away over it.
 
-   Artist -> Designer (data-portal="fade"): green grid pixel wipe. Blocks in
-   the emerald of the designer hero's grid step in from the top-right corner
-   over the artist page, then on the designer page (?portal=fade) break down
-   into its 20px grid and fade into it; the content then fades in on top.
+   Artist -> Designer (data-portal="fade"): band wipe matched to the
+   reference clip. Nine beige bands sweep in from the left, top row first;
+   their shades slide down the stack; then on the designer page
+   (?portal=fade) they sweep on and uncover it.
 
    Loaded in <head> on both pages so an arriving page can hide itself
    before it paints. The arriving side is told by ?portal=in, which is
@@ -39,10 +39,6 @@
     designerBg() +
     "}" +
     "html.portal-fade body{visibility:hidden}" +
-    /* the designer's content waits until its background has shown */
-    "html.portal-stage body>:not(#productPortfolioView):not(.portal-fx)," +
-    "html.portal-stage #productPortfolioView>:not(#hero)," +
-    "html.portal-stage #hero>:not(#heroGrid){opacity:0}" +
     ".portal-veil{position:fixed;inset:0;z-index:2147483000;pointer-events:none;visibility:visible}" +
     ".portal-fx{position:fixed;inset:0;width:100vw;height:100vh;z-index:2147483000;" +
     "pointer-events:none;visibility:visible}" +
@@ -72,7 +68,6 @@
       history.replaceState(history.state, "", clean);
     } catch (e) {}
     if (!reduce) root.classList.add(fading ? "portal-fade" : "portal-in");
-    if (!reduce && fading) root.classList.add("portal-stage");
   }
 
   /* ---------------------------------------------------------------- */
@@ -322,55 +317,73 @@
     requestAnimationFrame(frame);
   }
 
-  /* ------------- artist -> designer: green grid pixel wipe ------------- */
+  /* ------------- artist -> designer: band wipe ------------- */
 
-  /* Pixel blocks tinted with the emerald of the designer hero's grid step in
-     from the top-right corner over the artist page. On the designer page the
-     same blocks break down 80 -> 40 -> 20px, the size of the page's own grid
-     cells, lined up on its grid lines, and fade into it. The page's
-     background shows first; its content then fades in on top. */
-  var CELL = 20; /* the hero grid's cell */
-  var BIG = 80;
+  /* Built frame by frame from the reference clip (page pixel transition.mp4).
+     Nine horizontal gradient bands form a ladder: the top band slides in
+     from the left first and each band below follows a beat later, all on
+     the same decelerating curve, so at any moment every band is a step
+     shorter than the one above. Timed to the clip, in three motions:
+       1. the ladder covers the artist page, left to right;
+       2. on the designer page, while it loads underneath, the bands stay
+          put and their shades slide down the stack, the dark beige
+          travelling from the top band to the bottom;
+       3. straight after, the ladder runs in reverse: each band's left
+          edge pulls away to the right, top band first, uncovering it.
+     Each band runs lighter at the left; the stack starts dark beige at the
+     top and near ivory at the bottom. */
+  var ROWS = 9;
+  var COVER_ROW = 380; /* ms for one band to cross */
+  var COVER_STAGGER = 28; /* ms between one band and the next */
+  var COVER_EASE = 1.6; /* decelerating: 1 - (1 - u)^n */
+  var REVEAL_ROW = 140;
+  var REVEAL_STAGGER = 26;
+  var HOLD_MIN = 550; /* ms for motion two, as in the clip */
+  var COVER_MS = COVER_ROW + COVER_STAGGER * (ROWS - 1);
+  var REVEAL_MS = REVEAL_ROW + REVEAL_STAGGER * (ROWS - 1);
 
-  function gridPalette() {
+  /* the designer background's light and deep tones (light or dark, as the
+     visitor left the designer page); the clip's bands span about this much
+     either side of its page's background */
+  function bandPalette() {
     var dark = false;
     try {
       dark = localStorage.getItem("theme") === "dark";
     } catch (e) {}
-    var paper = dark ? [20, 21, 23] : [251, 249, 247];
-    var green = [16, 185, 129];
-    var mixes = dark
-      ? [0.07, 0.1, 0.13, 0.17, 0.21]
-      : [0.06, 0.1, 0.14, 0.19, 0.25];
-    var tints = mixes.map(function (k) {
-      return (
-        "rgb(" +
-        paper
-          .map(function (c, i) {
-            return Math.round(c + (green[i] - c) * k);
-          })
-          .join(",") +
-        ")"
-      );
-    });
-    return {
-      tints: tints,
-      line: dark ? "rgba(16,185,129,0.32)" : "rgba(16,185,129,0.45)",
-    };
+    /* one beige: darkest on the top band, each band below a step lighter */
+    return dark
+      ? { light: [20, 21, 23], hue: [54, 45, 35] }
+      : { light: [255, 253, 249], hue: [224, 207, 185] };
   }
 
-  /* the same block gets the same tint on both pages */
-  function hash(a, b, c) {
-    var h =
-      (Math.imul(a, 374761393) +
-        Math.imul(b, 668265263) +
-        Math.imul(c, 1442695041)) |
-      0;
-    h = Math.imul(h ^ (h >>> 13), 1274126177);
-    return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+  /* k: 0 = ivory (or the dark background), 1 = the full beige */
+  function tone(pal, k) {
+    k = k < 0 ? 0 : k > 1 ? 1 : k;
+    return (
+      "rgb(" +
+      pal.light
+        .map(function (v, i) {
+          return Math.round(v + (pal.hue[i] - v) * k);
+        })
+        .join(",") +
+      ")"
+    );
+  }
+  /* depth of the shade at stack position x: the top band (0) the full dark
+     beige, each band below a step lighter, mirrored past the ends */
+  function shade(x) {
+    var span = Math.max(1, ROWS - 1);
+    var q = ((x % (2 * span)) + 2 * span) % (2 * span);
+    return 1 - ((q <= span ? q : 2 * span - q) / span) * 0.85;
+  }
+  /* a band's own fill: a touch lighter at its left, as in the clip */
+  function bandFill(pal, x) {
+    var k = shade(x);
+    return [tone(pal, k - 0.08), tone(pal, k + 0.04)];
   }
 
-  function GridFx() {
+  /* motion one, on the artist page: drawn on a canvas, row by row */
+  function BandFx() {
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     var W = window.innerWidth,
       H = window.innerHeight;
@@ -381,102 +394,55 @@
     c.height = Math.round(H * dpr);
     document.body.appendChild(c);
     var ctx = c.getContext("2d");
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var pal = gridPalette();
-    /* where the page's grid lines start (0..19) */
-    var ox = 0,
-      oy = 0;
-    /* the grid is pinned to the page's grid line nearest the right edge, so
-       it grows and shrinks from the top-right corner */
-    function anchorX() {
-      return ox + Math.floor((W - ox) / CELL) * CELL;
-    }
+    var pal = bandPalette();
 
-    /* cell i (counting leftwards from the anchor), row j, at size s */
-    function cell(i, j, s, alpha) {
-      var x = anchorX() - (i + 1) * s,
-        y = oy + j * s;
-      var k = hash(i, j, 0);
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = pal.tints[Math.floor(k * pal.tints.length)];
-      /* a hair of overlap so neighbours never show a seam while they move */
-      ctx.fillRect(x - 0.5, y, s + 0.5, s + 0.5);
-      ctx.fillStyle = pal.line;
-      ctx.fillRect(x, y, 1, s);
-      ctx.fillRect(x, y, s, 1);
+    function px(v) {
+      return Math.round(v * dpr);
     }
-    /* 0 at the top-right corner, 1 at the bottom-left */
-    function dist(x, y) {
-      return ((W - x) / W) * 0.55 + (y / H) * 0.45;
+    function band(r, x0, x1) {
+      if (x1 <= x0) return;
+      var f = bandFill(pal, r);
+      var g = ctx.createLinearGradient(0, 0, c.width, 0);
+      g.addColorStop(0, f[0]);
+      g.addColorStop(1, f[1]);
+      ctx.fillStyle = g;
+      var Y = px((r * H) / ROWS),
+        Y2 = px(((r + 1) * H) / ROWS);
+      ctx.fillRect(px(x0), Y, px(x1) - px(x0), Y2 - Y);
     }
-    function smooth(t) {
-      return t <= 0 ? 0 : t >= 1 ? 1 : t * t * (3 - 2 * t);
+    function clamp(u) {
+      return u <= 0 ? 0 : u >= 1 ? 1 : u;
     }
-    function ease(t) {
-      t = t <= 0 ? 0 : t >= 1 ? 1 : t;
-      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    /* cover, ms since it began: each band grows from the left edge */
+    function cover(ms) {
+      ctx.clearRect(0, 0, c.width, c.height);
+      for (var r = 0; r < ROWS; r++) {
+        var u = clamp((ms - r * COVER_STAGGER) / COVER_ROW);
+        band(r, 0, W * (1 - Math.pow(1 - u, COVER_EASE)));
+      }
     }
-    /* every cell of size s that touches the screen, right edge and top row
-       first; one extra column past the anchor covers the strip beside it */
-    function each(s, fn) {
-      var ax = anchorX();
-      var cols = Math.ceil(ax / s) + 1,
-        rows = Math.ceil((H - oy) / s) + 1;
-      for (var j = oy > 0 ? -1 : 0; j < rows; j++)
-        for (var i = -1; i < cols; i++) fn(i, j, ax - (i + 1) * s, oy + j * s);
-    }
-
-    /* cover: whole 80px blocks switch on from the top right */
-    function cover(p) {
-      ctx.clearRect(0, 0, W, H);
-      each(BIG, function (i, j, x, y) {
-        if (p * 1.15 >= dist(x + BIG, y) + 0.05) cell(i, j, BIG, 1);
-      });
-      ctx.globalAlpha = 1;
-    }
-    /* morph: the whole grid shrinks smoothly from 80px blocks to the page's
-       20px cells, pinned at the top right, so the screen stays covered the
-       whole way; the cells then fade into the page's own grid lines */
-    function morph(p) {
-      ctx.clearRect(0, 0, W, H);
-      var s = BIG - (BIG - CELL) * ease(p / 0.55);
-      each(s, function (i, j, x, y) {
-        var a = 1 - smooth((p - 0.45 - dist(x + s / 2, y + s / 2) * 0.3) / 0.25);
-        if (a > 0) cell(i, j, s, a);
-      });
-      ctx.globalAlpha = 1;
-    }
-    return {
-      el: c,
-      cover: cover,
-      morph: morph,
-      origin: function (x, y) {
-        ox = ((Math.round(x) % CELL) + CELL) % CELL;
-        oy = ((Math.round(y) % CELL) + CELL) % CELL;
-      },
-    };
+    return { el: c, cover: cover };
   }
 
+  /* runs draw(ms elapsed) every frame for ms, then done() */
   function play(ms, draw, done) {
     var begin = performance.now();
-    function frame(now) {
-      var p = Math.min(1, (now - begin) / ms);
-      draw(p);
-      if (p < 1) requestAnimationFrame(frame);
+    function frame(stamp) {
+      var e = Math.min(ms, stamp - begin);
+      draw(e);
+      if (e < ms) requestAnimationFrame(frame);
       else if (done) done();
     }
     requestAnimationFrame(frame);
   }
 
-  /* Leaving the artist page: green blocks step over it from the top right. */
+  /* Leaving the artist page: motion one, the ladder covers it from the
+     left; then straight over to the designer page for motions two and
+     three. */
   function dissolveOut(href) {
     busy = true;
     var url = href.replace(/(#.*)?$/, function (hash) {
-      return (
-        (href.split("#")[0].indexOf("?") > -1 ? "&" : "?") +
-        "portal=fade" +
-        (hash || "")
-      );
+      return (href.split("#")[0].indexOf("?") > -1 ? "&" : "?") + "portal=fade" + (hash || "");
     });
     var pre = document.createElement("link");
     pre.rel = "prefetch";
@@ -485,10 +451,10 @@
     var open = document.querySelector(".profile-switch.is-open");
     if (open) open.classList.remove("is-open");
 
-    var fx = GridFx();
-    play(720, fx.cover, function () {
+    var fx = BandFx();
+    play(COVER_MS, fx.cover, function () {
       /* hand the covered screen to the designer page, which paints it
-         before anything else so there is no blank moment while it loads */
+         before anything else so there is no blank moment */
       try {
         sessionStorage.setItem("portal-grid", fx.el.toDataURL("image/png"));
       } catch (e) {}
@@ -501,98 +467,99 @@
     });
   }
 
-  /* What fades in once the background is showing: the header and the hero's
-     pieces, big wrappers split into their children so nothing arrives as
-     one slab. */
-  function stageUnits() {
-    var W = window.innerWidth,
-      H = window.innerHeight,
-      big = W * H * 0.3;
-    var out = [];
-    function add(el, depth) {
-      var r = el.getBoundingClientRect();
-      if (!r.width || !r.height || r.bottom < 0 || r.top > H) return;
-      if (r.width * r.height > big && depth < 3 && el.children.length) {
-        for (var i = 0; i < el.children.length; i++)
-          add(el.children[i], depth + 1);
-        return;
-      }
-      out.push({
-        el: el,
-        d:
-          ((W - (r.left + r.right) / 2) / W) * 0.55 +
-          ((r.top + r.bottom) / 2 / H) * 0.45,
-      });
-    }
-    var kids = document.body.children;
-    for (var i = 0; i < kids.length; i++) {
-      var k = kids[i];
-      if (k.id === "productPortfolioView") {
-        var hero = document.getElementById("hero");
-        if (hero)
-          for (var j = 0; j < hero.children.length; j++)
-            if (hero.children[j].id !== "heroGrid") add(hero.children[j], 1);
-      } else if (
-        !/^(SCRIPT|STYLE|LINK|NOSCRIPT)$/.test(k.tagName) &&
-        !k.classList.contains("portal-fx")
-      )
-        add(k, 1);
-    }
-    return out;
-  }
+  /* Arriving on the designer page, the moment <body> exists: the same
+     nine bands, rebuilt as elements so that motions two and three run on
+     the browser's animation timeline. That keeps them exactly on time even
+     while the rest of this long page is still being read, so motion three
+     follows motion two with no wait at all.
 
-  /* Arriving on the designer page: under the same blocks, with its content
-     held back. The blocks morph down into the page's grid, then the content
-     fades in on top, top right first. */
+     Motion two: each band is a window onto a column of the shades, which
+     slides down by the whole stack, so the dark beige travels from the top
+     band to the bottom one - once. Motion three, straight after: the
+     ladder runs in reverse, each band leaving to the right, top first. */
   function dissolveIn() {
-    var fx = GridFx();
-    fx.cover(1);
-    root.classList.remove("portal-fade");
-    var started = false;
-    function go() {
-      if (started) return;
-      started = true;
-      var g = document.getElementById("heroGrid");
-      if (g) {
-        var r = g.getBoundingClientRect();
-        fx.origin(r.left, r.top);
+    var W = window.innerWidth,
+      H = window.innerHeight;
+    var pal = bandPalette();
+    var span = ROWS - 1;
+    var wrap = document.createElement("div");
+    wrap.className = "portal-veil";
+    wrap.setAttribute("aria-hidden", "true");
+    wrap.style.cssText += ";overflow:hidden;pointer-events:auto";
+    var bands = [];
+    for (var r = 0; r < ROWS; r++) {
+      var top = Math.round((r * H) / ROWS),
+        h = Math.round(((r + 1) * H) / ROWS) - top;
+      var b = document.createElement("div");
+      b.style.cssText =
+        "position:absolute;left:0;width:100%;overflow:hidden;will-change:transform;" +
+        "box-sizing:border-box;margin:0;padding:0;top:" +
+        top +
+        "px;height:" +
+        /* a pixel of overlap, so scaled screens never show a seam */
+        (h + 1) +
+        "px";
+      /* the column: the shades of rows r-8 .. r stacked, positioned so the
+         window shows row r's own shade to start with */
+      var col = document.createElement("div");
+      col.style.cssText =
+        "position:absolute;left:0;width:100%;will-change:transform;box-sizing:border-box;" +
+        "top:" +
+        -span * h +
+        "px;height:" +
+        ROWS * h +
+        "px";
+      for (var j = 0; j < ROWS; j++) {
+        var f = bandFill(pal, r - span + j);
+        var s = document.createElement("div");
+        s.style.cssText =
+          "box-sizing:border-box;height:" + (h + 1) + "px;margin-bottom:-1px;" +
+          "background:linear-gradient(90deg," + f[0] + "," + f[1] + ")";
+        col.appendChild(s);
       }
-      var MORPH = 1150;
-      play(MORPH, fx.morph, function () {
-        fx.el.remove();
-      });
-      setTimeout(function () {
-        fx.el.classList.remove("is-blocking");
-        var units = stageUnits();
-        for (var i = 0; i < units.length; i++)
-          units[i].el.animate(
-            [
-              { opacity: 0, transform: "translateY(14px)" },
-              { opacity: 1, transform: "translateY(0)" },
-            ],
-            {
-              duration: 700,
-              delay: units[i].d * 520,
-              easing: "cubic-bezier(.2,.7,.2,1)",
-              fill: "backwards",
-              composite: "add",
-            },
-          );
-        root.classList.remove("portal-stage");
-      }, MORPH * 0.6);
+      b.appendChild(col);
+      wrap.appendChild(b);
+      bands.push({ band: b, col: col, h: h });
     }
-    if (document.readyState === "complete") requestAnimationFrame(go);
-    else {
-      window.addEventListener("load", function () {
-        requestAnimationFrame(go);
+    document.body.appendChild(wrap);
+    root.classList.remove("portal-fade");
+
+    for (var i = 0; i < bands.length; i++) {
+      var B = bands[i];
+      /* motion two */
+      B.col.animate([{ transform: "translateY(0)" }, { transform: "translateY(" + span * B.h + "px)" }], {
+        duration: HOLD_MIN,
+        easing: "linear",
+        fill: "forwards",
       });
-      setTimeout(go, 1200);
+      /* motion three: speeding up as it goes (roughly u^1.3) */
+      B.band.animate([{ transform: "translateX(0)" }, { transform: "translateX(" + W + "px)" }], {
+        duration: REVEAL_ROW,
+        delay: HOLD_MIN + i * REVEAL_STAGGER,
+        easing: "cubic-bezier(.4,0,.85,.65)",
+        fill: "forwards",
+      });
     }
+    setTimeout(function () {
+      wrap.style.pointerEvents = "none";
+    }, HOLD_MIN + REVEAL_MS / 3);
+    setTimeout(function () {
+      wrap.remove();
+    }, HOLD_MIN + REVEAL_MS + 60);
   }
 
   if (mode && !reduce) {
     var run = fading ? dissolveIn : arrive;
     if (document.body) run();
-    else document.addEventListener("DOMContentLoaded", run);
+    else if (fading && window.MutationObserver) {
+      /* the bands go up the moment <body> exists, long before the rest of
+         this large page has been read, so the motion never stalls */
+      var watch = new MutationObserver(function () {
+        if (!document.body) return;
+        watch.disconnect();
+        run();
+      });
+      watch.observe(root, { childList: true });
+    } else document.addEventListener("DOMContentLoaded", run);
   }
 })();
