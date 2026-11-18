@@ -448,8 +448,6 @@
     pre.rel = "prefetch";
     pre.href = href;
     document.head.appendChild(pre);
-    var open = document.querySelector(".profile-switch.is-open");
-    if (open) open.classList.remove("is-open");
 
     var fx = BandFx();
     play(COVER_MS, fx.cover, function () {

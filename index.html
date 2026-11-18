@@ -3229,73 +3229,55 @@
       }
     </style>
     <style id="profile-switch">
-      /* Instagram-style account switcher: a pill that opens a small sheet. */
-      .profile-switch { position: relative; }
-      .profile-switch-btn {
-        display: inline-flex; align-items: center; gap: 6px;
-        height: 36px; padding: 0 12px 0 16px; border-radius: 999px;
-        background: rgba(255, 255, 255, 0.9); color: #292524;
-        border: 1px solid rgba(231, 229, 228, 0.8);
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-        -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+      /* Designer / Artist toggle: one person, two modes. A pill with a thumb
+         behind the active side; picking the other side slides it across. */
+      .role-toggle {
+        position: relative; display: grid; grid-template-columns: 1fr 1fr;
+        height: 36px; padding: 3px; border-radius: 999px;
+        /* no outline: a fill a shade darker than the page */
+        background: #efebe6;
         font: 500 14px/1 "Roboto", system-ui, sans-serif;
-        transition: transform 0.15s ease;
       }
-      .profile-switch-btn:hover { transform: scale(1.04); }
-      .profile-switch-btn svg { width: 16px; height: 16px; transition: transform 0.2s ease; }
-      .profile-switch-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
-      .dark .profile-switch-btn { background: rgba(28, 25, 23, 0.9); color: #e7e5e4; border-color: #292524; }
-      .profile-switch-menu {
-        position: absolute; right: 0; top: calc(100% + 8px); z-index: 60;
-        width: 264px; padding: 8px; border-radius: 18px;
-        background: #fff; border: 1px solid #e7e5e4;
-        box-shadow: 0 14px 36px rgba(28, 25, 23, 0.16);
-        opacity: 0; visibility: hidden; transform: translateY(-6px);
-        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+      .rt-thumb {
+        position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
+        border-radius: 999px; background: #1c1917;
+        transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
       }
-      .profile-switch.is-open .profile-switch-menu {
-        opacity: 1; visibility: visible; transform: none;
-        transition: opacity 0.2s ease, transform 0.2s ease;
+      .role-toggle.to-artist .rt-thumb { transform: translateX(100%); }
+      .rt-opt {
+        position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
+        padding: 0 14px; border-radius: 999px; color: #57534e; text-decoration: none;
+        white-space: nowrap; transition: color 0.35s ease;
       }
-      .dark .profile-switch-menu { background: #1c1917; border-color: #292524; }
-      .ps-title {
-        margin: 4px 10px 6px; font: 600 11px/1.2 "Roboto", sans-serif;
-        letter-spacing: 0.08em; text-transform: uppercase; color: #78716c;
-      }
-      .ps-item {
-        display: flex; align-items: center; gap: 12px; min-height: 56px;
-        padding: 8px 10px; border-radius: 12px; color: #1c1917; text-decoration: none;
-      }
-      .ps-item:hover, .ps-item:focus-visible { background: #f5f5f4; outline: none; }
-      .dark .ps-item { color: #f5f5f4; }
-      .dark .ps-item:hover, .dark .ps-item:focus-visible { background: #292524; }
-      .ps-item img {
-        width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-        border: 1px solid #d6d3d1; flex: none;
-      }
-      .ps-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
-      .ps-text b { font: 600 15px/1.2 "Roboto", sans-serif; }
-      .ps-text small { font: 400 12.5px/1.2 "Roboto", sans-serif; color: #78716c; }
-      .ps-radio {
-        width: 22px; height: 22px; border-radius: 50%; flex: none;
-        border: 1.5px solid #a8a29e; position: relative;
-      }
-      .ps-item.is-current .ps-radio { border-color: #2563eb; background: #2563eb; }
-      .ps-item.is-current .ps-radio::after {
-        content: ""; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px;
-        border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
-      }
+      .rt-opt:hover { color: #1c1917; }
+      .rt-opt.is-current { color: #fff; }
+      .role-toggle.to-artist .rt-opt.is-current { color: #57534e; }
+      .role-toggle.to-artist .rt-opt[data-portal] { color: #fff; }
+      .rt-opt:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+      .dark .role-toggle { background: #0c0d0e; }
+      .dark .rt-thumb { background: #f5f5f4; }
+      .dark .rt-opt { color: #a8a29e; }
+      .dark .rt-opt:hover { color: #f5f5f4; }
+      .dark .rt-opt.is-current,
+      .dark .role-toggle.to-artist .rt-opt[data-portal] { color: #1c1917; }
+      .dark .role-toggle.to-artist .rt-opt.is-current { color: #a8a29e; }
       @media (min-width: 1024px) {
-        .profile-switch-btn {
+        .role-toggle {
           height: calc(46 * var(--hero-u)); font-size: calc(16 * var(--hero-u));
-          padding: 0 calc(14 * var(--hero-u)) 0 calc(20 * var(--hero-u));
+          padding: calc(4 * var(--hero-u));
         }
+        .rt-thumb {
+          top: calc(4 * var(--hero-u)); bottom: calc(4 * var(--hero-u)); left: calc(4 * var(--hero-u));
+          width: calc(50% - 4 * var(--hero-u));
+        }
+        .rt-opt { padding: 0 calc(18 * var(--hero-u)); }
       }
       @media (max-width: 639px) {
-        .profile-switch-btn { height: 40px; }
+        .role-toggle { height: 40px; font-size: 13.5px; }
+        .rt-opt { padding: 0 12px; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .profile-switch-btn, .profile-switch-btn svg, .profile-switch-menu { transition: none; }
+        .rt-thumb, .rt-opt { transition: none; }
       }
     </style>
     <style id="hero-reference-layout">
@@ -5705,33 +5687,12 @@
         <!-- Top Right Interactive Modes + Controls Island. On a phone the
              controls fold away behind the menu button. -->
         <div class="pointer-events-auto flex items-center gap-2">
-          <!-- Profile switcher: Designer (this page) / Artist (./artist/). -->
-          <div id="profileSwitch" class="profile-switch">
-            <button
-              id="profileSwitchBtn"
-              type="button"
-              class="profile-switch-btn"
-              aria-haspopup="true"
-              aria-expanded="false"
-              aria-controls="profileSwitchMenu"
-            >
-              <span class="ps-label">Designer</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-            </button>
-            <div id="profileSwitchMenu" class="profile-switch-menu" role="menu" aria-label="Switch portfolio">
-              <p class="ps-title">Switch portfolio</p>
-              <a href="./index.html" role="menuitemradio" aria-checked="true" class="ps-item is-current">
-                <img src="./assets/imgRectangle56.png" alt="" />
-                <span class="ps-text"><b>Designer</b><small>Product &amp; UX design</small></span>
-                <span class="ps-radio" aria-hidden="true"></span>
-              </a>
-              <a href="./artist/index.html" data-portal role="menuitemradio" aria-checked="false" class="ps-item">
-                <img src="./artist/img/hero/artist-seated.jpg" alt="" />
-                <span class="ps-text"><b>Artist</b><small>Illustration &amp; painting</small></span>
-                <span class="ps-radio" aria-hidden="true"></span>
-              </a>
-            </div>
-          </div>
+          <!-- Designer / Artist toggle: the same person's two modes. -->
+          <nav id="profileSwitch" class="role-toggle" aria-label="Portfolio mode">
+            <span class="rt-thumb" aria-hidden="true"></span>
+            <a href="./index.html" class="rt-opt is-current" aria-current="page">Designer</a>
+            <a href="./artist/index.html" class="rt-opt" data-portal>Artist</a>
+          </nav>
           <button
             id="headerMenuBtn"
             type="button"
@@ -13545,34 +13506,18 @@
     </script>
     <!-- firefly-turn:end -->
     <script>
+      /* Designer / Artist toggle: slide the thumb across the moment the other
+         side is chosen (the page transition then takes over). */
       (function () {
-        var wrap = document.getElementById("profileSwitch");
-        var btn = document.getElementById("profileSwitchBtn");
-        if (!wrap || !btn) return;
-        var items = wrap.querySelectorAll(".ps-item");
-        function setOpen(open, focus) {
-          wrap.classList.toggle("is-open", open);
-          btn.setAttribute("aria-expanded", open ? "true" : "false");
-          if (open && focus) items[0].focus();
-        }
-        btn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          setOpen(!wrap.classList.contains("is-open"), e.detail === 0);
-        });
-        document.addEventListener("click", function (e) {
-          if (!wrap.contains(e.target)) setOpen(false);
-        });
-        wrap.addEventListener("keydown", function (e) {
-          if (e.key === "Escape" && wrap.classList.contains("is-open")) {
-            setOpen(false); btn.focus();
-          } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && wrap.classList.contains("is-open")) {
-            e.preventDefault();
-            var i = Array.prototype.indexOf.call(items, document.activeElement);
-            i = e.key === "ArrowDown" ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
-            items[i].focus();
-          }
-        });
-        items[0].addEventListener("click", function (e) { e.preventDefault(); setOpen(false); });
+        var nav = document.getElementById("profileSwitch");
+        if (!nav) return;
+        var other = nav.querySelector(".rt-opt[data-portal]");
+        var here = nav.querySelector(".rt-opt.is-current");
+        function go() { nav.classList.add("to-artist"); }
+        other.addEventListener("pointerdown", go);
+        other.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") go(); });
+        here.addEventListener("click", function (e) { e.preventDefault(); });
+        window.addEventListener("pageshow", function (e) { if (e.persisted) nav.classList.remove("to-artist"); });
       })();
     </script>
   </body>

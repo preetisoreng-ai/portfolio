@@ -913,63 +913,40 @@
           display: none;
         }
       }
-      /* Instagram-style account switcher */
-      .profile-switch { position: relative; }
-      .profile-switch-btn {
-        display: inline-flex; align-items: center; gap: 4px; height: 28px;
-        font-weight: 700; font-size: 19px; line-height: 1;
+      /* Designer / Artist toggle: one person, two modes. A pill with a
+         thumb behind the active side; picking the other side slides it. */
+      .role-toggle {
+        position: relative; display: grid; grid-template-columns: 1fr 1fr;
+        height: 34px; padding: 3px; border-radius: 999px;
+        /* no outline: a fill a shade darker than the page */
+        background: #ebe5d9; font-size: 14.5px; font-weight: 600; line-height: 1;
       }
-      .profile-switch-btn span {
-        background-image: linear-gradient(var(--yellow), var(--yellow));
-        background-repeat: no-repeat; background-position: 0 92%; background-size: 100% 42%;
+      .rt-thumb {
+        position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
+        border-radius: 999px; background: var(--yellow);
+        transform: translateX(100%);
+        transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
       }
-      .profile-switch-btn svg { width: 18px; height: 18px; transition: transform 0.2s ease; }
-      .profile-switch-btn[aria-expanded="true"] svg { transform: rotate(180deg); }
-      .profile-switch-menu {
-        position: absolute; right: -8px; top: calc(100% + 10px); z-index: 80;
-        width: 264px; padding: 8px; border-radius: 16px;
-        background: #fffdf8; border: 1px solid var(--line);
-        box-shadow: 0 14px 36px rgba(22, 20, 18, 0.14);
-        opacity: 0; visibility: hidden; transform: translateY(-6px);
-        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s 0.2s;
+      .role-toggle.to-designer .rt-thumb { transform: translateX(0); }
+      .rt-opt {
+        position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
+        padding: 0 14px; border-radius: 999px; color: var(--muted); white-space: nowrap;
+        transition: color 0.35s ease;
       }
-      .profile-switch.is-open .profile-switch-menu {
-        opacity: 1; visibility: visible; transform: none;
-        transition: opacity 0.2s ease, transform 0.2s ease;
-      }
-      .ps-title {
-        margin: 4px 10px 6px; font-size: 11px; font-weight: 500;
-        letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-      }
-      .ps-item {
-        display: flex; align-items: center; gap: 12px; min-height: 56px;
-        padding: 8px 10px; border-radius: 10px;
-      }
-      .ps-item:hover, .ps-item:focus-visible { background: #f3ecdf; outline: none; }
-      .ps-item img {
-        width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-        border: 1px solid var(--line); flex: none;
-      }
-      .ps-text { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; line-height: 1.2; }
-      .ps-text b { font-size: 15px; }
-      .ps-text small { font-size: 12.5px; color: var(--muted); }
-      .ps-radio {
-        width: 22px; height: 22px; border-radius: 50%; flex: none;
-        border: 1.5px solid #b5ab9b; position: relative;
-      }
-      .ps-item.is-current .ps-radio { border-color: var(--ink); background: var(--ink); }
-      .ps-item.is-current .ps-radio::after {
-        content: ""; position: absolute; left: 7px; top: 3px; width: 5px; height: 10px;
-        border: solid var(--yellow); border-width: 0 2px 2px 0; transform: rotate(45deg);
-      }
-      header.menu-active .profile-switch { display: none; }
+      .rt-opt:hover { color: var(--ink); }
+      .rt-opt.is-current,
+      .role-toggle.to-designer .rt-opt[data-portal] { color: var(--ink); }
+      .role-toggle.to-designer .rt-opt.is-current { color: var(--muted); }
+      .rt-opt:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+      header.menu-active .role-toggle { display: none; }
       @media (max-width: 640px) {
-        .profile-switch-btn { font-size: 17px; height: 44px; }
+        .role-toggle { height: 40px; font-size: 13.5px; }
+        .rt-opt { padding: 0 11px; }
         .menu-btn { width: 44px; height: 44px; margin-right: -10px; }
         .head-inner { align-items: center; }
       }
       @media (prefers-reduced-motion: reduce) {
-        .profile-switch-btn svg, .profile-switch-menu { transition: none; }
+        .rt-thumb, .rt-opt { transition: none; }
       }
     </style>
   </head>
@@ -982,33 +959,12 @@
             <div class="role">Works</div>
           </div>
           <div style="display: flex; align-items: center; gap: 18px">
-            <!-- Profile switcher: Artist (this page) / Designer (../). -->
-            <div class="profile-switch" id="profileSwitch">
-              <button
-                type="button"
-                class="profile-switch-btn"
-                id="profileSwitchBtn"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-controls="profileSwitchMenu"
-              >
-                <span>Artist</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
-              </button>
-              <div class="profile-switch-menu" id="profileSwitchMenu" role="menu" aria-label="Switch portfolio">
-                <p class="ps-title">Switch portfolio</p>
-                <a href="../index.html" data-portal="fade" role="menuitemradio" aria-checked="false" class="ps-item">
-                  <img src="../assets/imgRectangle56.png" alt="" />
-                  <span class="ps-text"><b>Designer</b><small>Product &amp; UX design</small></span>
-                  <span class="ps-radio" aria-hidden="true"></span>
-                </a>
-                <a href="./index.html" role="menuitemradio" aria-checked="true" class="ps-item is-current">
-                  <img src="img/hero/artist-seated.jpg" alt="" />
-                  <span class="ps-text"><b>Artist</b><small>Illustration &amp; painting</small></span>
-                  <span class="ps-radio" aria-hidden="true"></span>
-                </a>
-              </div>
-            </div>
+            <!-- Designer / Artist toggle: the same person's two modes. -->
+            <nav class="role-toggle" id="profileSwitch" aria-label="Portfolio mode">
+              <span class="rt-thumb" aria-hidden="true"></span>
+              <a href="../index.html" class="rt-opt" data-portal="fade">Designer</a>
+              <a href="./index.html" class="rt-opt is-current" aria-current="page">Artist</a>
+            </nav>
             <button class="menu-btn" id="menuToggle" aria-label="Open menu" aria-expanded="false">
               <span class="lbl">Menu</span>
               <svg
@@ -1688,34 +1644,18 @@
       route();
     </script>
     <script>
+      /* Designer / Artist toggle: slide the thumb across the moment the other
+         side is chosen (the page transition then takes over). */
       (function () {
-        var wrap = document.getElementById("profileSwitch");
-        var btn = document.getElementById("profileSwitchBtn");
-        if (!wrap || !btn) return;
-        var items = wrap.querySelectorAll(".ps-item");
-        function setOpen(open, focus) {
-          wrap.classList.toggle("is-open", open);
-          btn.setAttribute("aria-expanded", open ? "true" : "false");
-          if (open && focus) items[0].focus();
-        }
-        btn.addEventListener("click", function (e) {
-          e.stopPropagation();
-          setOpen(!wrap.classList.contains("is-open"), e.detail === 0);
-        });
-        document.addEventListener("click", function (e) {
-          if (!wrap.contains(e.target)) setOpen(false);
-        });
-        wrap.addEventListener("keydown", function (e) {
-          if (e.key === "Escape" && wrap.classList.contains("is-open")) {
-            setOpen(false); btn.focus();
-          } else if ((e.key === "ArrowDown" || e.key === "ArrowUp") && wrap.classList.contains("is-open")) {
-            e.preventDefault();
-            var i = Array.prototype.indexOf.call(items, document.activeElement);
-            i = e.key === "ArrowDown" ? (i + 1) % items.length : (i - 1 + items.length) % items.length;
-            items[i].focus();
-          }
-        });
-        items[1].addEventListener("click", function (e) { e.preventDefault(); setOpen(false); });
+        var nav = document.getElementById("profileSwitch");
+        if (!nav) return;
+        var other = nav.querySelector(".rt-opt[data-portal]");
+        var here = nav.querySelector(".rt-opt.is-current");
+        function go() { nav.classList.add("to-designer"); }
+        other.addEventListener("pointerdown", go);
+        other.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") go(); });
+        here.addEventListener("click", function (e) { e.preventDefault(); });
+        window.addEventListener("pageshow", function (e) { if (e.persisted) nav.classList.remove("to-designer"); });
       })();
     </script>
   </body>
