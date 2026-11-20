@@ -1,0 +1,2112 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Murmur Case Study | Preeti Soreng</title>
+    <meta
+      name="description"
+      content="Murmur: a social media listening dashboard that brings trends, brands, topics and creators from every platform into one place."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      document.documentElement.className += " js";
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --font-head: "Fraunces", Georgia, serif;
+        --font-body: "Inter", system-ui, sans-serif;
+        --font-hand: "Caveat", cursive;
+        --ink: #0c0b1e;
+        --text: #22212b;
+        --muted: #3d3b4d;
+        --soft: #6a6878;
+        --line: rgba(12, 11, 30, 0.1);
+        --accent: #535398; /* Murmur indigo */
+        --accent-deep: #292967;
+        --accent-line: rgba(83, 83, 152, 0.18);
+        --accent-tint: #eef0fa;
+        --coral: #e2604a; /* Murmur's single coral highlight */
+        --coral-line: rgba(226, 96, 74, 0.22);
+        --night: #101124;
+        --sky: #c5e1f1;
+        --mist: #e9effb;
+        --fs-display: 64px;
+        --fs-h1: 46px;
+        --fs-h2: 38px;
+        --fs-h3: 30px;
+        --fs-h4: 23px;
+        --fs-lede: 21px;
+        --fs-body: 17.5px;
+        --fs-body-sm: 16px;
+        --fs-caption: 14.5px;
+        --fs-chip: 15px;
+        --fs-nav: 15px;
+        --fs-eyebrow: 13px;
+        --fs-meta: 12.5px;
+        --fs-numeral: 52px;
+        --fs-label: 34px;
+        --fs-hand-sm: 26px;
+        --gutter: 56px;
+        --section-gap: 130px;
+      }
+      @media (max-width: 1024px) {
+        :root {
+          --fs-display: 46px;
+          --fs-h1: 36px;
+          --fs-h2: 31px;
+          --fs-h3: 26px;
+          --fs-h4: 21px;
+          --fs-lede: 19px;
+          --fs-body: 17px;
+          --fs-numeral: 44px;
+          --fs-label: 30px;
+          --gutter: 36px;
+          --section-gap: 100px;
+        }
+      }
+      @media (max-width: 760px) {
+        :root {
+          --fs-display: 33px;
+          --fs-h1: 28px;
+          --fs-h2: 25px;
+          --fs-h3: 23px;
+          --fs-h4: 20px;
+          --fs-lede: 17px;
+          --fs-body: 16px;
+          --fs-body-sm: 15.5px;
+          --fs-caption: 14px;
+          --fs-chip: 13.5px;
+          --fs-numeral: 38px;
+          --fs-label: 28px;
+          --fs-hand-sm: 23px;
+          --gutter: 16px;
+          --section-gap: 64px;
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      body {
+        font-family: var(--font-body);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+      @supports (overflow: clip) {
+        html,
+        body {
+          overflow-x: clip;
+        }
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      ul {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 500;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      img,
+      video {
+        max-width: 100%;
+        display: block;
+      }
+      [id] {
+        scroll-margin-top: 110px;
+      }
+
+      /* type */
+      .t-display,
+      .t-h1,
+      .t-h2,
+      .t-h3,
+      .t-h4,
+      .t-lede,
+      .t-body,
+      .t-body-sm,
+      .t-caption {
+        text-wrap: pretty;
+      }
+      .t-display {
+        font: 500 var(--fs-display)/1.16 var(--font-head);
+        letter-spacing: -0.02em;
+      }
+      .t-h1 {
+        font: 500 var(--fs-h1)/1.22 var(--font-head);
+        letter-spacing: -0.015em;
+      }
+      .t-h2 {
+        font: 500 var(--fs-h2)/1.25 var(--font-head);
+        letter-spacing: -0.01em;
+      }
+      .t-h3 {
+        font: 500 var(--fs-h3)/1.3 var(--font-head);
+        letter-spacing: -0.01em;
+      }
+      .t-h4 {
+        font: 500 var(--fs-h4)/1.35 var(--font-head);
+      }
+      .t-lede {
+        font: 400 var(--fs-lede)/1.7 var(--font-body);
+      }
+      .t-body {
+        font: 400 var(--fs-body)/1.75 var(--font-body);
+      }
+      .t-body-sm {
+        font: 400 var(--fs-body-sm)/1.65 var(--font-body);
+      }
+      .t-caption {
+        font: 400 var(--fs-caption)/1.5 var(--font-body);
+      }
+      .t-chip {
+        font: 500 var(--fs-chip)/1.4 var(--font-body);
+        letter-spacing: 0.02em;
+      }
+      .t-nav {
+        font: 500 var(--fs-nav)/1.4 var(--font-body);
+        letter-spacing: 0.02em;
+      }
+      .t-eyebrow {
+        font: 600 var(--fs-eyebrow)/1.4 var(--font-body);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .t-meta {
+        font: 600 var(--fs-meta)/1.4 var(--font-body);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .t-numeral {
+        font: 600 var(--fs-numeral)/1 var(--font-hand);
+      }
+      .t-label {
+        font: 600 var(--fs-label)/1.1 var(--font-hand);
+      }
+      .t-hand-sm {
+        font: 600 var(--fs-hand-sm)/1.2 var(--font-hand);
+      }
+      .c-ink {
+        color: var(--ink);
+      }
+      .c-muted {
+        color: var(--muted);
+      }
+      .c-soft {
+        color: var(--soft);
+      }
+      .c-accent {
+        color: var(--accent);
+      }
+      .c-coral {
+        color: var(--coral);
+      }
+      .c-white {
+        color: #fff;
+      }
+      .c-white-soft {
+        color: rgba(255, 255, 255, 0.76);
+      }
+      .c-faint {
+        color: rgba(197, 225, 241, 0.55);
+      }
+      .fw-600 {
+        font-weight: 600;
+      }
+
+      /* layout */
+      .row {
+        display: flex;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+      }
+      .wrap {
+        flex-wrap: wrap;
+      }
+      .ai-center {
+        align-items: center;
+      }
+      .ai-start {
+        align-items: flex-start;
+      }
+      .ai-stretch {
+        align-items: stretch;
+      }
+      .jc-between {
+        justify-content: space-between;
+      }
+      .gap-6 {
+        gap: 6px;
+      }
+      .gap-8 {
+        gap: 8px;
+      }
+      .gap-10 {
+        gap: 10px;
+      }
+      .gap-12 {
+        gap: 12px;
+      }
+      .gap-14 {
+        gap: 14px;
+      }
+      .gap-16 {
+        gap: 16px;
+      }
+      .gap-20 {
+        gap: 20px;
+      }
+      .gap-26 {
+        gap: 26px;
+      }
+      .gap-30 {
+        gap: 30px;
+      }
+      .gap-34 {
+        gap: 34px;
+      }
+      .gap-44 {
+        gap: 44px;
+      }
+      .gap-56 {
+        gap: 56px;
+      }
+      .grid {
+        display: grid;
+      }
+      .cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .cols-icon {
+        grid-template-columns: 22px minmax(0, 1fr);
+      }
+      .cols-45-55 {
+        grid-template-columns: 45fr 55fr;
+      }
+      .span-2 {
+        grid-column: span 2;
+      }
+      .measure {
+        max-width: 860px;
+      }
+      .cs-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+      @media (max-width: 900px) {
+        .cols-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 760px) {
+        .cols-2,
+        .cols-3,
+        .cols-45-55 {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .gap-44 {
+          gap: 28px;
+        }
+      }
+
+      /* chrome */
+      .cs-progress {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: 3px;
+        z-index: 120;
+        background: rgba(12, 11, 30, 0.06);
+        pointer-events: none;
+      }
+      .cs-progress-fill {
+        height: 100%;
+        width: 100%;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left center;
+      }
+      .cs-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        padding: 24px 0 20px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 2px solid var(--accent-line);
+      }
+      .cs-home {
+        transition:
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .cs-home:hover {
+        color: var(--accent);
+        transform: translateX(-3px);
+      }
+      .cs-nav a {
+        position: relative;
+        color: var(--muted);
+        transition:
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .cs-nav a:hover {
+        color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .cs-nav a svg {
+        position: absolute;
+        left: 0;
+        top: 22px;
+        width: 100%;
+        height: 10px;
+        overflow: visible;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+      .cs-nav a svg path {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .cs-nav a:hover svg,
+      .cs-nav a[data-active="1"] svg {
+        opacity: 1;
+      }
+      .cs-nav a:hover svg path {
+        animation: wiggle 0.55s ease-out forwards;
+      }
+      .cs-nav a[data-active="1"] {
+        color: var(--accent);
+      }
+      .cs-nav a[data-active="1"] svg path {
+        stroke-dashoffset: 0;
+      }
+      @keyframes wiggle {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @media (max-width: 900px) {
+        .cs-header .cs-container {
+          flex-wrap: wrap;
+          row-gap: 8px;
+        }
+        .cs-nav {
+          width: 100%;
+          flex-wrap: wrap;
+          gap: 4px 20px;
+        }
+      }
+      @media (max-width: 760px) {
+        .cs-header {
+          padding: 12px 0 10px;
+          background: rgba(255, 255, 255, 0.97);
+          backdrop-filter: none;
+        }
+      }
+
+      /* hover lift + reveal */
+      [data-hov] {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      [data-hov]:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(12, 11, 30, 0.08);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .js [data-rise] {
+          opacity: 0;
+          transform: translateY(26px);
+          transition:
+            opacity 0.6s cubic-bezier(0.22, 0.7, 0.3, 1),
+            transform 0.6s cubic-bezier(0.22, 0.7, 0.3, 1);
+          animation: rise-failsafe 0s linear 4s forwards;
+        }
+        .js [data-rise][data-in="1"] {
+          opacity: 1;
+          transform: none;
+          animation: none;
+        }
+      }
+      @keyframes rise-failsafe {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* page */
+      .page {
+        padding-bottom: 120px;
+      }
+      .section {
+        padding-top: var(--section-gap);
+      }
+
+      /* hero */
+      .hero {
+        padding-top: 92px;
+      }
+      .chip {
+        background: var(--accent-tint);
+        color: var(--accent-deep);
+        border-radius: 999px;
+        padding: 9px 20px;
+      }
+      .hero-title {
+        max-width: 1120px;
+      }
+      .hero-lede {
+        max-width: 900px;
+      }
+      .hero-media {
+        padding-top: 56px;
+      }
+      .media-card {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 2px solid var(--line);
+        box-shadow: 0 6px 20px rgba(12, 11, 30, 0.06);
+        background: #fff;
+      }
+      .bar {
+        height: 12px;
+        background: var(--accent);
+      }
+      .bar--coral {
+        background: var(--coral);
+      }
+      .media-card-body {
+        position: relative;
+        height: 420px;
+        background: var(--sky);
+      }
+      .media-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      /* setup */
+      .setup {
+        margin-top: 64px;
+        border: 2px solid var(--line);
+        border-radius: 30px;
+        padding: 40px 44px;
+      }
+      .setup-note {
+        padding-top: 18px;
+        border-top: 2px solid rgba(12, 11, 30, 0.07);
+      }
+      .live-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-weight: 600;
+        border-bottom: 1.5px solid var(--accent-line);
+        padding-bottom: 2px;
+        transition: border-color 0.18s ease;
+      }
+      .live-link:hover {
+        border-color: var(--accent);
+      }
+      .note-pill {
+        align-self: flex-start;
+        background: #fff6d6;
+        border-radius: 999px;
+        padding: 8px 18px;
+      }
+
+      /* dark reasons band */
+      .reasons {
+        margin-top: var(--section-gap);
+        background: var(--night);
+        border-radius: 40px;
+        padding: 74px 72px;
+      }
+
+      /* goals + IA cells */
+      .goal-card,
+      .ia-cell {
+        background: #fff;
+        border: 2px solid var(--line);
+        border-radius: 26px;
+        padding: 30px 30px 34px;
+      }
+      .ia-cell {
+        background: var(--mist);
+        border-color: transparent;
+      }
+
+      /* personas */
+      .persona-card {
+        background: #fff;
+        border: 2.5px solid var(--accent);
+        border-radius: 34px;
+        padding: 44px 46px;
+      }
+      .persona-card--coral {
+        border-color: var(--coral);
+      }
+      .quote {
+        background: #fff3b0;
+        border-radius: 16px;
+        padding: 18px 22px;
+      }
+      .quote-icon {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        margin-top: 2px;
+      }
+      .goal-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 14px;
+      }
+      .goal-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .goal-list svg {
+        margin-top: 4px;
+      }
+
+      /* flow cards */
+      .flow-card {
+        background: #fff;
+        border: 2px solid var(--accent-line);
+        border-radius: 30px;
+        padding: 40px 44px;
+      }
+      .flow-card--coral {
+        border-color: var(--coral-line);
+      }
+      .flow-media {
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fbfbfe;
+        box-shadow: inset 0 0 0 1.5px var(--line);
+        padding: 18px;
+      }
+      .flow-media img {
+        width: 100%;
+        height: auto;
+      }
+      .flow-steps {
+        background: var(--accent-tint);
+        border-radius: 16px;
+        padding: 16px 20px;
+      }
+      .flow-split {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+      @media (max-width: 900px) {
+        .flow-split {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+      .cap-pill {
+        align-self: flex-start;
+        background: #f6f7fc;
+        border: 1.5px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 16px;
+        color: #4a4858;
+      }
+      .bullets {
+        padding-left: 1.1em;
+        display: grid;
+        gap: 10px;
+      }
+      .bullets strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      /* solution scrolly */
+      .step {
+        padding: 14vh 0;
+        min-height: 60vh;
+        justify-content: center;
+      }
+      .step--first {
+        padding-top: 0;
+        justify-content: flex-start;
+      }
+      .step--last {
+        padding-bottom: 22vh;
+      }
+      .scrolly-sticky {
+        position: sticky;
+        top: 112px;
+      }
+      .scrolly-frame {
+        position: relative;
+        aspect-ratio: 1488 / 1240;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 2px solid var(--line);
+        background: #fbfbfe;
+      }
+      .scrolly-layer {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        opacity: 0;
+        transform: translateY(26px);
+        transition:
+          opacity 0.42s ease,
+          transform 0.42s cubic-bezier(0.22, 0.7, 0.3, 1);
+      }
+      .scrolly-layer[data-on="1"] {
+        opacity: 1;
+        transform: none;
+      }
+      .scrolly-caps {
+        position: relative;
+        height: 44px;
+        margin-top: 14px;
+      }
+      .scrolly-cap {
+        position: absolute;
+        left: 0;
+        top: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 0.32s ease,
+          transform 0.32s ease;
+      }
+      .scrolly-cap[data-on="1"] {
+        opacity: 1;
+        transform: none;
+      }
+      .m-fig {
+        display: none;
+      }
+      @media (max-width: 900px) {
+        .scrolly {
+          display: block;
+        }
+        .scrolly-sticky {
+          display: none;
+        }
+        .step,
+        .step--first,
+        .step--last {
+          padding: 26px 0;
+          min-height: 0;
+        }
+        .m-fig {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 6px;
+        }
+        .m-fig img {
+          border-radius: 16px;
+          border: 2px solid var(--line);
+        }
+      }
+
+      /* tables */
+      .table-card {
+        border: 2px solid var(--line);
+        border-radius: 30px;
+        overflow: hidden;
+      }
+      .tbl {
+        display: grid;
+        grid-template-columns: 1fr 1.25fr 1.25fr;
+      }
+      .tbl > div {
+        padding: 18px 24px;
+        border-top: 1.5px solid var(--line);
+      }
+      .tbl > .th {
+        border-top: 0;
+        background: var(--accent-tint);
+      }
+      .tbl > .td-key {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      @media (max-width: 760px) {
+        .tbl {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .tbl > .th {
+          display: none;
+        }
+        .tbl > div {
+          border-top: 0;
+          padding: 4px 20px;
+        }
+        .tbl > .td-key {
+          border-top: 1.5px solid var(--line);
+          padding-top: 18px;
+        }
+        .tbl > .td-key:first-of-type {
+          border-top: 0;
+        }
+        .tbl > .td-last {
+          padding-bottom: 18px;
+        }
+        .tbl > div[data-k]::before {
+          content: attr(data-k);
+          display: block;
+          font: 600 11px/1.6 var(--font-body);
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--accent);
+        }
+      }
+
+      /* decisions */
+      .decision-card {
+        background: #fff;
+        border: 2px solid var(--line);
+        border-radius: 26px;
+        padding: 32px 32px 36px;
+      }
+      .decision-card:nth-child(even) {
+        border-color: var(--coral-line);
+      }
+
+      /* impact */
+      .impact {
+        width: calc(100% - 112px);
+        max-width: 1320px;
+        margin: var(--section-gap) auto 24px;
+        background: var(--mist);
+        border-radius: 40px;
+        padding: 60px 66px 64px;
+        position: relative;
+        overflow: hidden;
+      }
+      .impact-row {
+        display: grid;
+        grid-template-columns: 1fr 1.4fr 1.4fr;
+        gap: 32px;
+        padding: 26px 0;
+        border-top: 2px solid rgba(12, 11, 30, 0.08);
+        position: relative;
+      }
+      .impact-row:first-of-type {
+        border-top: 0;
+      }
+      .impact-confetti span {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        opacity: 0.85;
+        animation: snap 1.6s steps(1, end) infinite;
+      }
+      @keyframes snap {
+        50% {
+          transform: translate(var(--dx), var(--dy)) rotate(90deg);
+        }
+      }
+      @media (max-width: 1024px) {
+        .impact {
+          width: 100%;
+          margin: 80px 0 24px;
+          padding: 48px 40px;
+        }
+        .reasons {
+          padding: 48px 40px;
+        }
+        .persona-card,
+        .flow-card,
+        .setup {
+          padding: 32px 30px;
+        }
+      }
+      @media (max-width: 760px) {
+        .hero {
+          padding-top: 36px;
+          gap: 22px;
+        }
+        .chip {
+          padding: 7px 14px;
+        }
+        .hero-media {
+          padding-top: 30px;
+        }
+        .media-card-body {
+          height: auto;
+          aspect-ratio: 4 / 3;
+        }
+        .setup {
+          margin-top: 40px;
+          padding: 24px 20px;
+          border-radius: 24px;
+        }
+        .reasons {
+          padding: 34px 22px 38px;
+          border-radius: 28px;
+        }
+        .persona-card,
+        .flow-card {
+          padding: 26px 20px;
+          border-radius: 26px;
+        }
+        .flow-media {
+          padding: 10px;
+        }
+        .impact {
+          margin: 56px 0 8px;
+          padding: 32px 22px 34px;
+          border-radius: 28px;
+        }
+        .impact-row {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 8px;
+        }
+        .table-card {
+          border-radius: 22px;
+        }
+      }
+
+      /* other projects + back */
+      .op-card {
+        border: 2px solid var(--line);
+        border-radius: 26px;
+        overflow: hidden;
+        background: #fff;
+        color: inherit;
+      }
+      .op-shot {
+        height: 190px;
+        background: var(--mist);
+        overflow: hidden;
+      }
+      .op-shot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+      .op-body {
+        padding: 22px 24px 26px;
+      }
+      .back-row {
+        margin-top: 110px;
+        border-top: 2px solid var(--accent-line);
+        padding-top: 56px;
+      }
+      .back-link {
+        border: 2.5px solid var(--ink);
+        border-radius: 999px;
+        padding: 14px 38px;
+        color: var(--ink);
+        transition:
+          background 0.18s ease,
+          color 0.18s ease;
+      }
+      .back-link:hover {
+        background: var(--ink);
+        color: #fff;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scrolly-layer,
+        .scrolly-cap {
+          transition: none !important;
+        }
+        .impact-confetti span {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="cs-progress" aria-hidden="true">
+        <div class="cs-progress-fill" data-progress></div>
+      </div>
+
+      <header class="cs-header">
+        <div class="cs-container row gap-34 ai-center jc-between">
+          <a class="t-hand-sm c-ink row gap-10 ai-center cs-home" href="../index.html">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#535398"
+              stroke-width="2.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            back home
+          </a>
+          <nav class="t-nav row gap-34 ai-center cs-nav" aria-label="Sections">
+            <a href="#setup" data-spy="setup">setup</a>
+            <a href="#problem" data-spy="problem">problem</a>
+            <a href="#users" data-spy="users">users</a>
+            <a href="#flows" data-spy="flows">flows</a>
+            <a href="#solution" data-spy="solution">solution</a>
+            <a href="#decisions" data-spy="decisions">decisions</a>
+            <a href="#impact" data-spy="impact">impact</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="cs-container">
+        <!-- ============ HERO ============ -->
+        <div class="stack gap-34 hero">
+          <div class="row wrap gap-12">
+            <div class="t-chip chip">Product Designer</div>
+            <div class="t-chip chip">Social Media Listening</div>
+            <div class="t-chip chip">Information Architecture + UX</div>
+          </div>
+          <h1 class="t-display c-ink hero-title">
+            Listen to every platform at once:
+            <span class="c-accent">trends, brands, topics</span> and the creators who move them
+          </h1>
+          <p class="t-lede hero-lede">
+            The platform analyses social media posts across multiple platforms to uncover emerging
+            trends, brand performance, topic engagement, and influencer activity. Designed for
+            Social Media Marketing Managers and Market Research Analysts, it enables users to
+            benchmark their brand against competitors, compare the performance of different topics,
+            and identify influential voices within relevant conversations.
+          </p>
+        </div>
+
+        <!-- Media slots: swap any <img> for <video autoplay muted loop playsinline preload="metadata" class="media-cover" src="..."></video> -->
+        <div class="grid cols-2 gap-34 hero-media">
+          <div class="media-card" data-rise>
+            <div class="bar"></div>
+            <div class="media-card-body">
+              <img
+                class="media-cover"
+                src="../assets/murmurOverview.png"
+                alt="Murmur dashboard overview for the keyword sunscreen"
+              />
+            </div>
+          </div>
+          <div class="media-card" data-rise>
+            <div class="bar bar--coral"></div>
+            <div class="media-card-body">
+              <img
+                class="media-cover"
+                src="../assets/murmurTopics.png"
+                alt="Murmur Topics screen with themes, sentiment and platform breakdown"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SETUP ============ -->
+        <section class="stack gap-26 setup" id="setup" data-rise>
+          <div class="t-label c-accent">project setup</div>
+          <div class="grid cols-4 gap-30" style="row-gap: 30px; column-gap: 40px">
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Product</div>
+              <div class="t-body-sm c-ink">Murmur</div>
+            </div>
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Role</div>
+              <div class="t-body-sm c-ink">Product Designer</div>
+            </div>
+            <div class="stack gap-8 span-2">
+              <div class="t-meta c-accent">Scope</div>
+              <div class="t-body-sm c-ink">
+                Information Architecture · UX Design · Visual Design · Design System · Prototyping
+              </div>
+            </div>
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Year</div>
+              <div class="t-body-sm c-ink">October 2026</div>
+            </div>
+            <div class="stack gap-8 span-2">
+              <div class="t-meta c-accent">Live link</div>
+              <a
+                class="t-body-sm live-link"
+                href="https://preetisoreng-ai.github.io/Murmur-Social-Media-Listening-/#overview"
+                target="_blank"
+                rel="noopener"
+                >Try the Murmur dashboard <span aria-hidden="true">&#8599;&#xFE0E;</span
+                ><span
+                  style="
+                    position: absolute;
+                    width: 1px;
+                    height: 1px;
+                    overflow: hidden;
+                    clip: rect(0 0 0 0);
+                  "
+                >
+                  (opens in a new tab)</span
+                ></a
+              >
+            </div>
+          </div>
+          <p class="t-body setup-note">
+            By connecting brands with the right influencers for specific products and campaigns, the
+            platform supports targeted marketing strategies, informed budget allocation, and greater
+            brand awareness. These insights also help businesses identify evolving consumer
+            interests, discover opportunities for product innovation, and make data-driven decisions
+            that contribute to sales growth.
+          </p>
+          <div class="t-body-sm note-pill">
+            <strong>Note:</strong> The dashboard uses dummy data.
+          </div>
+        </section>
+
+        <!-- ============ PROBLEM ============ -->
+        <section class="stack gap-30 section" id="problem">
+          <div class="t-label c-accent" data-rise>problem statement</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            Conversations about a brand, a product category or a competitor happen everywhere at
+            once.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            On X, Instagram, TikTok, YouTube, Reddit and LinkedIn. Each platform has its own format,
+            its own audience and its own way of measuring engagement, so the full picture is never
+            in one place.
+          </p>
+          <div class="quote row gap-12 ai-start measure" data-rise>
+            <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"
+                stroke="#8a6d1f"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+            <p class="t-body-sm" style="color: #3a2f26">
+              Marketing managers and research analysts end up stitching exports, spreadsheets and
+              screenshots together by hand. By the time a report is ready, the trend has moved on.
+              It is hard to tell which topics are growing, how the brand compares with competitors,
+              which creators are genuinely relevant rather than simply large, and which complaints
+              or buying signals need a reply today. The result is slower decisions, campaign budgets
+              spent on guesswork, and missed chances to act while a conversation is still live.
+            </p>
+          </div>
+        </section>
+
+        <div class="stack gap-34 reasons" data-rise>
+          <div class="t-label" style="color: #9fc3dd">the business case</div>
+          <div class="grid cols-3 gap-44">
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">01</div>
+              <h3 class="t-h4 c-white">Drive and influence sales</h3>
+              <p class="t-body-sm c-white-soft">
+                Drive and influence sales, and create new product lines.
+              </p>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">02</div>
+              <h3 class="t-h4 c-white">Generate brand awareness</h3>
+              <p class="t-body-sm c-white-soft">Generate brand awareness.</p>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">03</div>
+              <h3 class="t-h4 c-white">Plan the marketing budget</h3>
+              <p class="t-body-sm c-white-soft">
+                Plan and decide the social media marketing budget.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ USERS ============ -->
+        <section class="stack gap-30 section" id="users">
+          <div class="t-label c-accent" data-rise>user goals</div>
+          <div class="grid cols-3 gap-34" style="gap: 24px">
+            <div class="stack gap-14 goal-card" data-hov data-rise>
+              <div class="t-numeral c-accent">01</div>
+              <p class="t-body">
+                Identify topics and themes related to a particular keyword and know the trends on
+                social media platforms
+              </p>
+            </div>
+            <div class="stack gap-14 goal-card" data-hov data-rise>
+              <div class="t-numeral c-coral">02</div>
+              <p class="t-body">
+                Identify top influencers and top posts on social media for promotional activities
+              </p>
+            </div>
+            <div class="stack gap-14 goal-card" data-hov data-rise>
+              <div class="t-numeral c-accent">03</div>
+              <p class="t-body">Identify and compare the most suitable influencers for the brand</p>
+            </div>
+          </div>
+
+          <div class="t-label c-accent" style="margin-top: 56px" data-rise>who it's for</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            Two primary users who read the same conversation for different reasons.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            Murmur is designed around two primary users who read the same conversation for different
+            reasons:
+          </p>
+
+          <div class="grid cols-2 gap-34 ai-stretch" style="padding-top: 12px">
+            <div class="stack gap-26 persona-card" data-hov data-rise>
+              <div>
+                <div class="t-label c-accent">persona 01</div>
+                <h3 class="t-h3 c-ink" style="margin-top: 6px">Social Media Marketing Manager</h3>
+              </div>
+              <div class="quote row gap-12 ai-start">
+                <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="8" r="3.6" stroke="#8a6d1f" stroke-width="1.7" />
+                  <path
+                    d="M4.8 20c.6-3.7 3.6-5.8 7.2-5.8s6.6 2.1 7.2 5.8"
+                    stroke="#8a6d1f"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <p class="t-body-sm" style="color: #3a2f26">
+                  “I need to know what to post, where, when — and who should post it with us.”
+                </p>
+              </div>
+              <div class="stack gap-14">
+                <div class="t-eyebrow c-muted">Goals</div>
+                <ul class="goal-list t-body">
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#535398"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Grow brand awareness and share of voice
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#535398"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Pick creators who fit a product or campaign
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#535398"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Spend the campaign budget where it lands
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#535398"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Answer complaints and questions before they escalate
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="stack gap-26 persona-card persona-card--coral" data-hov data-rise>
+              <div>
+                <div class="t-label c-coral">persona 02</div>
+                <h3 class="t-h3 c-ink" style="margin-top: 6px">Market Research Analyst</h3>
+              </div>
+              <div class="quote row gap-12 ai-start">
+                <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="8" r="3.6" stroke="#8a6d1f" stroke-width="1.7" />
+                  <path
+                    d="M4.8 20c.6-3.7 3.6-5.8 7.2-5.8s6.6 2.1 7.2 5.8"
+                    stroke="#8a6d1f"
+                    stroke-width="1.7"
+                    stroke-linecap="round"
+                  />
+                </svg>
+                <p class="t-body-sm" style="color: #3a2f26">
+                  “I need to see what people really think, how it is changing, and how we compare.”
+                </p>
+              </div>
+              <div class="stack gap-14">
+                <div class="t-eyebrow c-muted">Goals</div>
+                <ul class="goal-list t-body">
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#e2604a"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Spot emerging trends and rising topics early
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#e2604a"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Track sentiment by topic and by platform
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#e2604a"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Benchmark the brand against competitors
+                  </li>
+                  <li>
+                    <svg
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#e2604a"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M4 12.5 9.5 18 20 6.5" /></svg
+                    >Surface unmet needs that point to product innovation
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ FLOWS ============ -->
+        <section class="stack gap-30 section" id="flows">
+          <div class="t-label c-accent" data-rise>user scenarios &amp; flows</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            Every flow starts on the home page and narrows the conversation.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            Each flow begins on the home page with a choice between keyword-based and
+            influencer-based trends, then narrows the conversation with keyword, source and
+            timeframe before the insight the user came for.
+          </p>
+
+          <div class="stack gap-34" style="padding-top: 18px">
+            <article class="stack gap-16 flow-card" data-hov data-rise>
+              <div class="t-eyebrow c-accent">User Scenario 01</div>
+              <h3 class="t-h3 c-ink">Find top influencers for a vegan brand launch</h3>
+              <p class="t-body measure">
+                Maybelline is launching a new vegan brand for teenage girls. The marketing team
+                wants to create buzz on social media, and the social media marketing manager would
+                like to identify top influencers for the brand promotion.
+              </p>
+              <p class="t-body-sm flow-steps">
+                <strong>Flow:</strong> Home page → keyword-based trends → set keyword "vegan
+                skincare" → trend insights → set timeframe 3 months and source Instagram → trend
+                description → identify the top 2 influencers.
+              </p>
+              <div class="flow-media">
+                <img
+                  loading="lazy"
+                  src="../assets/murmurFlowScenario1.png"
+                  alt="User flow for scenario 1: from the home page through keyword-based trends, keyword vegan skincare, a 3 month Instagram timeframe and trend description, to identifying the top 2 influencers"
+                />
+              </div>
+              <div class="t-caption cap-pill">Fig. User flow for Scenario 01</div>
+            </article>
+
+            <article class="stack gap-16 flow-card flow-card--coral" data-hov data-rise>
+              <div class="t-eyebrow c-coral">User Scenario 02</div>
+              <h3 class="t-h3 c-ink">Compare influencers to pick the best fit</h3>
+              <p class="t-body measure">
+                Maybelline has identified a list of top influencers. Now they want to compare them
+                to identify the most suitable influencer for their brand.
+              </p>
+              <p class="t-body-sm flow-steps">
+                <strong>Flow:</strong> Home page → influencer-based trends → select trends of an
+                influencer → set influencer, timeframe, source and type of data → compare to
+                identify the most suitable influencer.
+              </p>
+              <div class="flow-media">
+                <img
+                  loading="lazy"
+                  src="../assets/murmurFlowScenario2.png"
+                  alt="User flow for scenario 2: from the home page through influencer-based trends and an influencer's trends, setting influencer, timeframe, source and type of data, to comparing influencers"
+                />
+              </div>
+              <div class="t-caption cap-pill">Fig. User flow for Scenario 02</div>
+            </article>
+
+            <article class="flow-card" data-hov data-rise>
+              <div class="grid cols-45-55 gap-56 ai-start">
+                <div class="stack gap-16">
+                  <div class="t-eyebrow c-accent">User Scenarios 03 – 06</div>
+                  <h3 class="t-h3 c-ink">
+                    Jo, from the marketing team, exploring skincare on Instagram
+                  </h3>
+                  <ul class="bullets t-body">
+                    <li>
+                      <strong>Trends over time:</strong> see what trends are being spoken about in
+                      skincare on Instagram and how they are changing over time.
+                    </li>
+                    <li>
+                      <strong>Top trends, posts and influencers:</strong> see the description of top
+                      trends, plus the top posts and top influencers on these trends.
+                    </li>
+                    <li>
+                      <strong>Top skincare brands:</strong> see which skincare brands are mentioned
+                      most on Instagram and how their engagement compares.
+                    </li>
+                    <li>
+                      <strong>Top skincare ingredients:</strong> see which skincare ingredients are
+                      mentioned most on Instagram and how their engagement compares.
+                    </li>
+                  </ul>
+                </div>
+                <div class="stack gap-14">
+                  <div class="flow-media">
+                    <img
+                      loading="lazy"
+                      src="../assets/murmurFlowScenarios.png"
+                      alt="Four user flows for Jo: skincare trends over time, top trends with posts and influencers, top skincare brands, and top skincare ingredients on Instagram"
+                    />
+                  </div>
+                  <div class="t-caption cap-pill">Fig. User flows for Scenarios 03 – 06</div>
+                </div>
+              </div>
+            </article>
+
+            <article class="stack gap-16 flow-card flow-card--coral" data-hov data-rise>
+              <div class="t-eyebrow c-coral">Task Flow &amp; User Flow</div>
+              <h3 class="t-h3 c-ink">A market researcher views the topics for a keyword</h3>
+              <p class="t-body measure">
+                The task flow maps the shortest path: log in, open keyword-based trends, enter a
+                keyword and credentials, view and edit topic names for different topics, then open
+                the topics deep dive. The user flow adds the decision point: a user who enters a
+                keyword, source and timeframe goes on to view or edit the names of the first five
+                topics; a user who skips it lands on a topics overview for the default keyword,
+                Skincare. Both paths end in the topics deep dive.
+              </p>
+              <div class="flow-split">
+                <div class="stack gap-12">
+                  <div class="flow-media">
+                    <img
+                      loading="lazy"
+                      src="../assets/murmurTaskFlow.png"
+                      alt="Task flow: login, keyword based trends, enter keyword, enter credentials, view and edit topic names, topics deep dive"
+                    />
+                  </div>
+                  <div class="t-caption cap-pill">
+                    Fig. Task flow for viewing topics for a keyword
+                  </div>
+                </div>
+                <div class="stack gap-12">
+                  <div class="flow-media">
+                    <img
+                      loading="lazy"
+                      src="../assets/murmurUserFlow.png"
+                      alt="User flow with a decision on entering keyword, source and timeframe: yes leads to entering credentials and editing topic names, no leads to the topics overview for Skincare; both end in the topics deep dive"
+                    />
+                  </div>
+                  <div class="t-caption cap-pill">
+                    Fig. User flow for viewing topics for a keyword
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- ============ INFORMATION ARCHITECTURE ============ -->
+        <section class="stack gap-30 section" id="ia">
+          <div class="t-label c-accent" data-rise>information architecture</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            Everything starts from one question: what is being said about a keyword?
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            A single filter bar — keyword, time range (4 weeks, 12 weeks or 6 months) and source —
+            sits at the top and applies to every screen, so users never lose their context when they
+            move between views. The content is split into six tabs, each answering one job.
+          </p>
+          <div class="grid cols-3" style="gap: 20px; padding-top: 8px">
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-accent">01</div>
+              <h3 class="t-h4 c-ink">Overview</h3>
+              <p class="t-body-sm c-muted">
+                The big picture and what changed: mentions, mood, brand share and auto-surfaced
+                discoveries.
+              </p>
+            </div>
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-coral">02</div>
+              <h3 class="t-h4 c-ink">Topics</h3>
+              <p class="t-body-sm c-muted">
+                Themes inside the conversation, how people feel about each one, and where it is
+                discussed.
+              </p>
+            </div>
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-accent">03</div>
+              <h3 class="t-h4 c-ink">Brands</h3>
+              <p class="t-body-sm c-muted">
+                Your share of voice against competitors, platform by platform.
+              </p>
+            </div>
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-coral">04</div>
+              <h3 class="t-h4 c-ink">Creators</h3>
+              <p class="t-body-sm c-muted">
+                Find and compare the voices that matter, including small creators with high
+                relevance.
+              </p>
+            </div>
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-accent">05</div>
+              <h3 class="t-h4 c-ink">Campaigns</h3>
+              <p class="t-body-sm c-muted">
+                Where, when and what to promote next, with creators who already fit the topic.
+              </p>
+            </div>
+            <div class="stack gap-12 ia-cell" data-rise>
+              <div class="t-numeral c-coral">06</div>
+              <h3 class="t-h4 c-ink">Inbox</h3>
+              <p class="t-body-sm c-muted">
+                Customer care and new leads that need a reply, sorted by priority.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ THE SOLUTION (scrolly) ============ -->
+        <section class="stack gap-30 section" id="solution">
+          <div class="t-label c-accent">the solution</div>
+          <div class="grid cols-45-55 gap-56 ai-start scrolly" data-scrolly>
+            <div>
+              <div class="stack gap-20 step step--first" data-step="0">
+                <div class="t-eyebrow c-accent">Screen 01 · Overview</div>
+                <h2 class="t-h2 c-ink">The big picture, and what changed.</h2>
+                <p class="t-body">
+                  The landing screen answers "how are we doing?" in seconds. Total mentions with the
+                  change on the previous period, the number of creators in the conversation, and an
+                  overall mood scale sit at the top. Below, brand share of voice, mentions over time
+                  split by sentiment, top posts filtered by tone and trending topics give the
+                  detail.
+                </p>
+                <p class="t-body">
+                  Discoveries are surfaced automatically — the fastest-growing topic, negative talk
+                  to watch, hidden-gem creators and competitors gaining share — each with a link
+                  straight to the screen that explains it.
+                </p>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurOverview.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Overview — mentions, mood, brand share and trending topics
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="1">
+                <div class="t-eyebrow c-coral">Screen 02 · Topics</div>
+                <h2 class="t-h2 c-ink">Themes inside the conversation.</h2>
+                <p class="t-body">
+                  Posts are grouped into themes that can be sorted by most talked about, fastest
+                  growing or most negative. Selecting a topic shows its trend, how people feel,
+                  which platforms it lives on, example posts and the creators driving it.
+                </p>
+                <div class="quote row gap-12 ai-start">
+                  <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"
+                      stroke="#8a6d1f"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <div class="stack gap-6">
+                    <p class="t-body-sm" style="color: #3a2f26">
+                      “every sunscreen leaves me grey” becomes “a tinted SPF for deeper skin tones”
+                    </p>
+                    <p class="t-caption" style="color: rgba(58, 47, 38, 0.62)">
+                      Insights turn complaints into product ideas — with the number of mentions and
+                      growth behind each one, giving product teams evidence for innovation.
+                    </p>
+                  </div>
+                </div>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurTopics.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Topics — sentiment, platforms and product ideas for each theme
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="2">
+                <div class="t-eyebrow c-accent">Screen 03 · Brands</div>
+                <h2 class="t-h2 c-ink">Benchmark against competitors.</h2>
+                <p class="t-body">
+                  A one-line summary states the brand's position in plain language — its share of
+                  brand mentions and the platform where it leads. Share of voice is broken down by
+                  platform, so it is clear where competitors are winning, and a scorecard compares
+                  mentions, share, change and sentiment for every brand side by side.
+                </p>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurBrands.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Brands — share of voice by platform and brand scorecard
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="3">
+                <div class="t-eyebrow c-coral">Screen 04 · Creators</div>
+                <h2 class="t-h2 c-ink">The right voices, not just the loudest.</h2>
+                <p class="t-body">
+                  Creators are ranked by how much of what they post is on-topic, alongside
+                  followers, engagement, posting frequency and tone. A "hidden gems" filter surfaces
+                  smaller accounts with high relevance and strong engagement — often a better fit
+                  for a product launch than a large, general audience. Up to three creators can be
+                  compared side by side before a brief goes out.
+                </p>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurInfluencers.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Creators — on-topic share, engagement and hidden gems
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="4">
+                <div class="t-eyebrow c-accent">Screen 05 · Campaigns</div>
+                <h2 class="t-h2 c-ink">Where, when and what to promote next.</h2>
+                <p class="t-body">
+                  Listening turns into a plan. A recommended next campaign names the topic,
+                  platform, day and time in one sentence, with a button to brief the best-fitting
+                  creator. A heatmap shows positive engagement by topic and platform, another shows
+                  the best time to post by day and daypart, and "messages that land" reuses the
+                  language of the most positive posts — supporting targeted strategies and better
+                  budget allocation.
+                </p>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurCampaigns.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Campaigns — recommended campaign, where to promote and when to post
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step step--last" data-step="5">
+                <div class="t-eyebrow c-coral">Screen 06 · Inbox</div>
+                <h2 class="t-h2 c-ink">Customer care and new leads.</h2>
+                <p class="t-body">
+                  Posts that need a reply are collected in one place and split into two queues:
+                  customer care (complaints, questions and feedback that mention the brand) and
+                  leads (people asking for recommendations, comparing brands or ready to buy).
+                </p>
+                <p class="t-body">
+                  Each post is prioritised by urgency, age and reach, so the oldest urgent posts
+                  come first, and comes with a suggested reply that can be drafted and marked as
+                  done.
+                </p>
+                <figure class="m-fig">
+                  <img loading="lazy" src="../assets/murmurInbox.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. Inbox — customer care and leads, sorted by priority
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <!-- Sticky frame: each layer can be an <img> or a <video muted loop playsinline preload="metadata">; videos play only while their step is active -->
+            <div class="scrolly-sticky">
+              <div class="scrolly-frame">
+                <img
+                  class="scrolly-layer"
+                  data-layer="0"
+                  data-on="1"
+                  src="../assets/murmurOverview.png"
+                  alt="Murmur Overview: total mentions, creators, overall mood, brand share, mentions over time and trending topics for sunscreen"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="1"
+                  loading="lazy"
+                  src="../assets/murmurTopics.png"
+                  alt="Murmur Topics: list of themes, topic trend line, sentiment split, platform breakdown and product insight cards"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="2"
+                  loading="lazy"
+                  src="../assets/murmurBrands.png"
+                  alt="Murmur Brands: share of voice by platform bar chart and a brand scorecard table"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="3"
+                  loading="lazy"
+                  src="../assets/murmurInfluencers.png"
+                  alt="Murmur Creators: table of creators with followers, engagement, on-topic share, posts per month and tone"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="4"
+                  loading="lazy"
+                  src="../assets/murmurCampaigns.png"
+                  alt="Murmur Campaigns: recommended next campaign, topic by platform heatmap, creators for the campaign, best time to post and messages that land"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="5"
+                  loading="lazy"
+                  src="../assets/murmurInbox.png"
+                  alt="Murmur Inbox: customer care and leads counts, and priority-tagged posts with draft reply and mark replied actions"
+                />
+              </div>
+              <div class="scrolly-caps">
+                <div class="t-caption cap-pill scrolly-cap" data-cap="0" data-on="1">
+                  Fig. Overview — mentions, mood, brand share and trending topics
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="1">
+                  Fig. Topics — sentiment, platforms and product ideas for each theme
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="2">
+                  Fig. Brands — share of voice by platform and brand scorecard
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="3">
+                  Fig. Creators — on-topic share, engagement and hidden gems
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="4">
+                  Fig. Campaigns — recommended campaign, where to promote and when to post
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="5">
+                  Fig. Inbox — customer care and leads, sorted by priority
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ SCENARIOS IN THE PRODUCT ============ -->
+        <section class="stack gap-30 section" id="scenarios">
+          <div class="t-label c-accent" data-rise>scenarios in the product</div>
+          <h2 class="t-h1 c-ink" data-rise>How each scenario plays out in the dashboard.</h2>
+          <p class="t-body c-muted measure" data-rise>
+            The filter bar (keyword, time and source) replaces the separate keyword and influencer
+            entry points of the early flows, so every scenario starts from the same place.
+          </p>
+          <div class="table-card" data-rise>
+            <div class="tbl t-body-sm">
+              <div class="th t-meta c-accent">Scenario</div>
+              <div class="th t-meta c-accent">Where it happens in Murmur</div>
+              <div class="th t-meta c-accent">What the user gets</div>
+              <div class="td-key">01 · Top influencers for a vegan launch</div>
+              <div data-k="Where">
+                Keyword "vegan", last 12 weeks, source Instagram → Creators, ranked by on-topic
+                share
+              </div>
+              <div class="td-last" data-k="Gets">
+                The most relevant creators, with hidden gems flagged
+              </div>
+              <div class="td-key">02 · Compare influencers</div>
+              <div data-k="Where">Creators → tick up to three to compare side by side</div>
+              <div class="td-last" data-k="Gets">
+                Followers, engagement, on-topic share and tone in one view; the best fit is briefed
+                from Campaigns
+              </div>
+              <div class="td-key">03 · Skincare trends over time</div>
+              <div data-k="Where">Overview → mentions over time and trending topics</div>
+              <div class="td-last" data-k="Gets">
+                Weekly volume split by sentiment, and which topics are rising
+              </div>
+              <div class="td-key">04 · Top trends, posts and influencers</div>
+              <div data-k="Where">Topics → select a topic; Overview → top posts</div>
+              <div class="td-last" data-k="Gets">
+                The topic's trend, example posts and the creators on that topic
+              </div>
+              <div class="td-key">05 · Top skincare brands</div>
+              <div data-k="Where">Brands → share of voice by platform and brand scorecard</div>
+              <div class="td-last" data-k="Gets">
+                Mentions, share, change and sentiment for each brand
+              </div>
+              <div class="td-key">06 · Top skincare ingredients</div>
+              <div data-k="Where">
+                Keyword picker → retinol, niacinamide or vitamin C serum; Topics for each
+              </div>
+              <div class="td-last" data-k="Gets">
+                Volume, sentiment and themes for each ingredient
+              </div>
+              <div class="td-key">Task flow · Topics for a keyword</div>
+              <div data-k="Where">Keyword in the filter bar → Topics</div>
+              <div class="td-last" data-k="Gets">
+                Themes sorted by most talked about, fastest growing or most negative, with a deep
+                dive on each
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ DESIGN DECISIONS ============ -->
+        <section class="stack gap-30 section" id="decisions">
+          <div class="t-label c-accent" data-rise>design decisions</div>
+          <div class="grid cols-3" style="gap: 24px">
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-accent">Design decision 01</div>
+              <h3 class="t-h4 c-ink">One filter bar for every screen</h3>
+              <p class="t-body-sm c-muted">
+                Keyword, time and source sit above the tabs because they apply to all of them.
+                Switching screens never resets what the user is looking at.
+              </p>
+            </div>
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-coral">Design decision 02</div>
+              <h3 class="t-h4 c-ink">Insights that lead somewhere</h3>
+              <p class="t-body-sm c-muted">
+                Every discovery ends in an action — explore topic, read posts, compare creator,
+                compare brands — that opens the screen with the right item already selected.
+              </p>
+            </div>
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-accent">Design decision 03</div>
+              <h3 class="t-h4 c-ink">Plain-language summaries</h3>
+              <p class="t-body-sm c-muted">
+                Key screens open with a sentence, not a chart: "You hold 16.5% of brand mentions and
+                lead on YouTube." Charts then back the sentence up.
+              </p>
+            </div>
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-coral">Design decision 04</div>
+              <h3 class="t-h4 c-ink">A calm, focused visual system</h3>
+              <p class="t-body-sm c-muted">
+                Off-white tonal layers, ink-black selection and a single coral highlight, set in
+                Inter Tight with pill shapes. Colour is reserved for data and the one thing that
+                needs attention.
+              </p>
+            </div>
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-accent">Design decision 05</div>
+              <h3 class="t-h4 c-ink">Themes separate from components</h3>
+              <p class="t-body-sm c-muted">
+                Built on the NucliOS design system. The Murmur look is a theme layered on top, so
+                colours can change without touching a single component, and the product supports
+                dark mode.
+              </p>
+            </div>
+            <div class="stack gap-14 decision-card" data-hov data-rise>
+              <div class="t-eyebrow c-coral">Design decision 06</div>
+              <h3 class="t-h4 c-ink">Shareable, accessible views</h3>
+              <p class="t-body-sm c-muted">
+                The open tab lives in the URL, so a refresh or a shared link reopens the same
+                screen. A skip link, labelled controls and a fully responsive layout keep it usable
+                for everyone.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ============ IMPACT ============ -->
+      <section class="stack gap-20 impact" id="impact" data-rise>
+        <div class="impact-confetti" aria-hidden="true">
+          <span style="top: 7%; left: 18%; background: #535398; --dx: 12px; --dy: -14px"></span>
+          <span
+            style="
+              top: 4%;
+              left: 62%;
+              background: #e2604a;
+              border-radius: 50%;
+              --dx: -14px;
+              --dy: 10px;
+            "
+          ></span>
+          <span style="top: 9%; left: 88%; background: #f5c518; --dx: 16px; --dy: 12px"></span>
+          <span style="top: 92%; left: 8%; background: #e2604a; --dx: -12px; --dy: -14px"></span>
+          <span
+            style="
+              top: 94%;
+              left: 46%;
+              background: #535398;
+              border-radius: 50%;
+              --dx: 14px;
+              --dy: -10px;
+            "
+          ></span>
+          <span style="top: 90%; left: 93%; background: #3aa0d1; --dx: -16px; --dy: -12px"></span>
+        </div>
+        <div class="t-label c-accent" style="position: relative">impact</div>
+        <div class="stack" style="position: relative">
+          <div class="impact-row">
+            <div class="t-meta c-accent">Need</div>
+            <div class="t-meta c-accent">How Murmur helps</div>
+            <div class="t-meta c-accent">Business outcome</div>
+          </div>
+          <div class="impact-row">
+            <div class="t-h4 c-ink">Targeted marketing</div>
+            <div class="t-body-sm c-muted">
+              Topic × platform heatmap, best time to post and messages that land
+            </div>
+            <div class="t-body-sm c-ink fw-600">
+              Campaigns built on evidence rather than guesswork
+            </div>
+          </div>
+          <div class="impact-row">
+            <div class="t-h4 c-ink">Budget allocation</div>
+            <div class="t-body-sm c-muted">
+              Share of voice by platform and a recommended next campaign
+            </div>
+            <div class="t-body-sm c-ink fw-600">
+              Spend goes where the conversation and the audience already are
+            </div>
+          </div>
+          <div class="impact-row">
+            <div class="t-h4 c-ink">Brand awareness</div>
+            <div class="t-body-sm c-muted">
+              Creator matching by on-topic share, engagement and tone, including hidden gems
+            </div>
+            <div class="t-body-sm c-ink fw-600">The right voices for each product and campaign</div>
+          </div>
+          <div class="impact-row">
+            <div class="t-h4 c-ink">Product innovation</div>
+            <div class="t-body-sm c-muted">
+              Insights that turn recurring complaints into product ideas
+            </div>
+            <div class="t-body-sm c-ink fw-600">Evolving consumer interests spotted early</div>
+          </div>
+          <div class="impact-row">
+            <div class="t-h4 c-ink">Sales growth</div>
+            <div class="t-body-sm c-muted">
+              An inbox for leads ready to buy and customers who need care
+            </div>
+            <div class="t-body-sm c-ink fw-600">
+              Faster replies that convert interest and protect reputation
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="cs-container">
+        <section class="stack gap-30 section" aria-labelledby="op-title">
+          <h2 class="t-label c-accent" id="op-title">other projects</h2>
+          <div class="grid cols-3" style="gap: 24px">
+            <a class="op-card" data-hov href="../scavvy.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/csImage103.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Gaming app</h3>
+                <p class="t-body-sm c-muted">A gaming app to be played in park and social groups</p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+            <a class="op-card" data-hov href="../building-with-ai.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/csImage98.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Full Stack Product</h3>
+                <p class="t-body-sm c-muted">
+                  4 tech stacks explored to build an end-to-end pet boarding web application using
+                  AI
+                </p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+            <a class="op-card" data-hov href="../aura.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/auraOtherProject.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Aura</h3>
+                <p class="t-body-sm c-muted">
+                  A conversational, occasion-first fashion app for custom tailoring
+                </p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+          </div>
+        </section>
+        <div class="row wrap jc-between back-row">
+          <a class="t-label back-link" href="../index.html">back to all work</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var nav =
+          '<svg viewBox="0 0 87 16" fill="none" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 1C5.9 5.2 16.1 11 27.6 2.9c1.5-1.1 3.5-1.5 5.3-.7 10.7 4.4 13.4 5.5 24.2.1 1.5-.8 3.3-.7 4.8.1C71.3 7.5 76.4 8.2 86 1" stroke="#535398" stroke-width="2.2" stroke-linecap="round"/><path pathLength="1" d="M1 10c3.9 3.6 14.2 8.4 25.8 1.4 1.4-.8 3.1-1.1 4.7-.6 11.1 3.8 13.7 4.8 25-.0 1.3-.5 2.9-.5 4.2.1C70.1 15.4 75.3 16.1 85 10" stroke="#535398" stroke-width="2.2" stroke-linecap="round"/></svg>';
+        var links = [].slice.call(document.querySelectorAll(".cs-nav a"));
+        links.forEach(function (a) {
+          a.insertAdjacentHTML("beforeend", nav);
+        });
+
+        /* progress bar + scroll spy */
+        var fill = document.querySelector("[data-progress]");
+        var spies = links.map(function (a) {
+          return document.getElementById(a.dataset.spy);
+        });
+        function onScroll() {
+          var h = document.documentElement.scrollHeight - innerHeight;
+          fill.style.transform = "scaleX(" + (h > 0 ? Math.min(1, scrollY / h) : 0) + ")";
+          var cur = -1;
+          spies.forEach(function (s, i) {
+            if (s && s.getBoundingClientRect().top < innerHeight * 0.4) cur = i;
+          });
+          links.forEach(function (a, i) {
+            a.dataset.active = i === cur ? "1" : "0";
+          });
+        }
+        addEventListener("scroll", onScroll, { passive: true });
+        addEventListener("resize", onScroll);
+        onScroll();
+
+        /* reveal on scroll */
+        var rise = document.querySelectorAll("[data-rise]");
+        if ("IntersectionObserver" in window) {
+          var io = new IntersectionObserver(
+            function (es) {
+              es.forEach(function (e) {
+                if (e.isIntersecting) {
+                  e.target.dataset.in = "1";
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -8% 0px" }
+          );
+          rise.forEach(function (el) {
+            io.observe(el);
+          });
+        } else
+          rise.forEach(function (el) {
+            el.dataset.in = "1";
+          });
+
+        /* solution scrolly: swap the sticky frame layer as each step reaches mid-screen */
+        var steps = [].slice.call(document.querySelectorAll("[data-step]"));
+        var layers = [].slice.call(document.querySelectorAll("[data-layer]"));
+        var caps = [].slice.call(document.querySelectorAll("[data-cap]"));
+        var active = 0;
+        function setStep(n) {
+          if (n === active) return;
+          active = n;
+          layers.forEach(function (l, i) {
+            var on = i === n;
+            l.dataset.on = on ? "1" : "0";
+            if (l.tagName === "VIDEO") {
+              if (on) {
+                try {
+                  l.currentTime = 0;
+                  l.play();
+                } catch (e) {}
+              } else l.pause();
+            }
+          });
+          caps.forEach(function (c, i) {
+            c.dataset.on = i === n ? "1" : "0";
+          });
+        }
+        if ("IntersectionObserver" in window) {
+          var so = new IntersectionObserver(
+            function (es) {
+              es.forEach(function (e) {
+                if (e.isIntersecting) setStep(+e.target.dataset.step);
+              });
+            },
+            { rootMargin: "-45% 0px -45% 0px" }
+          );
+          steps.forEach(function (s) {
+            so.observe(s);
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

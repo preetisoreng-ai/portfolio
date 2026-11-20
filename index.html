@@ -3229,55 +3229,54 @@
       }
     </style>
     <style id="profile-switch">
-      /* Designer / Artist toggle: one person, two modes. A pill with a thumb
-         behind the active side; picking the other side slides it across. */
-      .role-toggle {
-        position: relative; display: grid; grid-template-columns: 1fr 1fr;
-        height: 36px; padding: 3px; border-radius: 999px;
-        /* no outline: a fill a shade darker than the page */
-        background: #efebe6;
+      /* Designer / Artist: one label for the mode you're in. Choosing it
+         rolls the label over like a drum - the current word turns up and
+         away, the other rolls in from below - then the page changes. */
+      .role-roll {
+        display: inline-flex; align-items: center; gap: 8px;
+        height: 36px; padding: 0 12px 0 16px; border-radius: 999px;
+        text-decoration: none; cursor: pointer;
+      }
+      .rr-drum {
+        position: relative; display: inline-grid; height: 1.3em; line-height: 1.3em;
+        perspective: 120px;
+      }
+      /* the drum is as wide as the longer word, so it never jumps */
+      .rr-size { grid-area: 1 / 1; visibility: hidden; white-space: nowrap; }
+      .rr-rot {
+        grid-area: 1 / 1; position: relative; transform-style: preserve-3d;
+        transform-origin: 50% 50% -0.65em;
+        transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      .rr-face {
+        position: absolute; inset: 0; white-space: nowrap; text-align: left;
+        -webkit-backface-visibility: hidden; backface-visibility: hidden;
+      }
+      .rr-next { transform-origin: 50% 50% -0.65em; transform: rotateX(-90deg); }
+      .role-roll.is-rolling .rr-rot { transform: rotateX(90deg); }
+      .rr-icon { width: 15px; height: 15px; flex: none; opacity: 0.6; transition: opacity 0.2s ease; }
+      .role-roll:hover .rr-icon { opacity: 1; }
+      @media (prefers-reduced-motion: reduce) {
+        .rr-rot { transition: none; }
+      }
+      .role-roll {
+        /* same surface as the round buttons beside it */
+        background: rgba(255, 255, 255, 0.9); color: #1c1917;
+        border: 1px solid rgba(231, 229, 228, 0.8);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
         font: 500 14px/1 "Roboto", system-ui, sans-serif;
       }
-      .rt-thumb {
-        position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
-        border-radius: 999px; background: #1c1917;
-        transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
-      }
-      .role-toggle.to-artist .rt-thumb { transform: translateX(100%); }
-      .rt-opt {
-        position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
-        padding: 0 14px; border-radius: 999px; color: #57534e; text-decoration: none;
-        white-space: nowrap; transition: color 0.35s ease;
-      }
-      .rt-opt:hover { color: #1c1917; }
-      .rt-opt.is-current { color: #fff; }
-      .role-toggle.to-artist .rt-opt.is-current { color: #57534e; }
-      .role-toggle.to-artist .rt-opt[data-portal] { color: #fff; }
-      .rt-opt:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
-      .dark .role-toggle { background: #0c0d0e; }
-      .dark .rt-thumb { background: #f5f5f4; }
-      .dark .rt-opt { color: #a8a29e; }
-      .dark .rt-opt:hover { color: #f5f5f4; }
-      .dark .rt-opt.is-current,
-      .dark .role-toggle.to-artist .rt-opt[data-portal] { color: #1c1917; }
-      .dark .role-toggle.to-artist .rt-opt.is-current { color: #a8a29e; }
+      .role-roll:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+      .dark .role-roll { background: rgba(28, 25, 23, 0.9); border-color: #292524; color: #f5f5f4; }
       @media (min-width: 1024px) {
-        .role-toggle {
+        .role-roll {
           height: calc(46 * var(--hero-u)); font-size: calc(16 * var(--hero-u));
-          padding: calc(4 * var(--hero-u));
+          padding: 0 calc(14 * var(--hero-u)) 0 calc(20 * var(--hero-u));
         }
-        .rt-thumb {
-          top: calc(4 * var(--hero-u)); bottom: calc(4 * var(--hero-u)); left: calc(4 * var(--hero-u));
-          width: calc(50% - 4 * var(--hero-u));
-        }
-        .rt-opt { padding: 0 calc(18 * var(--hero-u)); }
       }
       @media (max-width: 639px) {
-        .role-toggle { height: 40px; font-size: 13.5px; }
-        .rt-opt { padding: 0 12px; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .rt-thumb, .rt-opt { transition: none; }
+        .role-roll { height: 40px; }
       }
     </style>
     <style id="hero-reference-layout">
@@ -5687,12 +5686,19 @@
         <!-- Top Right Interactive Modes + Controls Island. On a phone the
              controls fold away behind the menu button. -->
         <div class="pointer-events-auto flex items-center gap-2">
-          <!-- Designer / Artist toggle: the same person's two modes. -->
-          <nav id="profileSwitch" class="role-toggle" aria-label="Portfolio mode">
-            <span class="rt-thumb" aria-hidden="true"></span>
-            <a href="./index.html" class="rt-opt is-current" aria-current="page">Designer</a>
-            <a href="./artist/index.html" class="rt-opt" data-portal>Artist</a>
-          </nav>
+          <!-- Designer / Artist: one label for the mode you're in; it rolls over
+               to the other when chosen. The same person's two modes. -->
+          <a id="profileSwitch" class="role-roll" href="./artist/index.html" data-portal
+             aria-label="Designer portfolio. Switch to Artist" title="Switch to Artist">
+            <span class="rr-drum" aria-hidden="true">
+              <span class="rr-size">Designer</span>
+              <span class="rr-rot">
+                <span class="rr-face rr-now">Designer</span>
+                <span class="rr-face rr-next">Artist</span>
+              </span>
+            </span>
+            <svg class="rr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 5-5 5 5" /><path d="m7 15 5 5 5-5" /></svg>
+          </a>
           <button
             id="headerMenuBtn"
             type="button"
@@ -7112,277 +7118,546 @@
         </svg>
       </section>
 
-      <!-- ========================================================================= -->
-      <!-- OTHER WORK: 3D INTERACTIVE FLIP CARDS & ART (Jackie Hu Signature) -->
-      <!-- ========================================================================= -->
-      <section
-        id="other-works"
-        class="relative overflow-hidden py-24 px-4 sm:px-8 bg-canvas dark:bg-canvas-dark border-t border-stone-200 dark:border-stone-800"
+<!-- ========================================================================= -->
+<!-- KIND WORDS: LINKEDIN RECOMMENDATIONS, A SLOW RIGHT-TO-LEFT CAROUSEL       -->
+<!-- Pauses on hover, on press-and-hold (touch), on keyboard focus and while   -->
+<!-- a card is expanded. Static, swipeable row for reduced motion.            -->
+<!-- ========================================================================= -->
+<section id="kind-words" class="kw-section" aria-labelledby="kwTitle">
+  <style>
+    .kw-section {
+      --kw-ink: #1c1917;
+      --kw-soft: #57534e;
+      --kw-line: rgba(28, 25, 23, 0.1);
+      --kw-card: #ffffff;
+      padding: 5rem 0 4.5rem;
+      background-color: #fbf9f7;
+      color: var(--kw-ink);
+      border-top: 1px solid #e7e5e4;
+      overflow: hidden;
+    }
+    .dark .kw-section {
+      --kw-ink: #f5f5f4;
+      --kw-soft: #a8a29e;
+      --kw-line: rgba(255, 255, 255, 0.1);
+      --kw-card: #1c1e22;
+      background-color: #141517;
+      border-top-color: #292524;
+    }
+    .kw-head {
+      max-width: 80rem;
+      margin: 0 auto 2.75rem;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 1rem 2rem;
+    }
+    .kw-title {
+      margin: 0;
+      font-family: "Fraunces", Georgia, serif;
+      font-weight: 800;
+      font-size: clamp(2.8rem, 6vw, 4.6rem);
+      line-height: 0.9;
+      letter-spacing: -0.035em;
+      color: var(--kw-ink);
+    }
+    .kw-note {
+      margin: 0.9rem 0 0;
+      max-width: 26rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--kw-soft);
+    }
+    .kw-aside {
+      font-family: "Caveat", cursive;
+      font-size: 1.45rem;
+      line-height: 1.2;
+      color: var(--kw-soft);
+      transform: rotate(-2deg);
+    }
+    .kw-aside a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+    .kw-aside a:hover {
+      color: var(--kw-ink);
+    }
+
+    /* ---------- carousel ---------- */
+    .kw-viewport {
+      position: relative;
+      -webkit-mask-image: linear-gradient(
+        90deg,
+        transparent 0,
+        #000 6%,
+        #000 94%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        90deg,
+        transparent 0,
+        #000 6%,
+        #000 94%,
+        transparent 100%
+      );
+      touch-action: pan-y;
+    }
+    .kw-track {
+      display: flex;
+      width: max-content;
+      gap: 1.25rem;
+      padding: 0.75rem 0 1.25rem;
+      align-items: flex-start;
+    }
+    .kw-set {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .kw-track {
+        animation: kw-marquee var(--kw-duration, 90s) linear infinite;
+      }
+      .kw-viewport:hover .kw-track,
+      .kw-viewport:focus-within .kw-track,
+      .kw-viewport.is-held .kw-track,
+      .kw-viewport.is-open .kw-track {
+        animation-play-state: paused;
+      }
+    }
+    /* the second set is a copy, so moving by one set (plus one gap) loops seamlessly */
+    @keyframes kw-marquee {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(calc(-50% - 0.625rem));
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .kw-viewport {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-mask-image: none;
+        mask-image: none;
+        touch-action: auto;
+      }
+      .kw-track {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .kw-set[aria-hidden="true"] {
+        display: none;
+      }
+      .kw-card {
+        scroll-snap-align: start;
+      }
+    }
+
+    /* ---------- card ---------- */
+    .kw-card {
+      position: relative;
+      width: min(25rem, 82vw);
+      height: 26rem; /* every testimonial card is the same height */
+      flex: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.6rem 1.6rem 1.4rem;
+      border-radius: 1.4rem;
+      background: var(--kw-card);
+      border: 1px solid var(--kw-line);
+      box-shadow:
+        0 1px 0 rgba(28, 25, 23, 0.04),
+        0 10px 24px -14px rgba(28, 25, 23, 0.18);
+      transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+    }
+    .kw-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 1px 0 rgba(28, 25, 23, 0.04),
+        0 18px 32px -16px rgba(28, 25, 23, 0.26);
+    }
+    .kw-card::before {
+      /* big soft quote mark in the card's tint */
+      content: "\201C";
+      position: absolute;
+      top: 0.2rem;
+      right: 1.1rem;
+      font-family: "Fraunces", Georgia, serif;
+      font-size: 5.5rem;
+      line-height: 1;
+      color: var(--kw-tint);
+      pointer-events: none;
+    }
+    .kw-pull {
+      margin: 0;
+      padding-right: 2.6rem;
+      font-family: "Caveat", cursive;
+      font-weight: 600;
+      font-size: 1.65rem;
+      line-height: 1.15;
+      color: var(--kw-ink);
+    }
+    .kw-pull mark {
+      background: linear-gradient(transparent 58%, var(--kw-tint) 58%);
+      color: inherit;
+      padding: 0 0.1em;
+    }
+    .kw-body {
+      flex: 1 1 auto;
+      min-height: 0; /* takes whatever height is left in the card */
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: var(--kw-soft);
+      white-space: pre-line;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent);
+      mask-image: linear-gradient(180deg, #000 72%, transparent);
+    }
+    .kw-body.fits {
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    /* opened: the text scrolls inside the card, so the card keeps its height */
+    .kw-card.is-open .kw-body {
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      padding-right: 0.4rem;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .kw-pull,
+    .kw-who,
+    .kw-more {
+      flex: none;
+    }
+    .kw-more {
+      align-self: flex-start;
+      margin-top: -0.4rem;
+      padding: 0;
+      border: 0;
+      background: none;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            line-height: 1.4;
+      letter-spacing: 0.04em;
+      color: var(--kw-ink);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      cursor: pointer;
+    }
+    .kw-who {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--kw-line);
+    }
+    .kw-avatar {
+      width: 2.6rem;
+      height: 2.6rem;
+      flex: none;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font:
+        700 0.85rem/1 "Fraunces",
+        Georgia,
+        serif;
+      color: var(--kw-ink);
+      background: var(--kw-tint);
+    }
+    .dark .kw-avatar {
+      color: #1c1917;
+    }
+    .kw-name {
+      margin: 0;
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.3;
+      color: var(--kw-ink);
+    }
+    .kw-role {
+      margin: 0.1rem 0 0;
+      font-size: 0.78rem;
+      line-height: 1.4;
+      color: var(--kw-soft);
+    }
+    .kw-tie {
+      margin: 0.2rem 0 0;
+      font-family: "Caveat", cursive;
+      font-size: 1.05rem;
+      line-height: 1.2;
+      color: var(--kw-soft);
+    }
+    .kw-hint {
+      max-width: 80rem;
+      margin: 0.5rem auto 0;
+      padding: 0 1rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--kw-soft);
+      opacity: 0.8;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .kw-hint-motion {
+        display: none;
+      }
+    }
+    @media (max-width: 640px) {
+      .kw-section {
+        padding: 3.5rem 0 3rem;
+      }
+      .kw-head {
+        margin-bottom: 1.75rem;
+      }
+      .kw-pull {
+        font-size: 1.45rem;
+      }
+        .kw-card {
+          height: 28rem;
+        }
+    }
+  </style>
+
+  <div class="kw-head">
+    <div>
+      <h2 class="kw-title" id="kwTitle">Kind Words</h2>
+      <p class="kw-note">
+        Recommendations from the people I’ve designed, built and grown
+        alongside.
+      </p>
+    </div>
+    <p class="kw-aside">
+      straight from
+      <a
+        href="https://www.linkedin.com/in/preeti-soreng-229a4a10a/details/recommendations/"
+        target="_blank"
+        rel="noopener"
+        >LinkedIn ↗</a
       >
-        <div class="work-meadow lab-meadow" aria-hidden="true">
-          <img class="bloom lab-daisy" src="./assets/legoDaisyWhite.png" alt="" />
-          <img class="bloom lab-pink" src="./assets/legoDaisyPink.png" alt="" />
-          <img class="bloom lab-orange" src="./assets/legoDaisyOrange.png" alt="" />
-        </div>
-        <div class="max-w-7xl mx-auto">
-          <!-- Section Heading -->
-          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-6">
-            <div>
-              <div
-                class="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-stone-400 mb-2"
-              >
-                <span>02</span>
-                <span>/</span>
-                <span>Creative Exploration & Play</span>
-              </div>
-              <h2
-                class="font-display text-3xl sm:text-4xl font-extrabold text-stone-900 dark:text-white tracking-tight"
-              >
-                Creative Lab & Physical Craft
-              </h2>
-            </div>
-            <p class="text-sm font-mono text-stone-500 max-w-md">
-              "What I do in my free time makes me awesome at my work."<br />
-              <span class="text-stone-900 dark:text-white font-semibold"
-                >Click any card to flip</span
-              >
-              and reveal process sketches & notes.
-            </p>
-          </div>
+    </p>
+  </div>
 
-          <!-- 3D Flip Cards Grid (a coverflow carousel on phones) -->
-          <div id="labFlow" class="lab-flow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Card 1: Miniature Paintings -->
-            <div
-              id="miniatureCard"
-              class="flip-card perspective-1000 h-[380px] cursor-pointer"
-              onclick="toggleFlip(this)"
-            >
-              <div class="flip-card-inner">
-                <!-- Front -->
-                <div
-                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
-                >
-                  <div
-                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
-                  >
-                    <img
-                      src="./assets/imgImage128.jpg"
-                      alt="Miniature Painting"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="pt-4">
-                    <div class="flex items-center justify-between">
-                      <span
-                        class="text-xs font-mono uppercase tracking-wider text-rose-500 font-semibold"
-                        >Fine Art</span
-                      >
-                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
-                    </div>
-                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
-                      Miniature Paintings
-                    </h3>
-                    <p class="text-xs text-stone-500 font-sans mt-1">
-                      Intricate small-scale acrylic & gouache botanical studies on handmade paper.
-                    </p>
-                  </div>
-                </div>
+  <div
+    class="kw-viewport"
+    id="kwViewport"
+    role="region"
+    aria-roledescription="carousel"
+    aria-label="Recommendations"
+  >
+    <div class="kw-track" id="kwTrack"></div>
+  </div>
+  <p class="kw-hint">
+    <span class="kw-hint-motion"
+      >Hover, or press and hold, to pause and read · </span
+    >“Read more” opens the full note
+  </p>
 
-                <!-- Back -->
-                <div
-                  class="flip-card-back bg-rose-50 dark:bg-stone-900 border-2 border-rose-200 dark:border-rose-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
-                >
-                  <div>
-                    <div
-                      class="flex items-center justify-between border-b border-rose-200 dark:border-stone-800 pb-3"
-                    >
-                      <span class="font-hand font-bold text-xl text-rose-900 dark:text-rose-300"
-                        >Studio Notes 🎨</span
-                      >
-                      <span
-                        class="text-xs font-mono text-rose-600 bg-rose-100 dark:bg-rose-950 px-2 py-0.5 rounded"
-                        >Process</span
-                      >
-                    </div>
-                    <p
-                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
-                    >
-                      Working with micro-brushes (000) teaches the discipline of precision, negative
-                      space, and patience that directly influences my Figma layout alignment.
-                    </p>
-                    <div class="mt-4 grid grid-cols-2 gap-2">
-                      <img
-                        src="./assets/imgImage129.jpg"
-                        alt="Study 2"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                      <img
-                        src="./assets/imgImage130.jpg"
-                        alt="Study 3"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                    </div>
-                  </div>
-                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
-                </div>
-              </div>
-            </div>
+  <script>
+    (function () {
+      /* Recommendations received on LinkedIn, copied as written. `pull` is a verbatim excerpt from the same text. */
+      var KW = [
+        {
+          name: "Shridhar Guntury",
+          role: "CTO @ TheMathCompany",
+          tie: "Worked on the same team · Nov 2026",
+          tint: "#f6dcc4",
+          pull: "She brings a sense of <mark>creativity, and clean thinking</mark> to the table",
+          body: "I have worked with Preeti both directly and indirectly. She brings a sense of creativity, and clean thinking to the table when it comes to design, user interactions and user intent. I have seen her perform tasks which are heavy in graphics as well as design thinking really well. She was instrumental in rebranding and re-designing of our platform through multiple years (brand refresh, new features, new vision etc..). The best quality is like her willingness to work through ambiguity and put options/ideas in front of stakeholder, leaders and users - this makes giving feedback easy and keeps things objective.",
+        },
+        {
+          name: "Subhasis Debsharma",
+          role: "Platform Architect",
+          tie: "Worked on the same team · Nov 2026",
+          tint: "#d9dcf7",
+          pull: "One of the <mark>best designers</mark> I’ve collaborated with",
+          body: "I had the pleasure of working with Preeti for around five years at MathCo, and she is one of the best designers I’ve collaborated with.\n\nWe worked closely on building the NucliOS platform and a number of other AI capabilities. Preeti consistently brought a practical point of view to every problem. She grounds ideas in what will actually work for users and the business, which made our brainstorming sessions both productive and genuinely enjoyable.\n\nWhat stands out most is her ability to quickly land on a design that works for all stakeholders. With so many perspectives in the room, she balances them with ease and gets everyone aligned without losing design quality or momentum.\n\nPreeti would be a tremendous asset to any team, and I’d happily work with her again.",
+        },
+        {
+          name: "Keerthi Vasan",
+          role: "Product and Design",
+          tie: "Reported to Preeti directly · Aug 2026",
+          tint: "#cdebd8",
+          pull: "She orchestrated the work behind <mark>MathCo’s first design system</mark>",
+          body: "I worked with Preeti for a year at MathCo, and one thing that always stood out was how good she was at tackling problems without a clear answer yet. When things were messy, or the team wasn’t even sure what the real problem was, she had a way of breaking things down and getting everyone moving.\nShe also knows her craft really well. She orchestrated the work behind MathCo’s first design system and played a big role in bringing a very complex platform together.\nPreeti is approachable, thoughtful, and not afraid to speak up when something doesn’t feel right, especially when it comes to users. She’ll often be the one to say what everyone else is thinking but hasn’t said yet.",
+        },
+        {
+          name: "Shreyas Sutar",
+          role: "Senior Associate Product Designer at MathCo",
+          tie: "Reported to Preeti directly · Aug 2026",
+          tint: "#f8d7df",
+          pull: "I got incredibly lucky with who <mark>my first manager</mark> turned out to be",
+          body: "I had the opportunity to be managed by Preeti for two years, right from when I joined MathCo straight out of college. Being part of a design team within R&D comes with its own challenges, and she advocated for us, and for design, through and through.\n\nWhat stood out most was the trust she placed in me early on. Despite being fresh out of college with no real world experience, she handed me ownership of a genuinely complex project, gave me the freedom to conduct research and ideation early on, bought us the time we needed, and stood up for the team wherever necessary. That's a rare quality in a manager, knowing when to step back and let someone grow into a project rather than holding on too tight.\n\nOne thing I picked up from her that I still apply every day is communicating design decisions with empathy, understanding who you're talking to and framing your reasoning accordingly. It's a small shift that goes a long way in bringing people along with your decisions.\n\nTwo years in, she has shaped how I think about ownership in my projects and how I communicate as a designer. I got incredibly lucky with who my first manager turned out to be, and I'd recommend her to any team without hesitation.",
+        },
+        {
+          name: "Aditi Rastogi",
+          role: "Product Designer, AI-driven products",
+          tie: "Reported to Preeti directly · Aug 2026",
+          tint: "#fbe7a8",
+          pull: "Team members feel <mark>heard, supported,</mark> and encouraged",
+          body: "Working with Preeti Soreng was a wonderful learning experience. What stands out most is that she creates an environment where team members feel heard, supported, and encouraged to have open discussions, guiding the team toward the best outcomes. Her strong problem solving approach, clear communication, and people first leadership make her an exceptional manager. I’m grateful for the opportunity to learn from her and would highly recommend her as a leader and mentor.",
+        },
+        {
+          name: "Srini Narendran",
+          role: "UI & UX Designer",
+          tie: "Reported to Preeti directly · Oct 2024",
+          tint: "#d3e6f5",
+          pull: "Someone who <mark>leads by example</mark>",
+          body: "I feel incredibly fortunate to have worked under Preeti Soreng during a summer internship, whose guidance and leadership have been pivotal in my personal and professional growth as a designer. Her ability to challenge and support me has made a big impact on my learning journey. Preeti not only provided me with valuable insights and opportunities but also motivated me in a manner to encourage & increase collaboration, creativity, and communication. Her mentorship has not only enhanced my skills but also boosted my confidence, helping me grow to be more capable professionally. I am truly grateful for the experience of working with someone who leads by example and invests her time in the development of their team’s work.",
+        },
+        {
+          name: "Yashwanth Maheshwaram",
+          role: "Product Leader, AI Platforms",
+          tie: "Managed Preeti directly · Apr 2020",
+          tint: "#e6d9f3",
+          pull: "Very detail oriented, <mark>profound with her research</mark> and approach",
+          body: "Preeti is a very detail oriented professional who is profound with her research and approach. This, I believe is very critical for any designer to approach problem and offer design solution. She has played a great role in understanding the customer and various stakeholder expectations clearly, applied various methods in designing great consumer experiences. She's curious and likes learning new things. She'd be a good addition to any team.",
+        },
+      ];
 
-            <!-- Card 2: Pen Illustrations -->
-            <div
-              class="flip-card perspective-1000 h-[380px] cursor-pointer"
-              onclick="toggleFlip(this)"
-            >
-              <div class="flip-card-inner">
-                <!-- Front -->
-                <div
-                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
-                >
-                  <div
-                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
-                  >
-                    <img
-                      src="./assets/imgImage118.jpg"
-                      alt="Pen Illustration"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="pt-4">
-                    <div class="flex items-center justify-between">
-                      <span
-                        class="text-xs font-mono uppercase tracking-wider text-blue-500 font-semibold"
-                        >Illustration</span
-                      >
-                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
-                    </div>
-                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
-                      Pen & Ink Architecture
-                    </h3>
-                    <p class="text-xs text-stone-500 font-sans mt-1">
-                      Cross-hatching linework capturing historical facades and mechanical textures.
-                    </p>
-                  </div>
-                </div>
+      var track = document.getElementById("kwTrack");
+      var viewport = document.getElementById("kwViewport");
+      if (!track || !viewport) return;
 
-                <!-- Back -->
-                <div
-                  class="flip-card-back bg-blue-50 dark:bg-stone-900 border-2 border-blue-200 dark:border-blue-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
-                >
-                  <div>
-                    <div
-                      class="flex items-center justify-between border-b border-blue-200 dark:border-stone-800 pb-3"
-                    >
-                      <span class="font-hand font-bold text-xl text-blue-900 dark:text-blue-300"
-                        >Linework Discipline ✒️</span
-                      >
-                      <span
-                        class="text-xs font-mono text-blue-600 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded"
-                        >Structure</span
-                      >
-                    </div>
-                    <p
-                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
-                    >
-                      No Ctrl+Z in pure ink! You learn to embrace constraints and turn accidental
-                      strokes into deliberate rhythm.
-                    </p>
-                    <div class="mt-4 grid grid-cols-2 gap-2">
-                      <img
-                        src="./assets/imgImage119.jpg"
-                        alt="Linework 2"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                      <img
-                        src="./assets/imgImage127.jpg"
-                        alt="Linework 3"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                    </div>
-                  </div>
-                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
-                </div>
-              </div>
-            </div>
+      function esc(s) {
+        return String(s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+      function initials(n) {
+        return n
+          .split(/\s+/)
+          .map(function (w) {
+            return w.charAt(0);
+          })
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+      }
+      /* pull quotes carry a <mark> we wrote ourselves; everything else is escaped */
+      function pull(s) {
+        return esc(s)
+          .replace(/&lt;mark&gt;/g, "<mark>")
+          .replace(/&lt;\/mark&gt;/g, "</mark>");
+      }
+      function card(t, i, copy) {
+        var id = (copy ? "kwc" : "kw") + i;
+        return (
+          '<article class="kw-card" style="--kw-tint:' +
+          t.tint +
+          '">' +
+          '<p class="kw-pull">' +
+          pull(t.pull) +
+          "</p>" +
+          '<p class="kw-body" id="' +
+          id +
+          '">' +
+          esc(t.body) +
+          "</p>" +
+          '<button type="button" class="kw-more" aria-expanded="false" aria-controls="' +
+          id +
+          '"' +
+          (copy ? ' tabindex="-1"' : "") +
+          ">Read more</button>" +
+          '<div class="kw-who"><span class="kw-avatar" aria-hidden="true">' +
+          initials(t.name) +
+          "</span>" +
+          '<div><p class="kw-name">' +
+          esc(t.name) +
+          '</p><p class="kw-role">' +
+          esc(t.role) +
+          '</p><p class="kw-tie">' +
+          esc(t.tie) +
+          "</p></div></div>" +
+          "</article>"
+        );
+      }
+      var set = KW.map(function (t, i) {
+        return card(t, i, false);
+      }).join("");
+      var copy = KW.map(function (t, i) {
+        return card(t, i, true);
+      }).join("");
+      /* second set is a visual copy for the seamless loop, hidden from assistive tech */
+      track.innerHTML =
+        '<div class="kw-set">' +
+        set +
+        '</div><div class="kw-set" aria-hidden="true" inert>' +
+        copy +
+        "</div>";
 
-            <!-- Card 3: Pencil Sketches & Fashion Roots -->
-            <div
-              class="flip-card perspective-1000 h-[380px] cursor-pointer"
-              onclick="toggleFlip(this)"
-            >
-              <div class="flip-card-inner">
-                <!-- Front -->
-                <div
-                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
-                >
-                  <div
-                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
-                  >
-                    <img
-                      src="./assets/imgImage9.jpg"
-                      alt="Pencil Sketch"
-                      class="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div class="pt-4">
-                    <div class="flex items-center justify-between">
-                      <span
-                        class="text-xs font-mono uppercase tracking-wider text-amber-500 font-semibold"
-                        >Form & Shadow</span
-                      >
-                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
-                    </div>
-                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
-                      Pencil & Form Studies
-                    </h3>
-                    <p class="text-xs text-stone-500 font-sans mt-1">
-                      Exploring human expression, drapery, and high-contrast charcoal gradients.
-                    </p>
-                  </div>
-                </div>
+      /* a slow, steady pace: roughly 12 seconds per card */
+      track.style.setProperty("--kw-duration", KW.length * 12 + "s");
 
-                <!-- Back -->
-                <div
-                  class="flip-card-back bg-amber-50 dark:bg-stone-900 border-2 border-amber-200 dark:border-amber-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
-                >
-                  <div>
-                    <div
-                      class="flex items-center justify-between border-b border-amber-200 dark:border-stone-800 pb-3"
-                    >
-                      <span class="font-hand font-bold text-xl text-amber-900 dark:text-amber-300"
-                        >Fashion Foundation 🧵</span
-                      >
-                      <span
-                        class="text-xs font-mono text-amber-600 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded"
-                        >2014–2018</span
-                      >
-                    </div>
-                    <p
-                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
-                    >
-                      My early career in fashion taught me sensory storytelling, color psychology,
-                      and how details combine to form an undeniable cohesive presence.
-                    </p>
-                    <div class="mt-4 grid grid-cols-2 gap-2">
-                      <img
-                        src="./assets/imgImage11.jpg"
-                        alt="Pencil 2"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                      <img
-                        src="./assets/imgImage10.jpg"
-                        alt="Pencil 3"
-                        class="rounded object-cover h-24 w-full"
-                      />
-                    </div>
-                  </div>
-                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      /* hide "Read more" on cards whose text already fits */
+      function syncMore() {
+        track.querySelectorAll(".kw-card").forEach(function (c) {
+          if (c.classList.contains("is-open")) return;
+          var b = c.querySelector(".kw-body");
+          var fits = b.scrollHeight <= b.clientHeight + 2;
+          c.querySelector(".kw-more").hidden = fits;
+          b.classList.toggle("fits", fits);
+        });
+      }
+      syncMore();
+      if (document.fonts && document.fonts.ready)
+        document.fonts.ready.then(syncMore);
+      window.addEventListener("resize", syncMore);
+
+      /* expand / collapse; the carousel stays paused while any card is open */
+      track.addEventListener("click", function (e) {
+        var btn = e.target.closest(".kw-more");
+        if (!btn) return;
+        var c = btn.closest(".kw-card");
+        var open = !c.classList.contains("is-open");
+        c.classList.toggle("is-open", open);
+        btn.setAttribute("aria-expanded", open ? "true" : "false");
+        btn.textContent = open ? "Show less" : "Read more";
+        viewport.classList.toggle(
+          "is-open",
+          !!track.querySelector(".kw-card.is-open"),
+        );
+      });
+
+      /* touch: press and hold pauses; letting go resumes after a short beat */
+      var resumeTimer;
+      function hold() {
+        clearTimeout(resumeTimer);
+        viewport.classList.add("is-held");
+      }
+      function release() {
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(function () {
+          viewport.classList.remove("is-held");
+        }, 1200);
+      }
+      viewport.addEventListener("pointerdown", function (e) {
+        if (e.pointerType !== "mouse") hold();
+      });
+      ["pointerup", "pointercancel", "pointerleave"].forEach(function (ev) {
+        viewport.addEventListener(ev, function (e) {
+          if (e.pointerType !== "mouse") release();
+        });
+      });
+      /* stop the long-press context menu / text callout from interrupting the hold */
+      viewport.addEventListener("contextmenu", function (e) {
+        if (viewport.classList.contains("is-held")) e.preventDefault();
+      });
+    })();
+  </script>
+</section>
 
       <!-- ========================================================================= -->
       <!-- CAREER TIMELINE & RECOGNITION (Storytelling & Evolution) -->
@@ -8712,6 +8987,278 @@
               ><span class="books-hint-swipe">Swipe sideways to browse the shelf</span></span
             >
             <span class="books-foot-sign">Curated Personal Reading</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- OTHER WORK: 3D INTERACTIVE FLIP CARDS & ART (Jackie Hu Signature) -->
+      <!-- ========================================================================= -->
+      <section
+        id="other-works"
+        class="relative overflow-hidden py-24 px-4 sm:px-8 bg-canvas dark:bg-canvas-dark border-t border-stone-200 dark:border-stone-800"
+      >
+        <div class="work-meadow lab-meadow" aria-hidden="true">
+          <img class="bloom lab-daisy" src="./assets/legoDaisyWhite.png" alt="" />
+          <img class="bloom lab-pink" src="./assets/legoDaisyPink.png" alt="" />
+          <img class="bloom lab-orange" src="./assets/legoDaisyOrange.png" alt="" />
+        </div>
+        <div class="max-w-7xl mx-auto">
+          <!-- Section Heading -->
+          <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-6">
+            <div>
+              <div
+                class="flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-stone-400 mb-2"
+              >
+                <span>02</span>
+                <span>/</span>
+                <span>Creative Exploration & Play</span>
+              </div>
+              <h2
+                class="font-display text-3xl sm:text-4xl font-extrabold text-stone-900 dark:text-white tracking-tight"
+              >
+                Creative Lab & Physical Craft
+              </h2>
+            </div>
+            <p class="text-sm font-mono text-stone-500 max-w-md">
+              "What I do in my free time makes me awesome at my work."<br />
+              <span class="text-stone-900 dark:text-white font-semibold"
+                >Click any card to flip</span
+              >
+              and reveal process sketches & notes.
+            </p>
+          </div>
+
+          <!-- 3D Flip Cards Grid (a coverflow carousel on phones) -->
+          <div id="labFlow" class="lab-flow grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Card 1: Miniature Paintings -->
+            <div
+              id="miniatureCard"
+              class="flip-card perspective-1000 h-[380px] cursor-pointer"
+              onclick="toggleFlip(this)"
+            >
+              <div class="flip-card-inner">
+                <!-- Front -->
+                <div
+                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
+                >
+                  <div
+                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
+                  >
+                    <img
+                      src="./assets/imgImage128.jpg"
+                      alt="Miniature Painting"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="pt-4">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-mono uppercase tracking-wider text-rose-500 font-semibold"
+                        >Fine Art</span
+                      >
+                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
+                      Miniature Paintings
+                    </h3>
+                    <p class="text-xs text-stone-500 font-sans mt-1">
+                      Intricate small-scale acrylic & gouache botanical studies on handmade paper.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Back -->
+                <div
+                  class="flip-card-back bg-rose-50 dark:bg-stone-900 border-2 border-rose-200 dark:border-rose-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
+                >
+                  <div>
+                    <div
+                      class="flex items-center justify-between border-b border-rose-200 dark:border-stone-800 pb-3"
+                    >
+                      <span class="font-hand font-bold text-xl text-rose-900 dark:text-rose-300"
+                        >Studio Notes 🎨</span
+                      >
+                      <span
+                        class="text-xs font-mono text-rose-600 bg-rose-100 dark:bg-rose-950 px-2 py-0.5 rounded"
+                        >Process</span
+                      >
+                    </div>
+                    <p
+                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
+                    >
+                      Working with micro-brushes (000) teaches the discipline of precision, negative
+                      space, and patience that directly influences my Figma layout alignment.
+                    </p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                      <img
+                        src="./assets/imgImage129.jpg"
+                        alt="Study 2"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                      <img
+                        src="./assets/imgImage130.jpg"
+                        alt="Study 3"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                    </div>
+                  </div>
+                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Pen Illustrations -->
+            <div
+              class="flip-card perspective-1000 h-[380px] cursor-pointer"
+              onclick="toggleFlip(this)"
+            >
+              <div class="flip-card-inner">
+                <!-- Front -->
+                <div
+                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
+                >
+                  <div
+                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
+                  >
+                    <img
+                      src="./assets/imgImage118.jpg"
+                      alt="Pen Illustration"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="pt-4">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-mono uppercase tracking-wider text-blue-500 font-semibold"
+                        >Illustration</span
+                      >
+                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
+                      Pen & Ink Architecture
+                    </h3>
+                    <p class="text-xs text-stone-500 font-sans mt-1">
+                      Cross-hatching linework capturing historical facades and mechanical textures.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Back -->
+                <div
+                  class="flip-card-back bg-blue-50 dark:bg-stone-900 border-2 border-blue-200 dark:border-blue-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
+                >
+                  <div>
+                    <div
+                      class="flex items-center justify-between border-b border-blue-200 dark:border-stone-800 pb-3"
+                    >
+                      <span class="font-hand font-bold text-xl text-blue-900 dark:text-blue-300"
+                        >Linework Discipline ✒️</span
+                      >
+                      <span
+                        class="text-xs font-mono text-blue-600 bg-blue-100 dark:bg-blue-950 px-2 py-0.5 rounded"
+                        >Structure</span
+                      >
+                    </div>
+                    <p
+                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
+                    >
+                      No Ctrl+Z in pure ink! You learn to embrace constraints and turn accidental
+                      strokes into deliberate rhythm.
+                    </p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                      <img
+                        src="./assets/imgImage119.jpg"
+                        alt="Linework 2"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                      <img
+                        src="./assets/imgImage127.jpg"
+                        alt="Linework 3"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                    </div>
+                  </div>
+                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Pencil Sketches & Fashion Roots -->
+            <div
+              class="flip-card perspective-1000 h-[380px] cursor-pointer"
+              onclick="toggleFlip(this)"
+            >
+              <div class="flip-card-inner">
+                <!-- Front -->
+                <div
+                  class="flip-card-front bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 flex flex-col justify-between shadow-card hover:shadow-card-hover transition-all"
+                >
+                  <div
+                    class="aspect-[4/3] rounded-xl overflow-hidden bg-stone-100 dark:bg-stone-800"
+                  >
+                    <img
+                      src="./assets/imgImage9.jpg"
+                      alt="Pencil Sketch"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="pt-4">
+                    <div class="flex items-center justify-between">
+                      <span
+                        class="text-xs font-mono uppercase tracking-wider text-amber-500 font-semibold"
+                        >Form & Shadow</span
+                      >
+                      <span class="text-xs font-mono text-stone-400">Click to flip ↷</span>
+                    </div>
+                    <h3 class="font-display font-bold text-lg text-stone-900 dark:text-white mt-1">
+                      Pencil & Form Studies
+                    </h3>
+                    <p class="text-xs text-stone-500 font-sans mt-1">
+                      Exploring human expression, drapery, and high-contrast charcoal gradients.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Back -->
+                <div
+                  class="flip-card-back bg-amber-50 dark:bg-stone-900 border-2 border-amber-200 dark:border-amber-900/60 rounded-2xl p-6 flex flex-col justify-between shadow-card"
+                >
+                  <div>
+                    <div
+                      class="flex items-center justify-between border-b border-amber-200 dark:border-stone-800 pb-3"
+                    >
+                      <span class="font-hand font-bold text-xl text-amber-900 dark:text-amber-300"
+                        >Fashion Foundation 🧵</span
+                      >
+                      <span
+                        class="text-xs font-mono text-amber-600 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded"
+                        >2014–2018</span
+                      >
+                    </div>
+                    <p
+                      class="mt-4 text-xs font-mono text-stone-700 dark:text-stone-300 leading-relaxed"
+                    >
+                      My early career in fashion taught me sensory storytelling, color psychology,
+                      and how details combine to form an undeniable cohesive presence.
+                    </p>
+                    <div class="mt-4 grid grid-cols-2 gap-2">
+                      <img
+                        src="./assets/imgImage11.jpg"
+                        alt="Pencil 2"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                      <img
+                        src="./assets/imgImage10.jpg"
+                        alt="Pencil 3"
+                        class="rounded object-cover h-24 w-full"
+                      />
+                    </div>
+                  </div>
+                  <p class="text-[10px] font-mono text-stone-400 text-right">Click to flip back</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -13506,18 +14053,15 @@
     </script>
     <!-- firefly-turn:end -->
     <script>
-      /* Designer / Artist toggle: slide the thumb across the moment the other
-         side is chosen (the page transition then takes over). */
+      /* Designer / Artist label: roll it over the moment it's chosen (the
+         page transition then takes over). */
       (function () {
-        var nav = document.getElementById("profileSwitch");
-        if (!nav) return;
-        var other = nav.querySelector(".rt-opt[data-portal]");
-        var here = nav.querySelector(".rt-opt.is-current");
-        function go() { nav.classList.add("to-artist"); }
-        other.addEventListener("pointerdown", go);
-        other.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") go(); });
-        here.addEventListener("click", function (e) { e.preventDefault(); });
-        window.addEventListener("pageshow", function (e) { if (e.persisted) nav.classList.remove("to-artist"); });
+        var roll = document.getElementById("profileSwitch");
+        if (!roll) return;
+        function go() { roll.classList.add("is-rolling"); }
+        roll.addEventListener("pointerdown", go);
+        roll.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+        window.addEventListener("pageshow", function (e) { if (e.persisted) roll.classList.remove("is-rolling"); });
       })();
     </script>
   </body>

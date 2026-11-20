@@ -451,10 +451,7 @@
       .collage .card.polaroid {
         padding: 1.6% 1.6% 5%;
       }
-      .collage button.card:hover {
-        transform: rotate(0deg) translateY(-8px);
-        z-index: 9;
-      }
+      /* the cover collage stays put: no hover lift or reordering */
       .collage button.card:focus-visible {
         outline: 2px solid var(--ink);
         outline-offset: 4px;
@@ -913,40 +910,50 @@
           display: none;
         }
       }
-      /* Designer / Artist toggle: one person, two modes. A pill with a
-         thumb behind the active side; picking the other side slides it. */
-      .role-toggle {
-        position: relative; display: grid; grid-template-columns: 1fr 1fr;
-        height: 34px; padding: 3px; border-radius: 999px;
+      /* Designer / Artist: one label for the mode you're in. Choosing it
+         rolls the label over like a drum - the current word turns up and
+         away, the other rolls in from below - then the page changes. */
+      .role-roll {
+        display: inline-flex; align-items: center; gap: 8px;
+        height: 36px; padding: 0 12px 0 16px; border-radius: 999px;
+        text-decoration: none; cursor: pointer;
+      }
+      .rr-drum {
+        position: relative; display: inline-grid; height: 1.3em; line-height: 1.3em;
+        perspective: 120px;
+      }
+      /* the drum is as wide as the longer word, so it never jumps */
+      .rr-size { grid-area: 1 / 1; visibility: hidden; white-space: nowrap; }
+      .rr-rot {
+        grid-area: 1 / 1; position: relative; transform-style: preserve-3d;
+        transform-origin: 50% 50% -0.65em;
+        transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      .rr-face {
+        position: absolute; inset: 0; white-space: nowrap; text-align: left;
+        -webkit-backface-visibility: hidden; backface-visibility: hidden;
+      }
+      .rr-next { transform-origin: 50% 50% -0.65em; transform: rotateX(-90deg); }
+      .role-roll.is-rolling .rr-rot { transform: rotateX(90deg); }
+      .rr-icon { width: 15px; height: 15px; flex: none; opacity: 0.6; transition: opacity 0.2s ease; }
+      .role-roll:hover .rr-icon { opacity: 1; }
+      @media (prefers-reduced-motion: reduce) {
+        .rr-rot { transition: none; }
+      }
+      .role-roll {
         /* no outline: a fill a shade darker than the page */
-        background: #ebe5d9; font-size: 14.5px; font-weight: 600; line-height: 1;
+        background: #ebe5d9; color: var(--ink); font-size: 15px; font-weight: 600;
       }
-      .rt-thumb {
-        position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
-        border-radius: 999px; background: var(--yellow);
-        transform: translateX(100%);
-        transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+      .rr-face span {
+        background-image: linear-gradient(var(--yellow), var(--yellow));
+        background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 40%;
       }
-      .role-toggle.to-designer .rt-thumb { transform: translateX(0); }
-      .rt-opt {
-        position: relative; z-index: 1; display: flex; align-items: center; justify-content: center;
-        padding: 0 14px; border-radius: 999px; color: var(--muted); white-space: nowrap;
-        transition: color 0.35s ease;
-      }
-      .rt-opt:hover { color: var(--ink); }
-      .rt-opt.is-current,
-      .role-toggle.to-designer .rt-opt[data-portal] { color: var(--ink); }
-      .role-toggle.to-designer .rt-opt.is-current { color: var(--muted); }
-      .rt-opt:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-      header.menu-active .role-toggle { display: none; }
+      .role-roll:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+      header.menu-active .role-roll { display: none; }
       @media (max-width: 640px) {
-        .role-toggle { height: 40px; font-size: 13.5px; }
-        .rt-opt { padding: 0 11px; }
+        .role-roll { height: 40px; }
         .menu-btn { width: 44px; height: 44px; margin-right: -10px; }
         .head-inner { align-items: center; }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .rt-thumb, .rt-opt { transition: none; }
       }
     </style>
   </head>
@@ -959,12 +966,19 @@
             <div class="role">Works</div>
           </div>
           <div style="display: flex; align-items: center; gap: 18px">
-            <!-- Designer / Artist toggle: the same person's two modes. -->
-            <nav class="role-toggle" id="profileSwitch" aria-label="Portfolio mode">
-              <span class="rt-thumb" aria-hidden="true"></span>
-              <a href="../index.html" class="rt-opt" data-portal="fade">Designer</a>
-              <a href="./index.html" class="rt-opt is-current" aria-current="page">Artist</a>
-            </nav>
+            <!-- Designer / Artist: one label for the mode you're in; it rolls over
+                 to the other when chosen. The same person's two modes. -->
+            <a id="profileSwitch" class="role-roll" href="../index.html" data-portal="fade"
+               aria-label="Artist portfolio. Switch to Designer" title="Switch to Designer">
+              <span class="rr-drum" aria-hidden="true">
+                <span class="rr-size">Designer</span>
+                <span class="rr-rot">
+                  <span class="rr-face rr-now"><span>Artist</span></span>
+                  <span class="rr-face rr-next"><span>Designer</span></span>
+                </span>
+              </span>
+              <svg class="rr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 9 5-5 5 5" /><path d="m7 15 5 5 5-5" /></svg>
+            </a>
             <button class="menu-btn" id="menuToggle" aria-label="Open menu" aria-expanded="false">
               <span class="lbl">Menu</span>
               <svg
@@ -1644,18 +1658,15 @@
       route();
     </script>
     <script>
-      /* Designer / Artist toggle: slide the thumb across the moment the other
-         side is chosen (the page transition then takes over). */
+      /* Designer / Artist label: roll it over the moment it's chosen (the
+         page transition then takes over). */
       (function () {
-        var nav = document.getElementById("profileSwitch");
-        if (!nav) return;
-        var other = nav.querySelector(".rt-opt[data-portal]");
-        var here = nav.querySelector(".rt-opt.is-current");
-        function go() { nav.classList.add("to-designer"); }
-        other.addEventListener("pointerdown", go);
-        other.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") go(); });
-        here.addEventListener("click", function (e) { e.preventDefault(); });
-        window.addEventListener("pageshow", function (e) { if (e.persisted) nav.classList.remove("to-designer"); });
+        var roll = document.getElementById("profileSwitch");
+        if (!roll) return;
+        function go() { roll.classList.add("is-rolling"); }
+        roll.addEventListener("pointerdown", go);
+        roll.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+        window.addEventListener("pageshow", function (e) { if (e.persisted) roll.classList.remove("is-rolling"); });
       })();
     </script>
   </body>

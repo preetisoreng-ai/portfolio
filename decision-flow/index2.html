@@ -1,0 +1,2492 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Decision Flow Case Study | Preeti Soreng</title>
+    <meta
+      name="description"
+      content="Decision Flow for NucliOS: capture, structure, and surface decision-making touchpoints without disrupting natural workflows."
+    />
+    <meta name="theme-color" content="#ffffff" />
+    <script>
+      document.documentElement.className += " js";
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --font-head: "Fraunces", Georgia, serif;
+        --font-body: "Inter", system-ui, sans-serif;
+        --font-hand: "Caveat", cursive;
+        --ink: #0c0b1e;
+        --text: #22212b;
+        --muted: #3d3b4d;
+        --soft: #6a6878;
+        --line: rgba(12, 11, 30, 0.1);
+        --accent: #4f4dc5; /* Decision Flow indigo */
+        --accent-deep: #2c2a86;
+        --accent-line: rgba(79, 77, 197, 0.18);
+        --accent-tint: #eeeefb;
+        --alt: #1f8a5b; /* mint-green second colour */
+        --alt-line: rgba(31, 138, 91, 0.24);
+        --alt-tint: #e3f7ea;
+        --night: #101124;
+        --mist: #eef3fb;
+        --fs-display: 62px;
+        --fs-h1: 44px;
+        --fs-h2: 36px;
+        --fs-h3: 29px;
+        --fs-h4: 22px;
+        --fs-lede: 20px;
+        --fs-body: 17px;
+        --fs-body-sm: 15.5px;
+        --fs-caption: 14.5px;
+        --fs-chip: 15px;
+        --fs-nav: 15px;
+        --fs-eyebrow: 13px;
+        --fs-meta: 12.5px;
+        --fs-numeral: 50px;
+        --fs-label: 34px;
+        --fs-hand-sm: 26px;
+        --gutter: 56px;
+        --section-gap: 130px;
+      }
+      @media (max-width: 1024px) {
+        :root {
+          --fs-display: 44px;
+          --fs-h1: 35px;
+          --fs-h2: 30px;
+          --fs-h3: 25px;
+          --fs-h4: 21px;
+          --fs-lede: 19px;
+          --fs-numeral: 42px;
+          --fs-label: 30px;
+          --gutter: 36px;
+          --section-gap: 100px;
+        }
+      }
+      @media (max-width: 760px) {
+        :root {
+          --fs-display: 32px;
+          --fs-h1: 27px;
+          --fs-h2: 24px;
+          --fs-h3: 22px;
+          --fs-h4: 19px;
+          --fs-lede: 17px;
+          --fs-body: 16px;
+          --fs-body-sm: 15px;
+          --fs-caption: 14px;
+          --fs-chip: 13.5px;
+          --fs-numeral: 36px;
+          --fs-label: 28px;
+          --fs-hand-sm: 23px;
+          --gutter: 16px;
+          --section-gap: 64px;
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        background: #fff;
+      }
+      body {
+        font-family: var(--font-body);
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+      }
+      @supports (overflow: clip) {
+        html,
+        body {
+          overflow-x: clip;
+        }
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      p,
+      ul,
+      ol {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-weight: 500;
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      img,
+      video {
+        max-width: 100%;
+        display: block;
+      }
+      [id] {
+        scroll-margin-top: 110px;
+      }
+      .sr {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+      }
+
+      /* type */
+      .t-display,
+      .t-h1,
+      .t-h2,
+      .t-h3,
+      .t-h4,
+      .t-lede,
+      .t-body,
+      .t-body-sm,
+      .t-caption {
+        text-wrap: pretty;
+      }
+      .t-display {
+        font: 500 var(--fs-display)/1.16 var(--font-head);
+        letter-spacing: -0.02em;
+      }
+      .t-h1 {
+        font: 500 var(--fs-h1)/1.22 var(--font-head);
+        letter-spacing: -0.015em;
+      }
+      .t-h2 {
+        font: 500 var(--fs-h2)/1.25 var(--font-head);
+        letter-spacing: -0.01em;
+      }
+      .t-h3 {
+        font: 500 var(--fs-h3)/1.3 var(--font-head);
+        letter-spacing: -0.01em;
+      }
+      .t-h4 {
+        font: 500 var(--fs-h4)/1.35 var(--font-head);
+      }
+      .t-lede {
+        font: 400 var(--fs-lede)/1.7 var(--font-body);
+      }
+      .t-body {
+        font: 400 var(--fs-body)/1.75 var(--font-body);
+      }
+      .t-body-sm {
+        font: 400 var(--fs-body-sm)/1.65 var(--font-body);
+      }
+      .t-caption {
+        font: 400 var(--fs-caption)/1.5 var(--font-body);
+      }
+      .t-chip {
+        font: 500 var(--fs-chip)/1.4 var(--font-body);
+        letter-spacing: 0.02em;
+      }
+      .t-nav {
+        font: 500 var(--fs-nav)/1.4 var(--font-body);
+        letter-spacing: 0.02em;
+      }
+      .t-eyebrow {
+        font: 600 var(--fs-eyebrow)/1.4 var(--font-body);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+      .t-meta {
+        font: 600 var(--fs-meta)/1.4 var(--font-body);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .t-numeral {
+        font: 600 var(--fs-numeral)/1 var(--font-hand);
+      }
+      .t-label {
+        font: 600 var(--fs-label)/1.1 var(--font-hand);
+      }
+      .t-hand-sm {
+        font: 600 var(--fs-hand-sm)/1.2 var(--font-hand);
+      }
+      .c-ink {
+        color: var(--ink);
+      }
+      .c-muted {
+        color: var(--muted);
+      }
+      .c-soft {
+        color: var(--soft);
+      }
+      .c-accent {
+        color: var(--accent);
+      }
+      .c-alt {
+        color: var(--alt);
+      }
+      .c-white {
+        color: #fff;
+      }
+      .c-white-soft {
+        color: rgba(255, 255, 255, 0.76);
+      }
+      .c-faint {
+        color: rgba(167, 232, 189, 0.6);
+      }
+      .fw-600 {
+        font-weight: 600;
+      }
+
+      /* layout */
+      .row {
+        display: flex;
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+      }
+      .wrap {
+        flex-wrap: wrap;
+      }
+      .ai-center {
+        align-items: center;
+      }
+      .ai-start {
+        align-items: flex-start;
+      }
+      .ai-stretch {
+        align-items: stretch;
+      }
+      .jc-between {
+        justify-content: space-between;
+      }
+      .gap-6 {
+        gap: 6px;
+      }
+      .gap-8 {
+        gap: 8px;
+      }
+      .gap-10 {
+        gap: 10px;
+      }
+      .gap-12 {
+        gap: 12px;
+      }
+      .gap-14 {
+        gap: 14px;
+      }
+      .gap-16 {
+        gap: 16px;
+      }
+      .gap-20 {
+        gap: 20px;
+      }
+      .gap-24 {
+        gap: 24px;
+      }
+      .gap-26 {
+        gap: 26px;
+      }
+      .gap-30 {
+        gap: 30px;
+      }
+      .gap-34 {
+        gap: 34px;
+      }
+      .gap-44 {
+        gap: 44px;
+      }
+      .gap-56 {
+        gap: 56px;
+      }
+      .grid {
+        display: grid;
+      }
+      .cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .cols-4 {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .cols-5 {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+      }
+      .cols-icon {
+        grid-template-columns: 22px minmax(0, 1fr);
+      }
+      .cols-45-55 {
+        grid-template-columns: 45fr 55fr;
+      }
+      .span-2 {
+        grid-column: span 2;
+      }
+      .measure {
+        max-width: 860px;
+      }
+      .cs-container {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 0 var(--gutter);
+      }
+      @media (max-width: 1100px) {
+        .cols-5 {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 900px) {
+        .cols-4 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      @media (max-width: 760px) {
+        .cols-2,
+        .cols-3,
+        .cols-5,
+        .cols-45-55 {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .gap-44 {
+          gap: 28px;
+        }
+      }
+
+      /* chrome */
+      .cs-progress {
+        position: fixed;
+        inset: 0 0 auto 0;
+        height: 3px;
+        z-index: 120;
+        background: rgba(12, 11, 30, 0.06);
+        pointer-events: none;
+      }
+      .cs-progress-fill {
+        height: 100%;
+        width: 100%;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left center;
+      }
+      .cs-header {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        padding: 24px 0 20px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        border-bottom: 2px solid var(--accent-line);
+      }
+      .cs-home {
+        transition:
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .cs-home:hover {
+        color: var(--accent);
+        transform: translateX(-3px);
+      }
+      .cs-nav a {
+        position: relative;
+        color: var(--muted);
+        transition:
+          color 0.18s ease,
+          transform 0.18s ease;
+      }
+      .cs-nav a:hover {
+        color: var(--accent);
+        transform: translateY(-2px);
+      }
+      .cs-nav a svg {
+        position: absolute;
+        left: 0;
+        top: 22px;
+        width: 100%;
+        height: 10px;
+        overflow: visible;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+      }
+      .cs-nav a svg path {
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+      }
+      .cs-nav a:hover svg,
+      .cs-nav a[data-active="1"] svg {
+        opacity: 1;
+      }
+      .cs-nav a:hover svg path {
+        animation: wiggle 0.55s ease-out forwards;
+      }
+      .cs-nav a[data-active="1"] {
+        color: var(--accent);
+      }
+      .cs-nav a[data-active="1"] svg path {
+        stroke-dashoffset: 0;
+      }
+      @keyframes wiggle {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+      @media (max-width: 900px) {
+        .cs-header .cs-container {
+          flex-wrap: wrap;
+          row-gap: 8px;
+        }
+        .cs-nav {
+          width: 100%;
+          flex-wrap: wrap;
+          gap: 4px 20px;
+        }
+      }
+      @media (max-width: 760px) {
+        .cs-header {
+          padding: 12px 0 10px;
+          background: rgba(255, 255, 255, 0.97);
+          backdrop-filter: none;
+        }
+      }
+
+      /* hover lift + reveal */
+      [data-hov] {
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      [data-hov]:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 30px rgba(12, 11, 30, 0.08);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .js [data-rise] {
+          opacity: 0;
+          transform: translateY(26px);
+          transition:
+            opacity 0.6s cubic-bezier(0.22, 0.7, 0.3, 1),
+            transform 0.6s cubic-bezier(0.22, 0.7, 0.3, 1);
+          animation: rise-failsafe 0s linear 4s forwards;
+        }
+        .js [data-rise][data-in="1"] {
+          opacity: 1;
+          transform: none;
+          animation: none;
+        }
+      }
+      @keyframes rise-failsafe {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .page {
+        padding-bottom: 120px;
+      }
+      .section {
+        padding-top: var(--section-gap);
+      }
+
+      /* hero */
+      .hero {
+        padding-top: 92px;
+      }
+      .chip {
+        background: var(--accent-tint);
+        color: var(--accent-deep);
+        border-radius: 999px;
+        padding: 9px 20px;
+      }
+      .hero-title {
+        max-width: 1120px;
+      }
+      .hero-lede {
+        max-width: 900px;
+      }
+      .hero-media {
+        padding-top: 56px;
+      }
+      .media-card {
+        border-radius: 22px;
+        overflow: hidden;
+        border: 2px solid var(--line);
+        box-shadow: 0 6px 20px rgba(12, 11, 30, 0.06);
+        background: #fff;
+      }
+      .bar {
+        height: 12px;
+        background: linear-gradient(90deg, var(--accent) 0 60%, var(--alt) 60% 100%);
+      }
+      .media-card-body {
+        position: relative;
+        background: #fafbfd;
+        padding: 28px;
+      }
+      .media-cover {
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        max-height: 640px;
+        object-fit: contain;
+      }
+
+      /* setup */
+      .setup {
+        margin-top: 64px;
+        border: 2px solid var(--line);
+        border-radius: 30px;
+        padding: 40px 44px;
+      }
+      .setup-note {
+        padding-top: 18px;
+        border-top: 2px solid rgba(12, 11, 30, 0.07);
+      }
+
+      /* live link password gate (same behaviour as decision-flow.html) */
+      .live-access .live-link {
+        display: none;
+        align-items: center;
+        gap: 6px;
+        color: var(--accent);
+        font-weight: 600;
+        border-bottom: 1.5px solid var(--accent-line);
+        padding-bottom: 2px;
+        align-self: flex-start;
+      }
+      .live-access.is-unlocked .live-link {
+        display: inline-flex;
+      }
+      .live-access.is-unlocked .live-locked {
+        display: none;
+      }
+      .live-note a {
+        font-weight: 600;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      .live-form {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        max-width: 330px;
+      }
+      .live-form input {
+        min-width: 0;
+        flex: 1;
+        height: 40px;
+        padding: 0 12px;
+        border: 1.5px solid #d8d6e5;
+        border-radius: 10px;
+        background: #fff;
+        color: var(--ink);
+        font: 400 14px var(--font-body);
+        outline: none;
+      }
+      .live-form input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-line);
+      }
+      .live-form button {
+        height: 40px;
+        padding: 0 16px;
+        border: 0;
+        border-radius: 999px;
+        background: var(--accent);
+        color: #fff;
+        font: 600 13px var(--font-body);
+        cursor: pointer;
+      }
+      .live-error {
+        min-height: 18px;
+        margin-top: 6px;
+        color: #b33b52;
+        font: 500 12.5px/1.4 var(--font-body);
+      }
+
+      /* dark band */
+      .reasons {
+        margin-top: var(--section-gap);
+        background: var(--night);
+        border-radius: 40px;
+        padding: 74px 72px;
+      }
+
+      /* cards */
+      .card {
+        background: #fff;
+        border: 2px solid var(--line);
+        border-radius: 26px;
+        padding: 30px 30px 34px;
+      }
+      .card--tint {
+        background: var(--mist);
+        border-color: transparent;
+      }
+      .quote {
+        background: #fff3b0;
+        border-radius: 16px;
+        padding: 18px 22px;
+      }
+      .quote-icon {
+        width: 20px;
+        height: 20px;
+        flex: none;
+        margin-top: 2px;
+      }
+      .flow-card {
+        background: #fff;
+        border: 2px solid var(--accent-line);
+        border-radius: 30px;
+        padding: 40px 44px;
+      }
+      .flow-card--alt {
+        border-color: var(--alt-line);
+      }
+      .flow-media {
+        border-radius: 18px;
+        overflow: hidden;
+        background: #fafbfd;
+        box-shadow: inset 0 0 0 1.5px var(--line);
+        padding: 18px;
+      }
+      .flow-media img {
+        width: 100%;
+        height: auto;
+      }
+      .cap-pill {
+        align-self: flex-start;
+        background: #f6f7fc;
+        border: 1.5px solid var(--line);
+        border-radius: 999px;
+        padding: 7px 16px;
+        color: #4a4858;
+      }
+      .bullets {
+        padding-left: 1.1em;
+        display: grid;
+        gap: 10px;
+      }
+      .bullets strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+
+      /* stages */
+      .stage {
+        position: relative;
+        background: #fff;
+        border: 2px solid var(--accent-line);
+        border-radius: 24px;
+        padding: 26px 24px 28px;
+      }
+      .stage:nth-child(even) {
+        border-color: var(--alt-line);
+      }
+      .stage-arrow {
+        position: absolute;
+        right: -19px;
+        top: 34px;
+        width: 22px;
+        height: 22px;
+        color: var(--accent);
+        z-index: 2;
+        background: #fff;
+        border-radius: 50%;
+      }
+      .stage:last-child .stage-arrow {
+        display: none;
+      }
+      @media (max-width: 1100px) {
+        .stage-arrow {
+          display: none;
+        }
+      }
+
+      /* journey scrolly */
+      .step {
+        padding: 14vh 0;
+        min-height: 60vh;
+        justify-content: center;
+      }
+      .step--first {
+        padding-top: 0;
+        justify-content: flex-start;
+      }
+      .step--last {
+        padding-bottom: 22vh;
+      }
+      .scrolly-sticky {
+        position: sticky;
+        top: 112px;
+      }
+      .scrolly-frame {
+        position: relative;
+        aspect-ratio: 1140 / 760;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 2px solid var(--line);
+        background: #fafbfd;
+      }
+      .scrolly-layer {
+        position: absolute;
+        inset: 18px;
+        width: calc(100% - 36px);
+        height: calc(100% - 36px);
+        object-fit: contain;
+        opacity: 0;
+        transform: translateY(26px);
+        transition:
+          opacity 0.42s ease,
+          transform 0.42s cubic-bezier(0.22, 0.7, 0.3, 1);
+      }
+      .scrolly-layer[data-on="1"] {
+        opacity: 1;
+        transform: none;
+      }
+      .scrolly-caps {
+        position: relative;
+        height: 44px;
+        margin-top: 14px;
+      }
+      .scrolly-cap {
+        position: absolute;
+        left: 0;
+        top: 0;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 0.32s ease,
+          transform 0.32s ease;
+      }
+      .scrolly-cap[data-on="1"] {
+        opacity: 1;
+        transform: none;
+      }
+      .handshake {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .handshake img {
+        width: 30px;
+        height: auto;
+      }
+      .m-fig {
+        display: none;
+      }
+      @media (max-width: 900px) {
+        .scrolly {
+          display: block;
+        }
+        .scrolly-sticky {
+          display: none;
+        }
+        .step,
+        .step--first,
+        .step--last {
+          padding: 26px 0;
+          min-height: 0;
+        }
+        .m-fig {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 6px;
+        }
+        .m-fig img {
+          border-radius: 16px;
+          border: 2px solid var(--line);
+          padding: 10px;
+          background: #fafbfd;
+        }
+      }
+
+      /* tables */
+      .table-card {
+        border: 2px solid var(--line);
+        border-radius: 30px;
+        overflow: hidden;
+      }
+      .table-scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .jtbl {
+        display: grid;
+        grid-template-columns: 150px repeat(4, minmax(190px, 1fr));
+        min-width: 920px;
+      }
+      .jtbl > div {
+        padding: 18px 20px;
+        border-top: 1.5px solid var(--line);
+        border-left: 1.5px solid var(--line);
+      }
+      .jtbl > div:nth-child(5n + 1) {
+        border-left: 0;
+        background: var(--mist);
+      }
+      .jtbl > .th {
+        border-top: 0;
+        background: var(--accent-tint);
+        color: var(--accent-deep);
+      }
+      .jtbl ol,
+      .jtbl ul {
+        padding-left: 1.1em;
+        display: grid;
+        gap: 4px;
+      }
+      .ftbl {
+        display: grid;
+        grid-template-columns: 1fr 1.6fr 1.6fr;
+      }
+      .ftbl > div {
+        padding: 18px 24px;
+        border-top: 1.5px solid var(--line);
+      }
+      .ftbl > .th {
+        border-top: 0;
+        background: var(--accent-tint);
+      }
+      .ftbl > .td-key {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      @media (max-width: 760px) {
+        .ftbl {
+          grid-template-columns: minmax(0, 1fr);
+        }
+        .ftbl > .th {
+          display: none;
+        }
+        .ftbl > div {
+          border-top: 0;
+          padding: 4px 20px;
+        }
+        .ftbl > .td-key {
+          border-top: 1.5px solid var(--line);
+          padding-top: 18px;
+        }
+        .ftbl > .td-key:first-of-type {
+          border-top: 0;
+        }
+        .ftbl > .td-last {
+          padding-bottom: 18px;
+        }
+        .ftbl > div[data-k]::before {
+          content: attr(data-k);
+          display: block;
+          font: 600 11px/1.6 var(--font-body);
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--accent);
+        }
+        .table-card {
+          border-radius: 22px;
+        }
+      }
+
+      /* personas */
+      .persona-card {
+        background: #fff;
+        border: 2.5px solid var(--accent);
+        border-radius: 34px;
+        padding: 44px 46px;
+      }
+      .persona-card--alt {
+        border-color: var(--alt);
+      }
+      .avatar {
+        width: 108px;
+        height: 108px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 5px solid var(--accent);
+        box-shadow: 0 6px 18px var(--accent-line);
+        flex: none;
+      }
+      .persona-card--alt .avatar {
+        border-color: var(--alt);
+        box-shadow: 0 6px 18px var(--alt-line);
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .icon-list {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        gap: 12px;
+      }
+      .icon-list li {
+        display: grid;
+        grid-template-columns: 22px minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+      .icon-list svg {
+        margin-top: 3px;
+      }
+      .gain {
+        background: rgba(79, 77, 197, 0.06);
+        box-shadow: inset 0 0 0 1.5px var(--accent-line);
+        border-radius: 20px;
+        padding: 20px 22px;
+      }
+      .persona-card--alt .gain {
+        background: rgba(31, 138, 91, 0.06);
+        box-shadow: inset 0 0 0 1.5px var(--alt-line);
+      }
+      /* challenges: rust orange for every persona */
+      .c-rust { color: #c2502a; }
+      .pain {
+        background: rgba(194, 80, 42, 0.07);
+        box-shadow: inset 0 0 0 1.5px rgba(194, 80, 42, 0.22);
+        border-radius: 20px;
+        padding: 20px 22px;
+      }
+      /* persona header: identity column + comic speech bubble */
+      .persona-top {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 40px;
+        align-items: center;
+      }
+      .persona-id { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
+      .persona-id .avatar { width: 128px; height: 128px; margin-bottom: 10px; }
+      .persona-say { display: flex; flex-direction: column; gap: 18px; }
+      .persona-bio { max-width: 640px; padding-left: 6px; }
+      .bubble {
+        position: relative;
+        margin: 0;
+        background: #fff;
+        border: 2.5px solid var(--ink);
+        border-radius: 30px;
+        padding: 22px 30px 24px;
+        box-shadow: 5px 5px 0 #ffe066;   /* flat comic offset shadow */
+      }
+      .bubble p { margin: 0; font: 600 29px/1.25 var(--font-hand); color: var(--ink); }
+      /* tail pointing left, toward the persona photo */
+      .bubble::before,
+      .bubble::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 0; height: 0;
+        border-style: solid;
+        transform: translateY(-50%);
+      }
+      .bubble::before { left: -24px; border-width: 13px 24px 13px 0; border-color: transparent var(--ink) transparent transparent; }
+      .bubble::after  { left: -19px; border-width: 10px 20px 10px 0; border-color: transparent #fff transparent transparent; }
+      @media (max-width: 760px) {
+        .persona-top { grid-template-columns: minmax(0, 1fr); gap: 38px; }
+        .persona-id .avatar { width: 104px; height: 104px; }
+        .bubble p { font-size: 24px; }
+        .bubble { padding: 18px 22px 20px; }
+        /* tail points up toward the photo on small screens */
+        .bubble::before { left: 50%; top: -24px; transform: translateX(-50%); border-width: 0 13px 24px 13px; border-color: transparent transparent var(--ink) transparent; }
+        .bubble::after  { left: 50%; top: -19px; transform: translateX(-50%); border-width: 0 10px 20px 10px; border-color: transparent transparent #fff transparent; }
+        .persona-bio { padding-left: 0; text-align: center; }
+      }
+      /* journey map: stages as columns, rows for doing / feeling */
+      .jmap {
+        border: 1.5px solid var(--line);
+        border-radius: 22px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .jmap-row {
+        display: grid;
+        grid-template-columns: 124px repeat(4, minmax(0, 1fr));
+        border-top: 1.5px solid var(--line);
+      }
+      .jmap-row:first-child { border-top: 0; }
+      .jmap-row > div { padding: 14px 16px; }
+      .jmap-row > div + div { border-left: 1.5px dashed var(--line); }
+      .jmap-key {
+        font: 600 11px/1.3 var(--font-body);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--soft);
+        background: #fafbfd;
+        display: flex;
+        align-items: center;
+      }
+      .jmap-head > div:not(.jmap-key) { background: var(--accent-tint); }
+      .persona-card--alt .jmap-head > div:not(.jmap-key) { background: var(--alt-tint); }
+      .jmap-stage { font: 600 12px/1.3 var(--font-body); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); }
+      .persona-card--alt .jmap-stage { color: var(--alt); }
+      .jmap-stage b { display: block; font: 600 22px/1 var(--font-hand); letter-spacing: 0; margin-bottom: 4px; opacity: 0.7; }
+      .jmap-doing { font: 500 15px/1.4 var(--font-body); color: var(--ink); }
+      .jmap-curve-row > div { padding: 0; }
+      .jmap-curve-row .jmap-key { white-space: nowrap; padding: 14px 16px; flex-direction: column; justify-content: space-between; align-items: flex-start; }
+      .jmap-curve { grid-column: 2 / -1; position: relative; height: 150px;
+        background: linear-gradient(180deg, rgba(31,138,91,.07), rgba(31,138,91,0) 40%, rgba(179,59,82,0) 60%, rgba(179,59,82,.07)); }
+      .jmap-curve svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+      .jmap-zero { stroke: rgba(12, 11, 30, 0.16); stroke-dasharray: 4 5; }
+      .jmap-col { stroke: rgba(12, 11, 30, 0.10); stroke-dasharray: 4 4; }
+      .jmap-area { opacity: 0.12; }
+      .jmap-line { stroke-dasharray: 1; stroke-dashoffset: 0; }
+      .jmap-face {
+        position: absolute;
+        width: 34px; height: 34px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 2px 10px rgba(12, 11, 30, 0.18);
+        z-index: 2;
+      }
+      .jmap-face svg { position: static; width: 100%; height: 100%; }
+      .jmap-feel { display: flex; align-items: center; gap: 8px; font: 600 14px/1.3 var(--font-body); color: var(--ink); }
+      .jmap-feel i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+      @media (prefers-reduced-motion: no-preference) {
+        .js .persona-card .jmap-line { stroke-dashoffset: 1; }
+        .js .persona-card .jmap-face { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        .js .persona-card[data-in="1"] .jmap-line { animation: jmap-draw 1.3s cubic-bezier(0.45, 0, 0.2, 1) 0.25s forwards; }
+        .js .persona-card[data-in="1"] .jmap-face { animation: jmap-pop 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+      }
+      @keyframes jmap-draw { to { stroke-dashoffset: 0; } }
+      @keyframes jmap-pop { to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+      @media (max-width: 760px) {
+        .jmap-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .jmap-row > .jmap-key { display: none; }
+        .jmap-row > div { padding: 10px 8px; }
+        .jmap-row > div:nth-child(2) { border-left: 0; }
+        .jmap-curve { grid-column: 1 / -1; height: 120px; }
+        .jmap-curve-row > .jmap-curve { padding: 0; border-left: 0; }
+        .jmap-stage { font-size: 10px; letter-spacing: 0.06em; }
+        .jmap-stage b { font-size: 18px; }
+        .jmap-doing { font-size: 12.5px; }
+        .jmap-feel { font-size: 11.5px; flex-direction: column; align-items: flex-start; gap: 5px; hyphens: auto; overflow-wrap: anywhere; }
+        .jmap-row > div { padding: 10px 6px; }
+        .jmap-face { width: 28px; height: 28px; }
+      }
+
+      /* impact */
+      .impact {
+        width: calc(100% - 112px);
+        max-width: 1320px;
+        margin: var(--section-gap) auto 24px;
+        background: var(--alt-tint);
+        border-radius: 40px;
+        padding: 60px 66px 64px;
+        position: relative;
+        overflow: hidden;
+      }
+      .t-stat {
+        font: 600 72px/1 var(--font-hand);
+        color: var(--ink);
+      }
+      .stat-divided {
+        border-left: 2px solid rgba(12, 11, 30, 0.1);
+        padding-left: 40px;
+      }
+      .impact-confetti span {
+        position: absolute;
+        width: 8px;
+        height: 8px;
+        border-radius: 2px;
+        opacity: 0.85;
+        animation: snap 1.6s steps(1, end) infinite;
+      }
+      @keyframes snap {
+        50% {
+          transform: translate(var(--dx), var(--dy)) rotate(90deg);
+        }
+      }
+      @media (max-width: 1024px) {
+        .impact {
+          width: 100%;
+          margin: 80px 0 24px;
+          padding: 48px 40px;
+        }
+        .reasons {
+          padding: 48px 40px;
+        }
+        .persona-card,
+        .flow-card,
+        .setup {
+          padding: 32px 30px;
+        }
+      }
+      @media (max-width: 760px) {
+        .hero {
+          padding-top: 36px;
+          gap: 22px;
+        }
+        .chip {
+          padding: 7px 14px;
+        }
+        .hero-media {
+          padding-top: 30px;
+        }
+        .media-card-body {
+          padding: 12px;
+        }
+        .setup {
+          margin-top: 40px;
+          padding: 24px 20px;
+          border-radius: 24px;
+        }
+        .reasons {
+          padding: 34px 22px 38px;
+          border-radius: 28px;
+        }
+        .persona-card,
+        .flow-card {
+          padding: 26px 20px;
+          border-radius: 26px;
+        }
+        .avatar {
+          width: 84px;
+          height: 84px;
+        }
+        .flow-media {
+          padding: 10px;
+        }
+        .impact {
+          margin: 56px 0 8px;
+          padding: 32px 22px 34px;
+          border-radius: 28px;
+        }
+        .t-stat {
+          font-size: 54px;
+        }
+        .stat-divided {
+          border-left: 0;
+          padding-left: 0;
+          border-top: 2px solid var(--line);
+          padding-top: 22px;
+        }
+      }
+
+      /* other projects + back */
+      .op-card {
+        border: 2px solid var(--line);
+        border-radius: 26px;
+        overflow: hidden;
+        background: #fff;
+        color: inherit;
+      }
+      .op-shot {
+        height: 190px;
+        background: var(--mist);
+        overflow: hidden;
+      }
+      .op-shot img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top center;
+      }
+      .op-body {
+        padding: 22px 24px 26px;
+      }
+      .back-row {
+        margin-top: 110px;
+        border-top: 2px solid var(--accent-line);
+        padding-top: 56px;
+      }
+      .back-link {
+        border: 2.5px solid var(--ink);
+        border-radius: 999px;
+        padding: 14px 38px;
+        color: var(--ink);
+        transition:
+          background 0.18s ease,
+          color 0.18s ease;
+      }
+      .back-link:hover {
+        background: var(--ink);
+        color: #fff;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scrolly-layer,
+        .scrolly-cap {
+          transition: none !important;
+        }
+        .impact-confetti span {
+          animation: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="cs-progress" aria-hidden="true">
+        <div class="cs-progress-fill" data-progress></div>
+      </div>
+
+      <header class="cs-header">
+        <div class="cs-container row gap-34 ai-center jc-between">
+          <a class="t-hand-sm c-ink row gap-10 ai-center cs-home" href="../index.html">
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#4f4dc5"
+              stroke-width="2.75"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+            back home
+          </a>
+          <nav class="t-nav row gap-34 ai-center cs-nav" aria-label="Sections">
+            <a href="#setup" data-spy="setup">setup</a>
+            <a href="#problem" data-spy="problem">problem</a>
+            <a href="#research" data-spy="research">research</a>
+            <a href="#stages" data-spy="stages">stages</a>
+            <a href="#journey" data-spy="journey">journey</a>
+            <a href="#personas" data-spy="personas">personas</a>
+            <a href="#features" data-spy="features">features</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="cs-container">
+        <!-- ============ HERO ============ -->
+        <div class="stack gap-34 hero">
+          <div class="row wrap gap-12">
+            <div class="t-chip chip">Lead Product Designer</div>
+            <div class="t-chip chip">NucliOS · MathCo</div>
+            <div class="t-chip chip">User Research + UX Design</div>
+          </div>
+          <h1 class="t-display c-ink hero-title">
+            Capture, structure, and surface
+            <span class="c-accent">decision-making touchpoints</span> without disrupting natural
+            workflows
+          </h1>
+          <p class="t-lede hero-lede">
+            MathCo is an enterprise AI and analytics company that helps organizations transform data
+            into actionable business decisions. It builds customized data products, integrates AI
+            into business workflows, and enables companies to scale intelligence across operations.
+            Their approach focuses on connecting data, analytics, and decision-making to drive
+            measurable outcomes and improve efficiency.
+          </p>
+        </div>
+
+        <!-- Media slot: swap the <img> for <video autoplay muted loop playsinline preload="metadata" class="media-cover" src="..."></video> -->
+        <div class="hero-media">
+          <div class="media-card" data-rise>
+            <div class="bar"></div>
+            <div class="media-card-body">
+              <img
+                class="media-cover"
+                src="../assets/csImage79.png"
+                alt="Decision Flow hero architecture diagram"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ SETUP ============ -->
+        <section class="stack gap-26 setup" id="setup" data-rise>
+          <div class="t-label c-accent">project setup</div>
+          <div class="grid cols-4" style="row-gap: 30px; column-gap: 40px">
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Company</div>
+              <div class="t-body-sm c-ink">MathCo</div>
+            </div>
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Product</div>
+              <div class="t-body-sm c-ink">NucliOS</div>
+            </div>
+            <div class="stack gap-8 span-2">
+              <div class="t-meta c-accent">Role</div>
+              <div class="t-body-sm c-ink">Lead Product Designer | NucliOS</div>
+            </div>
+            <div class="stack gap-8 span-2">
+              <div class="t-meta c-accent">Scope</div>
+              <div class="t-body-sm c-ink">
+                User Research · Interaction · Visual Design · UX Design · Prototyping · Testing
+              </div>
+            </div>
+            <div class="stack gap-8">
+              <div class="t-meta c-accent">Timeline</div>
+              <div class="t-body-sm c-ink">March 2024 – December 2025</div>
+            </div>
+            <div class="stack gap-8 live-access" data-live-access>
+              <div class="t-meta c-accent">Live link</div>
+              <a
+                class="t-body-sm live-link"
+                href="https://preetisoreng-ai.github.io/decision-flow/"
+                target="_blank"
+                rel="noopener"
+                >Open Decision Flow <span aria-hidden="true">&#8599;&#xFE0E;</span
+                ><span class="sr"> (opens in a new tab)</span></a
+              >
+              <div class="live-locked">
+                <p class="t-caption c-soft live-note">
+                  <a
+                    href="mailto:preeti.soreng@gmail.com?subject=Password%20request%20for%20case%20study"
+                    >Request access</a
+                  >
+                  to open the live link.
+                </p>
+                <form class="live-form">
+                  <label class="sr" for="decision-live-password">Password</label>
+                  <input
+                    id="decision-live-password"
+                    type="password"
+                    autocomplete="current-password"
+                    placeholder="Password"
+                    required
+                  />
+                  <button type="submit">Unlock</button>
+                </form>
+                <p class="live-error" role="alert" aria-live="polite"></p>
+              </div>
+            </div>
+          </div>
+          <p class="t-body setup-note">
+            NucliOS is MathCo’s proprietary AI-powered platform that powers this transformation. It
+            converts raw data into governed, contextual intelligence, enables AI agents and
+            applications, and supports end-to-end workflows—from data preparation to decision
+            automation—helping enterprises move faster from insights to impactful business actions.
+          </p>
+        </section>
+
+        <!-- ============ PROBLEM ============ -->
+        <section class="stack gap-30 section" id="problem">
+          <div class="t-label c-accent" data-rise>problem statement</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            The decision-making journey spans functions and personas, but remains fragmented and
+            difficult to trace end to end.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            The organization’s decision-making process spans multiple functions and personas,
+            bringing together diverse inputs, perspectives, and actions across the business. While
+            this creates a rich foundation for informed decisions, the overall journey remains
+            fragmented and difficult to trace end to end.
+          </p>
+          <div class="quote row gap-12 ai-start measure" data-rise>
+            <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"
+                stroke="#8a6d1f"
+                stroke-width="1.7"
+                stroke-linecap="round"
+              />
+            </svg>
+            <p class="t-body-sm" style="color: #3a2f26">
+              Information, insights, and decisions are often created and managed across disconnected
+              systems and informal channels. As a result, critical context, rationale, and
+              dependencies are not consistently captured or carried forward. This makes it
+              challenging to understand how decisions originate, evolve, and ultimately translate
+              into outcomes. The lack of a unified and traceable flow leads to limited visibility,
+              inefficiencies, repeated work, and misalignment—hindering the organization’s ability
+              to make consistent, scalable, and impact-driven decisions.
+            </p>
+          </div>
+        </section>
+
+        <div class="stack gap-34 reasons" data-rise>
+          <div class="t-label" style="color: #a7e8bd">goals</div>
+          <div class="grid cols-5 gap-34">
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">01</div>
+              <h3 class="t-h4 c-white">Make decision flows visible</h3>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">02</div>
+              <h3 class="t-h4 c-white">Capture and preserve decision context</h3>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">03</div>
+              <h3 class="t-h4 c-white">Reduce fragmentation into a single source of truth</h3>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">04</div>
+              <h3 class="t-h4 c-white">Accelerate and streamline decision-making</h3>
+            </div>
+            <div class="stack gap-14">
+              <div class="t-numeral c-faint">05</div>
+              <h3 class="t-h4 c-white">Build a reusable organizational memory</h3>
+            </div>
+          </div>
+        </div>
+
+        <!-- ============ RESEARCH ============ -->
+        <section class="stack gap-30 section" id="research">
+          <div class="t-label c-accent" data-rise>user interview</div>
+          <div class="t-eyebrow c-accent" data-rise>Objective</div>
+          <h2 class="t-h1 c-ink" style="margin-top: -14px" data-rise>
+            To uncover how decisions flow across both tangible and intangible touchpoints, and
+            identify gaps and opportunities to optimize the overall journey.
+          </h2>
+
+          <div class="t-eyebrow c-accent" style="margin-top: 20px" data-rise>Hypothesis</div>
+          <div class="grid cols-3" style="gap: 24px">
+            <div class="stack gap-14 card" data-hov data-rise>
+              <div class="t-numeral c-accent">01</div>
+              <p class="t-body">
+                Mapping the end-to-end decision flow will help uncover users’ micro-goals, while
+                exposing gaps, lost context, and inefficiencies across the journey.
+              </p>
+            </div>
+            <div class="stack gap-14 card" data-hov data-rise>
+              <div class="t-numeral c-alt">02</div>
+              <p class="t-body">
+                A deeper understanding of how information and decisions evolve across functions will
+                enable optimization of the process and improve visibility and transparency.
+              </p>
+            </div>
+            <div class="stack gap-14 card" data-hov data-rise>
+              <div class="t-numeral c-accent">03</div>
+              <p class="t-body">
+                While insights today exist in silos across decision intelligence, data-driven
+                practices, and collaboration, the key opportunity lies in stitching them together to
+                create a unified, traceable decision-making ecosystem.
+              </p>
+            </div>
+          </div>
+
+          <article class="stack gap-16 flow-card" data-hov data-rise>
+            <div class="flow-media">
+              <img
+                loading="lazy"
+                src="../assets/csUserInterviewStickies.png"
+                alt="Interview notes for Harshad, Manasi, Ishani and Shridhar on a Figma sticky board"
+              />
+            </div>
+            <div class="t-caption cap-pill">
+              Fig. Screenshot from the Figma file where the interviews were documented
+            </div>
+          </article>
+
+          <div class="t-label c-accent" style="margin-top: 56px" data-rise>
+            user research insights
+          </div>
+          <h2 class="t-h1 c-ink" data-rise>
+            The decision-making journey, before, during and after.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            In the table below the decision-making journey has been captured by before, after and
+            during stages of decision making
+          </p>
+          <div class="table-card" data-rise>
+            <div class="table-scroll">
+              <div class="jtbl t-body-sm">
+                <div class="th"></div>
+                <div class="th t-meta">Pre Decision Making (Discover)</div>
+                <div class="th t-meta">During Decision Making (Analyse)</div>
+                <div class="th t-meta">Post Decision Making (Collab)</div>
+                <div class="th t-meta">Implement / Approval</div>
+
+                <div class="t-meta c-accent">Actions</div>
+                <div>
+                  Gather Information: Collect relevant data and information related to the decision
+                </div>
+                <div>Insights Collection: Look at insights to create a decision</div>
+                <div>
+                  <ul>
+                    <li>Prepare decision for approval</li>
+                    <li>Review decision</li>
+                    <li>Team discussion</li>
+                    <li>Compare</li>
+                    <li>Adjust</li>
+                  </ul>
+                </div>
+                <div>
+                  <ul>
+                    <li>Send decisions for approval</li>
+                    <li>Review decision</li>
+                    <li>Approve / Deny</li>
+                    <li>Send feedback</li>
+                  </ul>
+                </div>
+
+                <div class="t-meta c-accent">Goals</div>
+                <div>
+                  Find all the necessary artefacts, data, to be ready for creating a decision,
+                  ability to save filter combo
+                </div>
+                <div>
+                  <ol>
+                    <li>Compare different scenarios</li>
+                    <li>Save different scenarios</li>
+                    <li>Validating Insights</li>
+                  </ol>
+                </div>
+                <div>
+                  <ol>
+                    <li>Finalise decision</li>
+                  </ol>
+                </div>
+                <div>
+                  <ol>
+                    <li>Approve decision</li>
+                    <li>Implement decision</li>
+                    <li>Track decision</li>
+                  </ol>
+                </div>
+
+                <div class="t-meta c-accent">Pain Points</div>
+                <div>
+                  <ul>
+                    <li>Lot of information</li>
+                    <li>Lack of information</li>
+                    <li>Unable to search efficiently in NucliOS</li>
+                  </ul>
+                </div>
+                <div>
+                  <ol>
+                    <li>How to validate</li>
+                    <li>Credibility of the decisions / insights</li>
+                  </ol>
+                </div>
+                <div>
+                  <ol>
+                    <li>Lack of collaborative aid</li>
+                    <li>Manual and redundant process</li>
+                    <li>Lot of back and forth of decision</li>
+                    <li>Approval from finance is a lengthier process</li>
+                  </ol>
+                </div>
+                <div>
+                  <ul>
+                    <li>Lack of validation on decision</li>
+                    <li>Redundant process to get plan approved</li>
+                  </ul>
+                </div>
+
+                <div class="t-meta c-accent">Emotions</div>
+                <div>Curious, Excited, Overwhelmed</div>
+                <div>Curious, Confused, Equivocal</div>
+                <div>Confident, Apprehensive</div>
+                <div>Confident</div>
+
+                <div class="t-meta c-accent">Activity</div>
+                <div>
+                  User looks at past data to retrospect and analyse the product performance last
+                  year / quarter etc depending on the goal
+                </div>
+                <div>
+                  User looks at past data to retrospect and analyse the product performance last
+                  year / quarter etc depending on the goal
+                </div>
+                <div>
+                  Collaborators will review the decisions and after discussion will finalise the
+                  decision
+                </div>
+                <div>Implement the solution</div>
+
+                <div class="t-meta c-accent">Touchpoint</div>
+                <div>NucliOS, Excel</div>
+                <div>NucliOS, Excel</div>
+                <div>NucliOS, Excel, Other dashboard tool</div>
+                <div>NucliOS, Mail</div>
+
+                <div class="t-meta c-accent">Design Ideas</div>
+                <div>Insights for user to quickly look at the database; Advanced search</div>
+                <div>
+                  Save a scenario, Compare Scenario, add a credibility to the decisions made by
+                  attaching some credible info
+                </div>
+                <div>
+                  Send / Receive plan. Ability to add alerts, notes, comments, reply. Log the entire
+                  transaction of decision
+                </div>
+                <div>Notification; Reasons for denial; Status visibility</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ STAGES ============ -->
+        <section class="stack gap-30 section" id="stages">
+          <div class="t-label c-accent" data-rise>stages of decision making</div>
+          <h2 class="t-h1 c-ink" data-rise>Five distinct stages that apply to all the projects.</h2>
+          <p class="t-body c-muted measure" data-rise>
+            User interviews revealed a consistent decision-making journey, comprising Five distinct
+            stages that apply to all the projects.
+          </p>
+          <ol
+            class="grid cols-5"
+            style="gap: 20px; padding: 0; list-style: none"
+            aria-label="Five stages of decision making"
+          >
+            <li class="stack gap-12 stage" data-rise>
+              <div class="t-numeral c-accent">01</div>
+              <div class="t-eyebrow c-ink">Discoverability</div>
+              <p class="t-body-sm c-muted">
+                Navigating vast datasets, surfacing relevant metrics, filtering noise, and
+                identifying meaningful signals worth investigating
+              </p>
+              <svg
+                class="stage-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </li>
+            <li class="stack gap-12 stage" data-rise>
+              <div class="t-numeral c-alt">02</div>
+              <div class="t-eyebrow c-ink">Validation</div>
+              <p class="t-body-sm c-muted">
+                Ability to validate, that what system is recommending is in sync with users’
+                intuition
+              </p>
+              <p class="t-body-sm c-muted">
+                Confirming the accuracy, reliability, and relevance of the findings derived from
+                data analysis
+              </p>
+              <svg
+                class="stage-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </li>
+            <li class="stack gap-12 stage" data-rise>
+              <div class="t-numeral c-accent">03</div>
+              <div class="t-eyebrow c-ink">Comparison &amp; Track</div>
+              <p class="t-body-sm c-muted">
+                Introduce scenario modeling, historical benchmarking, and performance evaluation
+                across similar products, plans, or business conditions.
+              </p>
+              <svg
+                class="stage-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </li>
+            <li class="stack gap-12 stage" data-rise>
+              <div class="t-numeral c-alt">04</div>
+              <div class="t-eyebrow c-ink">Collaboration</div>
+              <p class="t-body-sm c-muted">
+                Cross-functional communication, clarification of rationale, negotiation of
+                priorities, and alignment between stakeholders with different goals and constraints.
+              </p>
+              <svg
+                class="stage-arrow"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </li>
+            <li class="stack gap-12 stage" data-rise>
+              <div class="t-numeral c-accent">05</div>
+              <div class="t-eyebrow c-ink">Approval</div>
+              <p class="t-body-sm c-muted">
+                Extends beyond a simple sign-off process, incorporating governance, accountability,
+                financial implications, compliance considerations, and execution readiness.
+              </p>
+            </li>
+          </ol>
+          <div class="quote row gap-12 ai-start measure" data-rise>
+            <svg class="quote-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3Z"
+                stroke="#8a6d1f"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <p class="t-body-sm" style="color: #3a2f26">
+              This framework represents a high-level view of how decisions evolve within an
+              organization—from the initial identification of an opportunity to the final approval
+              and implementation of an action. However, in practice, each stage contains its own
+              deeply layered decision-making ecosystem. Every transition to the next stage is
+              supported by multiple micro-decisions, evaluations, discussions, trade-offs, and
+              iterations occurring within teams, systems, and workflows.
+            </p>
+          </div>
+        </section>
+
+        <!-- ============ ORGANISATION + FUNCTION JOURNEY (scrolly) ============ -->
+        <section class="stack gap-30 section" id="journey">
+          <div class="t-label c-accent">organisation &amp; function decision flow</div>
+          <div class="grid cols-45-55 gap-56 ai-start scrolly" data-scrolly>
+            <div>
+              <div class="stack gap-20 step step--first" data-step="0">
+                <div class="t-eyebrow c-accent">Organisation Decision Journey · Fig. 1A</div>
+                <h2 class="t-h2 c-ink handshake">
+                  <img src="../assets/csIconHandshake.png" alt="" />Kellanova Collaboration
+                </h2>
+                <p class="t-body">
+                  The business revolves around enabling a continuous, collaborative assortment
+                  planning system where centrally defined strategies (Category Strategist) are
+                  validated, adapted, and optimized through field-level insights (Field
+                  Representative).
+                </p>
+                <p class="t-body">
+                  The system must support ongoing planogram implementation and dynamic modification,
+                  ensuring that any performance-driven decision is seamlessly communicated,
+                  validated, and iterated across stakeholders in near real-time.
+                </p>
+                <figure class="m-fig" style="margin: 0">
+                  <img loading="lazy" src="../assets/csFig1A.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. 1A — plans passing between the category strategist and the field
+                    representative
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="1">
+                <div class="t-eyebrow c-alt">Organisation Decision Journey · Fig. 1B</div>
+                <h2 class="t-h2 c-ink handshake">
+                  <img src="../assets/csIconHandshake.png" alt="" />Bi-Monthly Assortment Planning
+                </h2>
+                <p class="t-body">
+                  A system to enable bi-monthly, scenario-driven stocking decisions, where teams can
+                  continuously evaluate performance, simulate assortment changes, and optimize
+                  inventory distribution, ensuring the right products are available at the right
+                  place and time with minimal inefficiencies.
+                </p>
+                <figure class="m-fig" style="margin: 0">
+                  <img loading="lazy" src="../assets/csFig1B.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. 1B — bi-monthly loop between sales, category leadership and analysts
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="2">
+                <div class="t-eyebrow c-accent">Organisation Decision Journey · Fig. 1C</div>
+                <h2 class="t-h2 c-ink handshake">
+                  <img src="../assets/csIconHandshake.png" alt="" />Annual Operation Planning
+                </h2>
+                <p class="t-body">
+                  The business revolves around enabling a multi-functional, collaborative annual
+                  planning system that defines and operationalizes the retail assortment, pricing,
+                  and promotion strategy across the organization. This system must support
+                  end-to-end decision orchestration, where insights are generated, validated,
+                  simulated, and approved across multiple teams—including strategy, sales,
+                  marketing, analysts, and finance—before being executed in the market.
+                </p>
+                <p class="t-body">
+                  Given the complexity of assortment planning—balancing customer demand, financial
+                  targets, and operational constraints—the platform must facilitate continuous
+                  back-and-forth collaboration, scenario comparison, and structured approvals,
+                  ensuring that decisions are aligned, traceable, and optimized before execution.
+                </p>
+                <figure class="m-fig" style="margin: 0">
+                  <img loading="lazy" src="../assets/csFig1C.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. 1C — annual operating plan moving from analysts through RGM to finance
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step" data-step="3">
+                <div class="t-eyebrow c-alt">Function Decision Flow · Fig. 2A</div>
+                <h2 class="t-h2 c-ink handshake">
+                  <img src="../assets/csIconHandshake.png" alt="" />Assortment Decision Making
+                </h2>
+                <p class="t-body">
+                  The information is fragmented across multiple tools and functions are part of
+                  decision making various stages. In the above image it has been clearly identified
+                  that there are three stages in decision making starting from Identifying Needs,
+                  Running analysis and ending with Generating Recommendation reviewing the Impact.
+                </p>
+                <figure class="m-fig" style="margin: 0">
+                  <img loading="lazy" src="../assets/csFig2A.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. 2A — current routine and gaps across assortment, pricing and promotions
+                  </figcaption>
+                </figure>
+              </div>
+              <div class="stack gap-20 step step--last" data-step="4">
+                <div class="t-eyebrow c-accent">Function Decision Flow · Fig. 2B</div>
+                <h2 class="t-h2 c-ink handshake">
+                  <img src="../assets/csIconHandshake.png" alt="" />RGM
+                </h2>
+                <div class="t-eyebrow c-muted">Core Process Pillars</div>
+                <ul class="bullets t-body">
+                  <li>
+                    <strong>Assortment:</strong> The process focuses on analyzing current SKU
+                    performance to identify growth opportunities, understanding shopper purchase
+                    behavior, and performing simulations to determine the ideal product mix and
+                    necessary delistings.
+                  </li>
+                  <li>
+                    <strong>Pricing:</strong> Teams analyze historical pricing, simulate price
+                    changes based on market trends and competitor analysis, and assess the impact of
+                    price points on consumer psychology to finalize budget planning.
+                  </li>
+                  <li>
+                    <strong>Promotions:</strong> This pillar involves tracking historical
+                    promotional performance, validating guardrails, simulating future plans, and
+                    establishing a formalized approval and execution process.
+                  </li>
+                </ul>
+                <figure class="m-fig" style="margin: 0">
+                  <img loading="lazy" src="../assets/csFig2B.png" alt="" />
+                  <figcaption class="t-caption cap-pill">
+                    Fig. 2B — using multiple tools and reports to drive decisions without a unified
+                    tool
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+
+            <!-- Sticky frame: each layer can be an <img> or a <video muted loop playsinline preload="metadata">; videos play only while their step is active -->
+            <div class="scrolly-sticky">
+              <div class="scrolly-frame">
+                <img
+                  class="scrolly-layer"
+                  data-layer="0"
+                  data-on="1"
+                  src="../assets/csFig1A.png"
+                  alt="Fig. 1A — plans passing between the category strategist and the field representative"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="1"
+                  loading="lazy"
+                  src="../assets/csFig1B.png"
+                  alt="Fig. 1B — bi-monthly loop between sales, category leadership and analysts"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="2"
+                  loading="lazy"
+                  src="../assets/csFig1C.png"
+                  alt="Fig. 1C — annual operating plan moving from analysts through RGM to finance"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="3"
+                  loading="lazy"
+                  src="../assets/csFig2A.png"
+                  alt="Fig. 2A — current routine and gaps across assortment, pricing and promotions"
+                />
+                <img
+                  class="scrolly-layer"
+                  data-layer="4"
+                  loading="lazy"
+                  src="../assets/csFig2B.png"
+                  alt="Fig. 2B — using multiple tools and reports to drive decisions without a unified tool"
+                />
+              </div>
+              <div class="scrolly-caps">
+                <div class="t-caption cap-pill scrolly-cap" data-cap="0" data-on="1">
+                  Fig. 1A — Kellanova collaboration
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="1">
+                  Fig. 1B — Bi-monthly assortment planning
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="2">
+                  Fig. 1C — Annual operation planning
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="3">
+                  Fig. 2A — Assortment decision making
+                </div>
+                <div class="t-caption cap-pill scrolly-cap" data-cap="4">
+                  Fig. 2B — RGM, multiple tools without a unified one
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ PERSONAS ============ -->
+        <section class="stack gap-30 section" id="personas">
+          <div class="t-label c-accent" data-rise>user persona</div>
+          <h2 class="t-h1 c-ink" data-rise>Three ways people meet a decision.</h2>
+          <p class="t-body c-muted measure" data-rise>
+            The user interview led us to identify three categories of user personas:
+          </p>
+          <div class="row wrap gap-12" data-rise>
+            <div class="t-chip chip">Executive (C-Level Decision Maker)</div>
+            <div class="t-chip chip">Manager (Mid Level)</div>
+            <div class="t-chip chip">Analyst (Beginner to Intermediate Level)</div>
+          </div>
+
+          <div class="stack gap-34" style="padding-top: 12px" data-personas></div>
+        </section>
+
+        <!-- ============ FEATURES ============ -->
+        <section class="stack gap-30 section" id="features">
+          <div class="t-label c-accent" data-rise>feature list</div>
+          <h2 class="t-h1 c-ink" data-rise>
+            Feature impact analysis: design ideas to optimize the decision-making journey.
+          </h2>
+          <p class="t-body c-muted measure" data-rise>
+            After reviewing multiple user journeys and analyzing the key challenges and goals across
+            every stage of the decision-making process, we identified recurring patterns and
+            opportunities. Based on these insights, we iterated on potential solutions and
+            documented them along with their descriptions, expected impact, and relevance to
+            different user personas and functions, helping establish a clearer direction for
+            improving collaboration and decision efficiency.
+          </p>
+          <div class="table-card" data-rise>
+            <div class="ftbl t-body-sm" data-features>
+              <div class="th t-meta c-accent">Feature</div>
+              <div class="th t-meta c-accent">Description</div>
+              <div class="th t-meta c-accent">Impact</div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- ============ EXPECTED IMPACT ============ -->
+      <section class="stack gap-34 impact" id="impact" data-rise>
+        <div class="impact-confetti" aria-hidden="true">
+          <span style="top: 7%; left: 18%; background: #4f4dc5; --dx: 12px; --dy: -14px"></span>
+          <span
+            style="
+              top: 5%;
+              left: 62%;
+              background: #1f8a5b;
+              border-radius: 50%;
+              --dx: -14px;
+              --dy: 10px;
+            "
+          ></span>
+          <span style="top: 9%; left: 88%; background: #f5c518; --dx: 16px; --dy: 12px"></span>
+          <span style="top: 90%; left: 8%; background: #1f8a5b; --dx: -12px; --dy: -14px"></span>
+          <span
+            style="
+              top: 92%;
+              left: 46%;
+              background: #4f4dc5;
+              border-radius: 50%;
+              --dx: 14px;
+              --dy: -10px;
+            "
+          ></span>
+          <span style="top: 88%; left: 93%; background: #e2604a; --dx: -16px; --dy: -12px"></span>
+        </div>
+        <div class="t-label c-alt" style="position: relative">expected impact</div>
+        <div class="grid cols-3 gap-34" style="position: relative">
+          <div class="stack gap-14">
+            <div class="t-stat">60%</div>
+            <p class="t-body-sm c-muted">
+              Less information overload and discovery time with the Insights Dashboard.
+            </p>
+          </div>
+          <div class="stack gap-14 stat-divided">
+            <div class="t-stat">50%</div>
+            <p class="t-body-sm c-muted">
+              Less back-and-forth with the Collaborative Decision Workspace.
+            </p>
+          </div>
+          <div class="stack gap-14 stat-divided">
+            <div class="t-stat">35%</div>
+            <p class="t-body-sm c-muted">Shorter approval cycle time with Smart Notifications.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="cs-container">
+        <section class="stack gap-30 section" aria-labelledby="op-title">
+          <h2 class="t-label c-accent" id="op-title">other projects</h2>
+          <div class="grid cols-3" style="gap: 24px">
+            <a class="op-card" data-hov href="../scavvy.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/csImage103.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Gaming app</h3>
+                <p class="t-body-sm c-muted">A gaming app to be played in park and social groups</p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+            <a class="op-card" data-hov href="../building-with-ai.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/csImage98.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Full Stack Product</h3>
+                <p class="t-body-sm c-muted">
+                  4 tech stacks explored to build an end-to-end pet boarding web application using
+                  AI
+                </p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+            <a class="op-card" data-hov href="../aura.html"
+              ><div class="op-shot">
+                <img loading="lazy" src="../assets/auraOtherProject.png" alt="" />
+              </div>
+              <div class="op-body stack gap-8">
+                <h3 class="t-h4 c-ink">Aura</h3>
+                <p class="t-body-sm c-muted">
+                  A conversational, occasion-first fashion app for custom tailoring
+                </p>
+                <span class="t-body-sm c-accent fw-600">Read more →</span>
+              </div></a
+            >
+          </div>
+        </section>
+        <div class="row wrap jc-between back-row">
+          <a class="t-label back-link" href="../index.html">back to all work</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ---------- content data (from decision-flow.html) ---------- */
+      var PERSONAS = [
+        {
+          name: "Sarah Chen",
+          meta: "Executive | Age: 45",
+          img: "../assets/csPersonaSarah.jpg",
+          bio: "15+ years in strategic leadership, MBA from Stanford. Oversees multiple departments and makes high-level organizational decisions.",
+          quote:
+            "I need to see the full picture quickly, but I'm drowning in reports that don't connect to each other.",
+          goals: [
+            "Make informed strategic decisions quickly",
+            "Ensure decisions align with company vision",
+            "Minimize risk in major investments",
+            "Track ROI on approved initiatives",
+          ],
+          challenges: [
+            "Information overload from multiple sources",
+            "Lack of visibility into decision flow across teams",
+            "Difficulty validating credibility of insights",
+            "No centralised view of pending approvals",
+          ],
+          actions: [
+            "Reviews high-level reports and KPIs",
+            "Compares scenarios and validates with team",
+            "Discusses with leadership team",
+            "Approves and tracks implementation",
+          ],
+          emotions: [
+            "Curious but overwhelmed by volume",
+            "Seeking confidence in recommendation",
+            "Confident but waiting for buy-in",
+            "Monitoring for success metrics",
+          ],
+          /* emotion score per stage, -2 (negative) to +2 (positive), read from the emotions above */
+          steps: ["Reviews KPIs", "Compares scenarios", "Aligns leadership", "Approves & tracks"],
+          mood: [-1, 0, 1, 1],
+          moodTags: ["Overwhelmed", "Seeking confidence", "Confident", "Monitoring"],
+        },
+        {
+          name: "Harshad Muley",
+          meta: "Manager | Age: 38",
+          img: "../assets/csPersonaHarshad.jpg",
+          bio: "8 years managing cross-functional teams. Bridges executive vision with analyst execution. Previously worked as a senior analyst.",
+          quote:
+            "I spend half my time just moving information between people instead of actually improving our decisions.",
+          goals: [
+            "Translate executive goals into actionable plans",
+            "Coordinate between analysts and leadership",
+            "Ensure data quality and accuracy",
+            "Facilitate smooth approval processes",
+          ],
+          challenges: [
+            "Manual and redundant handoff processes",
+            "Back and forth communication delays",
+            "Difficulty tracking decision status",
+            "Limited collaboration tools for team reviews",
+            "Multiple tools",
+          ],
+          actions: [
+            "Gathers data from analysts and past decisions",
+            "Validates scenarios, saves alternatives",
+            "Prepares decision for executive review",
+            "Sends for approval and awaits feedback",
+          ],
+          emotions: [
+            "Organized but time-pressured",
+            "Seeking confidence in recommendation",
+            "Apprehensive about missing details",
+            "Waiting and ready to iterate",
+          ],
+          steps: ["Gathers data", "Validates scenarios", "Preps for review", "Sends for approval"],
+          mood: [-1, 0, -1, 0],
+          moodTags: ["Time-pressured", "Seeking confidence", "Apprehensive", "Ready to iterate"],
+        },
+        {
+          name: "Aryan Dey",
+          meta: "Analyst | Age: 29",
+          img: "../assets/csPersonaAryan.jpg",
+          bio: "4 years in data analysis, skilled in NucliOS and Excel. Creates detailed models and insights for decision-making.",
+          quote:
+            "I can build great analysis, but I never know if I'm looking at the right data or if anyone actually uses what I create.",
+          goals: [
+            "Translate executive goals into actionable plans",
+            "Coordinate between analysts and leadership",
+            "Ensure data quality and accuracy",
+            "Facilitate smooth approval processes",
+          ],
+          challenges: [
+            "Manual and redundant handoff processes",
+            "Back and forth communication delays",
+            "Difficulty tracking decision status",
+            "Limited collaboration tools for team reviews",
+            "Multiple tools",
+          ],
+          actions: [
+            "Searches databases for historical data",
+            "Builds models and creates scenario comparisons",
+            "Shares insights with manager",
+            "Waits for feedback, rarely sees final outcome",
+          ],
+          emotions: [
+            "Excited to explore but frustrated by search",
+            "Confused about validation criteria",
+            "Uncertain if work meets expectations",
+            "Disconnected from decision impact",
+          ],
+          steps: ["Searches data", "Builds models", "Shares insights", "Awaits feedback"],
+          mood: [-1, -2, -1, -2],
+          moodTags: ["Frustrated", "Confused", "Uncertain", "Disconnected"],
+        },
+      ];
+      var STAGES = [
+        "Pre Decision Making",
+        "During Decision Making",
+        "Post Decision Making",
+        "Implement / Approval",
+      ];
+      var FEATURES = [
+        [
+          "Insights Dashboard",
+          "Quick access view that surfaces relevant data, past decisions, and key metrics from the database without extensive searching",
+          "Reduces information overload and discovery time by 60%, enabling users to start analysis faster with contextually relevant data",
+        ],
+        [
+          "AI Native Decision Intelligence",
+          "AI-powered layer that understands context, surfaces insights, summarizes discussions, recommends actions, and connects past decisions with current scenarios across the workflow",
+          "Reduces cognitive load, speeds up decision-making, improves confidence, and transforms fragmented collaboration into a more intelligent and connected decision process.",
+        ],
+        [
+          "Advanced Search",
+          "Powerful search functionality with filters, tags, and intelligent suggestions to efficiently locate specific artefacts, data points, and historical decisions across NucliOS",
+          "Eliminates search inefficiency pain point, helping analysts find necessary information 3x faster and increasing confidence in data completeness",
+        ],
+        [
+          "Scenario Comparison",
+          "Side-by-side comparison tool that allows users to evaluate multiple decision scenarios with different parameters, assumptions, and outcomes",
+          "Enables data-driven decision making by allowing managers and analysts to explore alternatives, reducing decision uncertainty by 45%",
+        ],
+        [
+          "Scenario Saving",
+          "Ability to save multiple decision scenarios with all associated data, assumptions, and analysis for future reference and iteration",
+          "Preserves decision context and eliminates redundant work, allowing teams to build on previous analysis rather than starting from scratch",
+        ],
+        [
+          "Credibility Indicators",
+          "System for attaching validation markers, data source citations, and credibility ratings to insights and decisions",
+          "Addresses validation concerns by making data lineage transparent, increasing executive confidence in recommendations by 40%",
+        ],
+        [
+          "Collaborative Decision Workspace (Connected Systems)",
+          "Shared environment with user management controls where teams can send/receive plans, add alerts, notes, comments, and reply to feedback in context. Includes role-based access and permission management for decision visibility and editing rights",
+          "Reduces back-and-forth by 50% and eliminates manual handoffs, creating a single source of truth for decision collaboration while ensuring data security and appropriate access levels",
+        ],
+        [
+          "Decision Transaction Log",
+          "Complete audit trail that captures the entire lifecycle of a decision including edits, discussions, approvals, and rationale",
+          "Builds organizational memory by preserving decision context, enabling teams to learn from past decisions and avoid repeating mistakes",
+        ],
+        [
+          "Smart Notifications",
+          "Contextual alerts for decision status changes, approval requests, feedback needed, and implementation milestones",
+          "Keeps stakeholders informed without overwhelming them, reducing approval cycle time by 35% and preventing bottlenecks",
+        ],
+        [
+          "Approval Workflow",
+          "Streamlined process for submitting decisions for review, providing structured feedback, and tracking approval/denial with reasoning",
+          "Eliminates redundant approval processes and lack of feedback, making decision flow transparent and accountable",
+        ],
+        [
+          "Status Visibility Dashboard",
+          "Real-time view of where all decisions are in the approval pipeline, who owns each step, and what actions are required",
+          "Provides executives with decision flow visibility, reducing status check meetings by 60% and accelerating overall decision velocity",
+        ],
+        [
+          "Autocomplete / Setting Guardrails",
+          "Intelligent automation that sets guardrails and automates repetitive resource allocation processes based on customized parameters",
+          "Saves 10+ hours per week by automating manual tasks and ensuring consistency in resource allocation decisions",
+        ],
+        [
+          "Mobile Access",
+          "Mobile-responsive interface enabling decision review, approvals, and collaboration from",
+          "Enables decision-making on-the-go, reducing approval delays by 50% for remote",
+        ],
+      ];
+
+      (function () {
+        function esc(s) {
+          return String(s).replace(/[&<>"]/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+          });
+        }
+        var CHECK =
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12.5 9.5 18 20 6.5"/></svg>';
+        var CROSS =
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12"/><path d="M18 6 6 18"/></svg>';
+        function list(items, icon, cls) {
+          return (
+            '<ul class="icon-list t-body-sm ' +
+            cls +
+            '">' +
+            items
+              .map(function (t) {
+                return "<li>" + icon + "<span>" + esc(t) + "</span></li>";
+              })
+              .join("") +
+            "</ul>"
+          );
+        }
+
+        /* journey map: a compact stage-by-stage table with the emotion curve as its middle row */
+        var MOOD_COLOR = function (s) { return s > 0 ? "#1f8a5b" : s === 0 ? "#d9a400" : "#b33b52"; };
+        function face(s) {
+          var c = MOOD_COLOR(s);
+          /* mouth: smile for positive, flat for neutral, frown for negative */
+          var mouth = s > 0 ? "M11 20q5 5 10 0" : s === 0 ? "M11 21h10" : s === -1 ? "M11 22q5 -4 10 0" : "M10 23q6 -6 12 0";
+          return '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="' + c + '" fill-opacity=".14" stroke="' + c + '" stroke-width="2"/>' +
+            '<circle cx="11.5" cy="13" r="1.8" fill="' + c + '"/><circle cx="20.5" cy="13" r="1.8" fill="' + c + '"/>' +
+            '<path d="' + mouth + '" fill="none" stroke="' + c + '" stroke-width="2.2" stroke-linecap="round"/></svg>';
+        }
+        function journeyMap(p, alt) {
+          var line = alt ? "#1f8a5b" : "#4f4dc5";
+          var yPct = function (s) { return 18 + ((2 - s) / 4) * 64; }; /* +2 -> 18%, -2 -> 82% */
+          var pts = p.mood.map(function (s, k) { return { x: (k + 0.5) * 250, y: yPct(s) * 2, s: s }; });
+          var d = "M" + pts[0].x + " " + pts[0].y;
+          for (var i = 1; i < pts.length; i++) {
+            d += " C" + (pts[i - 1].x + 125) + " " + pts[i - 1].y + " " + (pts[i].x - 125) + " " + pts[i].y + " " + pts[i].x + " " + pts[i].y;
+          }
+          var area = d + " L" + pts[pts.length - 1].x + " 200 L" + pts[0].x + " 200 Z";
+          var gid = "jm" + p.name.replace(/\W/g, "");
+          var SHORT = ["Pre-decision", "During", "Post-decision", "Implement"];
+
+          var head = '<div class="jmap-row jmap-head"><div class="jmap-key">Stage</div>' +
+            SHORT.map(function (s, k) { return '<div class="jmap-stage" title="' + esc(STAGES[k]) + '"><b>0' + (k + 1) + "</b>" + s + "</div>"; }).join("") + "</div>";
+          var doing = '<div class="jmap-row"><div class="jmap-key">Doing</div>' +
+            p.steps.map(function (t, k) { return '<div class="jmap-doing" title="' + esc(p.actions[k]) + '">' + esc(t) + "</div>"; }).join("") + "</div>";
+          var curve = '<div class="jmap-row jmap-curve-row"><div class="jmap-key"><span>+ Positive</span><span>&minus; Negative</span></div>' +
+            '<div class="jmap-curve" role="img" aria-label="' + esc(p.name + " emotion curve: " + p.moodTags.join(", then ")) + '">' +
+            '<svg viewBox="0 0 1000 200" preserveAspectRatio="none" aria-hidden="true">' +
+            '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + line + '"/><stop offset="1" stop-color="' + line + '" stop-opacity="0"/></linearGradient></defs>' +
+            [250, 500, 750].map(function (x) { return '<line class="jmap-col" x1="' + x + '" x2="' + x + '" y1="0" y2="200" vector-effect="non-scaling-stroke"/>'; }).join("") +
+            '<line class="jmap-zero" x1="0" x2="1000" y1="' + yPct(0) * 2 + '" y2="' + yPct(0) * 2 + '" vector-effect="non-scaling-stroke"/>' +
+            '<path class="jmap-area" d="' + area + '" fill="url(#' + gid + ')"/>' +
+            '<path class="jmap-line" d="' + d + '" fill="none" stroke="' + line + '" stroke-width="3" stroke-linecap="round" pathLength="1"/>' +
+            "</svg>" +
+            pts.map(function (pt, k) {
+              return '<span class="jmap-face" style="left:' + ((k + 0.5) / 4) * 100 + "%;top:" + pt.y / 2 + "%;animation-delay:" + (0.45 + k * 0.28) + 's">' + face(pt.s) + "</span>";
+            }).join("") +
+            "</div></div>";
+          var feel = '<div class="jmap-row"><div class="jmap-key">Feeling</div>' +
+            p.moodTags.map(function (t, k) { return '<div class="jmap-feel" title="' + esc(p.emotions[k]) + '"><i style="background:' + MOOD_COLOR(p.mood[k]) + '"></i>' + esc(t) + "</div>"; }).join("") + "</div>";
+
+          return '<div class="stack gap-12"><div class="t-eyebrow c-muted">Journey map</div><div class="jmap">' + head + doing + curve + feel + "</div></div>";
+        }
+
+        /* personas */
+        var wrap = document.querySelector("[data-personas]");
+        wrap.innerHTML = PERSONAS.map(function (p, i) {
+          var alt = i % 2 === 1,
+            col = alt ? "c-alt" : "c-accent";
+          return (
+            '<article class="stack gap-26 persona-card' +
+            (alt ? " persona-card--alt" : "") +
+            '" data-rise>' +
+            /* row 1: who they are (left) speaking in a comic bubble (right) */
+            '<div class="persona-top">' +
+            '<div class="persona-id"><div class="avatar"><img loading="lazy" src="' + p.img + '" alt="' + esc(p.name) + '"></div>' +
+            '<div class="t-label ' + col + '">persona 0' + (i + 1) + '</div><h3 class="t-h3 c-ink">' + esc(p.name) + '</h3><div class="t-meta c-soft">' + esc(p.meta) + "</div></div>" +
+            '<div class="persona-say">' +
+            '<blockquote class="bubble"><p>' + esc(p.quote) + "</p></blockquote>" +
+            '<p class="t-body c-muted persona-bio">' + esc(p.bio) + "</p>" +
+            "</div></div>" +
+            /* row 2: goals and challenges side by side */
+            '<div class="grid cols-2 gap-20 ai-stretch">' +
+            '<div class="stack gap-12 gain"><div class="t-eyebrow c-muted">Goals</div><div class="' + col + '">' + list(p.goals, CHECK, "") + "</div></div>" +
+            '<div class="stack gap-12 pain"><div class="t-eyebrow c-muted">Challenges</div><div class="c-rust">' + list(p.challenges, CROSS, "") + "</div></div>" +
+            "</div>" +
+            journeyMap(p, alt) +
+            "</article>"
+          );
+        }).join("");
+        document.querySelectorAll(".icon-list span").forEach(function (s) {
+          s.style.color = "var(--text)";
+        });
+
+        /* feature table */
+        var ft = document.querySelector("[data-features]");
+        ft.insertAdjacentHTML(
+          "beforeend",
+          FEATURES.map(function (f) {
+            return (
+              '<div class="td-key">' +
+              esc(f[0]) +
+              '</div><div class="c-muted" data-k="Description">' +
+              esc(f[1]) +
+              '</div><div class="td-last c-ink" data-k="Impact">' +
+              esc(f[2]) +
+              "</div>"
+            );
+          }).join("")
+        );
+
+        /* nav underline squiggles */
+        var nav =
+          '<svg viewBox="0 0 87 16" fill="none" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 1C5.9 5.2 16.1 11 27.6 2.9c1.5-1.1 3.5-1.5 5.3-.7 10.7 4.4 13.4 5.5 24.2.1 1.5-.8 3.3-.7 4.8.1C71.3 7.5 76.4 8.2 86 1" stroke="#4f4dc5" stroke-width="2.2" stroke-linecap="round"/><path pathLength="1" d="M1 10c3.9 3.6 14.2 8.4 25.8 1.4 1.4-.8 3.1-1.1 4.7-.6 11.1 3.8 13.7 4.8 25 0 1.3-.5 2.9-.5 4.2.1C70.1 15.4 75.3 16.1 85 10" stroke="#4f4dc5" stroke-width="2.2" stroke-linecap="round"/></svg>';
+        var links = [].slice.call(document.querySelectorAll(".cs-nav a"));
+        links.forEach(function (a) {
+          a.insertAdjacentHTML("beforeend", nav);
+        });
+
+        /* progress + scroll spy */
+        var fill = document.querySelector("[data-progress]");
+        var spies = links.map(function (a) {
+          return document.getElementById(a.dataset.spy);
+        });
+        function onScroll() {
+          var h = document.documentElement.scrollHeight - innerHeight;
+          fill.style.transform = "scaleX(" + (h > 0 ? Math.min(1, scrollY / h) : 0) + ")";
+          var cur = -1;
+          spies.forEach(function (s, i) {
+            if (s && s.getBoundingClientRect().top < innerHeight * 0.4) cur = i;
+          });
+          links.forEach(function (a, i) {
+            a.dataset.active = i === cur ? "1" : "0";
+          });
+        }
+        addEventListener("scroll", onScroll, { passive: true });
+        addEventListener("resize", onScroll);
+        onScroll();
+
+        /* reveal */
+        var rise = document.querySelectorAll("[data-rise]");
+        if ("IntersectionObserver" in window) {
+          var io = new IntersectionObserver(
+            function (es) {
+              es.forEach(function (e) {
+                if (e.isIntersecting) {
+                  e.target.dataset.in = "1";
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -8% 0px" }
+          );
+          rise.forEach(function (el) {
+            io.observe(el);
+          });
+        } else
+          rise.forEach(function (el) {
+            el.dataset.in = "1";
+          });
+
+        /* journey scrolly */
+        var steps = [].slice.call(document.querySelectorAll("[data-step]"));
+        var layers = [].slice.call(document.querySelectorAll("[data-layer]"));
+        var caps = [].slice.call(document.querySelectorAll("[data-cap]"));
+        var active = 0;
+        function setStep(n) {
+          if (n === active) return;
+          active = n;
+          layers.forEach(function (l, i) {
+            var on = i === n;
+            l.dataset.on = on ? "1" : "0";
+            if (l.tagName === "VIDEO") {
+              if (on) {
+                try {
+                  l.currentTime = 0;
+                  l.play();
+                } catch (e) {}
+              } else l.pause();
+            }
+          });
+          caps.forEach(function (c, i) {
+            c.dataset.on = i === n ? "1" : "0";
+          });
+        }
+        if ("IntersectionObserver" in window) {
+          var so = new IntersectionObserver(
+            function (es) {
+              es.forEach(function (e) {
+                if (e.isIntersecting) setStep(+e.target.dataset.step);
+              });
+            },
+            { rootMargin: "-45% 0px -45% 0px" }
+          );
+          steps.forEach(function (s) {
+            so.observe(s);
+          });
+        }
+
+        /* live-link password gate — same key and password as decision-flow.html, so unlocking one unlocks both */
+        var ACCESS_KEY = "decision-flow-live-access-v1";
+        var PASSWORD = "ps@design0815";
+        var block = document.querySelector("[data-live-access]");
+        if (block) {
+          var unlock = function () {
+            block.classList.add("is-unlocked");
+            try {
+              sessionStorage.setItem(ACCESS_KEY, "1");
+            } catch (e) {}
+          };
+          var ok = false;
+          try {
+            ok = sessionStorage.getItem(ACCESS_KEY) === "1";
+          } catch (e) {}
+          if (ok) unlock();
+          else {
+            var form = block.querySelector("form"),
+              input = block.querySelector("input"),
+              err = block.querySelector(".live-error");
+            form.addEventListener("submit", function (ev) {
+              ev.preventDefault();
+              if (input.value === PASSWORD) {
+                unlock();
+                return;
+              }
+              err.textContent = "Incorrect password. Please try again.";
+              input.value = "";
+              input.focus();
+            });
+          }
+        }
+      })();
+    </script>
+    <script src="../password-request.js" defer></script>
+  </body>
+</html>
